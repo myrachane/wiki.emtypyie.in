@@ -6,7 +6,6 @@
   <meta name="description" content="emtypyie's personal developer wiki — dev logs, builds, and technical breakdowns." />
   <title>wiki — emtypyie</title>
   <style>
-    /* ─── DESIGN TOKENS ──────────────────────────────────────── */
     :root {
       --bg:           #F4EFE6;
       --surface:      #EDE7DA;
@@ -25,9 +24,6 @@
       --amber-bg:     #FEF3C7;
       --slate:        #334155;
       --slate-bg:     #E2E8F0;
-      --code-bg:      #E8E2D4;
-      --shadow:       0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
-      --shadow-md:    0 4px 12px rgba(0,0,0,0.10), 0 2px 4px rgba(0,0,0,0.06);
       --radius:       3px;
       --font-serif:   'Georgia', 'Times New Roman', serif;
       --font-sans:    system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
@@ -35,7 +31,6 @@
       --max-w:        900px;
       --nav-h:        52px;
     }
-
     [data-theme="dark"] {
       --bg:           #0E0D0B;
       --surface:      #181614;
@@ -54,12 +49,8 @@
       --amber-bg:     #1C1100;
       --slate:        #94A3B8;
       --slate-bg:     #0F172A;
-      --code-bg:      #141210;
-      --shadow:       0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
-      --shadow-md:    0 4px 12px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.2);
     }
 
-    /* ─── RESET ──────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
@@ -72,23 +63,20 @@
       transition: background 0.2s, color 0.2s;
     }
     a { color: inherit; text-decoration: none; }
-    img { display: block; max-width: 100%; }
 
-    /* ─── TEXTURE OVERLAY ────────────────────────────────────── */
     body::before {
       content: '';
       position: fixed;
       inset: 0;
       pointer-events: none;
       z-index: 0;
-      background-image:
-        radial-gradient(circle, var(--border) 1px, transparent 1px);
+      background-image: radial-gradient(circle, var(--border) 1px, transparent 1px);
       background-size: 28px 28px;
       opacity: 0.3;
     }
     [data-theme="dark"] body::before { opacity: 0.12; }
 
-    /* ─── NAVBAR ─────────────────────────────────────────────── */
+    /* NAV */
     nav {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -101,13 +89,6 @@
       z-index: 100;
       transition: background 0.2s;
     }
-    nav::after {
-      content: '';
-      position: absolute;
-      bottom: -1px; left: 0; right: 0;
-      height: 1px;
-      background: var(--border);
-    }
     .nav-inner {
       width: 100%;
       max-width: var(--max-w);
@@ -116,28 +97,10 @@
       align-items: center;
       justify-content: space-between;
     }
-    .nav-brand {
-      font-family: var(--font-mono);
-      font-size: 13px;
-      color: var(--text);
-      letter-spacing: 0;
-      display: flex;
-      align-items: center;
-      gap: 0;
-    }
-    .nav-brand .slash {
-      color: var(--text-faint);
-      margin: 0 5px;
-    }
-    .nav-brand .wiki-part {
-      color: var(--accent);
-      font-weight: 700;
-    }
-    .nav-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .nav-brand { font-family: var(--font-mono); font-size: 13px; color: var(--text); display: flex; align-items: center; }
+    .nav-brand .slash { color: var(--text-faint); margin: 0 5px; }
+    .nav-brand .wiki-part { color: var(--accent); font-weight: 700; }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
     .nav-btn {
       background: none;
       border: 1px solid var(--border);
@@ -153,28 +116,13 @@
       transition: color 0.15s, border-color 0.15s, background 0.15s;
       white-space: nowrap;
     }
-    .nav-btn:hover {
-      color: var(--text);
-      border-color: var(--text-muted);
-      background: var(--surface);
-    }
+    .nav-btn:hover { color: var(--text); border-color: var(--text-muted); background: var(--surface); }
     .nav-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
 
-    /* ─── PAGE WRAPPER ───────────────────────────────────────── */
-    .page {
-      position: relative;
-      z-index: 1;
-      padding-top: var(--nav-h);
-    }
+    /* PAGE */
+    .page { position: relative; z-index: 1; padding-top: var(--nav-h); }
 
-    /* ─── SECTION LAYOUT ─────────────────────────────────────── */
-    .section {
-      max-width: var(--max-w);
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-
-    /* ─── HERO ───────────────────────────────────────────────── */
+    /* HERO */
     .hero {
       padding: 72px 24px 56px;
       max-width: var(--max-w);
@@ -192,13 +140,7 @@
       align-items: center;
       gap: 8px;
     }
-    .hero-eyebrow::before {
-      content: '';
-      display: inline-block;
-      width: 20px;
-      height: 1px;
-      background: var(--accent);
-    }
+    .hero-eyebrow::before { content: ''; display: inline-block; width: 20px; height: 1px; background: var(--accent); }
     .hero h1 {
       font-family: var(--font-serif);
       font-size: clamp(42px, 7vw, 68px);
@@ -208,32 +150,14 @@
       letter-spacing: -0.02em;
       margin-bottom: 20px;
     }
-    .hero h1 .tilde {
-      color: var(--accent);
-      font-style: italic;
-    }
-    .hero-sub {
-      font-size: 16px;
-      color: var(--text-muted);
-      max-width: 520px;
-      line-height: 1.6;
-      margin-bottom: 12px;
-    }
-    .hero-tag {
-      font-family: var(--font-mono);
-      font-size: 12px;
-      color: var(--text-faint);
-      letter-spacing: 0.04em;
-    }
-    .hero-tag::before {
-      content: '// ';
-      color: var(--accent);
-      opacity: 0.7;
-    }
+    .hero h1 .tilde { color: var(--accent); font-style: italic; }
+    .hero-sub { font-size: 16px; color: var(--text-muted); max-width: 520px; line-height: 1.6; margin-bottom: 12px; }
+    .hero-tag { font-family: var(--font-mono); font-size: 12px; color: var(--text-faint); }
+    .hero-tag::before { content: '// '; color: var(--accent); opacity: 0.7; }
 
-    /* ─── ABOUT ──────────────────────────────────────────────── */
+    /* ABOUT */
     .about {
-      padding: 48px 24px 48px;
+      padding: 48px 24px;
       max-width: var(--max-w);
       margin: 0 auto;
       border-bottom: 1px solid var(--border-light);
@@ -248,46 +172,47 @@
       color: var(--text-faint);
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      padding-top: 4px;
       border-top: 2px solid var(--accent);
       padding-top: 8px;
     }
-    .about-body p {
-      color: var(--text-muted);
-      font-size: 14.5px;
-      line-height: 1.75;
-      max-width: 580px;
-    }
+    .about-body p { color: var(--text-muted); font-size: 14.5px; line-height: 1.75; max-width: 580px; }
     .about-body p + p { margin-top: 12px; }
 
-    /* ─── PROJECTS ───────────────────────────────────────────── */
-    .projects {
-      padding: 48px 24px 72px;
-      max-width: var(--max-w);
-      margin: 0 auto;
-    }
+    /* PROJECTS */
+    .projects { padding: 48px 24px 72px; max-width: var(--max-w); margin: 0 auto; }
     .section-header {
       display: flex;
       align-items: baseline;
       justify-content: space-between;
-      margin-bottom: 28px;
+      margin-bottom: 20px;
       border-bottom: 1px solid var(--border-light);
       padding-bottom: 16px;
     }
-    .section-title {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--text-faint);
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-    }
-    .section-count {
+    .section-title { font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); letter-spacing: 0.14em; text-transform: uppercase; }
+    .section-meta { font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); display: flex; align-items: center; gap: 10px; }
+    #fetchStatus { font-size: 10px; }
+    #fetchStatus.ok   { color: var(--green); }
+    #fetchStatus.err  { color: #DC2626; }
+
+    /* FILTERS */
+    .filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+    .filter-pill {
       font-family: var(--font-mono);
       font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 2px;
+      border: 1px solid var(--border);
+      background: none;
       color: var(--text-faint);
+      cursor: pointer;
+      transition: all 0.12s;
     }
+    .filter-pill:hover { color: var(--text-muted); border-color: var(--text-faint); }
+    .filter-pill.active { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, transparent); background: var(--accent-dim); }
 
-    /* ─── PROJECT GRID ───────────────────────────────────────── */
+    /* GRID */
     .project-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -296,6 +221,7 @@
       border: 1px solid var(--border);
       border-radius: var(--radius);
       overflow: hidden;
+      min-height: 120px;
     }
     .project-card {
       background: var(--bg);
@@ -304,7 +230,7 @@
       transition: background 0.15s;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
       min-height: 160px;
       position: relative;
       text-decoration: none;
@@ -318,24 +244,12 @@
       color: var(--text-faint);
       transition: color 0.15s, transform 0.15s;
     }
-    .project-card:hover::after {
-      color: var(--accent);
-      transform: translateX(2px);
-    }
-    .card-name {
-      font-family: var(--font-serif);
-      font-size: 17px;
-      color: var(--text);
-      font-weight: 700;
-      line-height: 1.2;
-      padding-right: 24px;
-    }
-    .card-desc {
-      font-size: 13px;
-      color: var(--text-muted);
-      line-height: 1.55;
-      flex: 1;
-    }
+    .project-card:hover::after { color: var(--accent); transform: translateX(2px); }
+    .project-card[data-hidden="true"] { display: none; }
+
+    .card-name { font-family: var(--font-serif); font-size: 17px; color: var(--text); font-weight: 700; line-height: 1.2; padding-right: 24px; }
+    .card-lang { font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); }
+    .card-desc { font-size: 13px; color: var(--text-muted); line-height: 1.55; flex: 1; }
     .card-footer {
       display: flex;
       align-items: center;
@@ -354,32 +268,35 @@
       font-weight: 700;
       border: 1px solid transparent;
     }
-    .badge-active {
-      color: var(--green);
-      background: var(--green-bg);
-      border-color: color-mix(in srgb, var(--green) 25%, transparent);
-    }
-    .badge-paused {
-      color: var(--amber);
-      background: var(--amber-bg);
-      border-color: color-mix(in srgb, var(--amber) 25%, transparent);
-    }
-    .badge-completed {
-      color: var(--slate);
-      background: var(--slate-bg);
-      border-color: color-mix(in srgb, var(--slate) 25%, transparent);
-    }
-    .card-date {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      color: var(--text-faint);
-    }
+    .badge-active    { color: var(--green); background: var(--green-bg); border-color: color-mix(in srgb, var(--green) 25%, transparent); }
+    .badge-paused    { color: var(--amber); background: var(--amber-bg); border-color: color-mix(in srgb, var(--amber) 25%, transparent); }
+    .badge-completed { color: var(--slate); background: var(--slate-bg); border-color: color-mix(in srgb, var(--slate) 25%, transparent); }
+    .card-date { font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); }
 
-    /* ─── FOOTER ─────────────────────────────────────────────── */
-    footer {
-      border-top: 1px solid var(--border);
-      background: var(--surface);
+    /* STATES */
+    .grid-state {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px;
+      gap: 12px;
+      background: var(--bg);
     }
+    .grid-state-label { font-family: var(--font-mono); font-size: 12px; color: var(--text-faint); }
+    .grid-state-sub   { font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); opacity: 0.7; }
+    .loader {
+      width: 18px; height: 18px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* FOOTER */
+    footer { border-top: 1px solid var(--border); background: var(--surface); }
     .footer-inner {
       max-width: var(--max-w);
       margin: 0 auto;
@@ -389,38 +306,17 @@
       justify-content: space-between;
       gap: 16px;
     }
-    .footer-brand {
-      font-family: var(--font-mono);
-      font-size: 12px;
-      color: var(--text-faint);
-    }
+    .footer-brand { font-family: var(--font-mono); font-size: 12px; color: var(--text-faint); }
     .footer-brand span { color: var(--accent); }
-    .footer-links {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-    .footer-link {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--text-faint);
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      transition: color 0.15s;
-    }
+    .footer-links { display: flex; align-items: center; gap: 20px; }
+    .footer-link { font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); display: flex; align-items: center; gap: 5px; transition: color 0.15s; }
     .footer-link:hover { color: var(--accent); }
     .footer-link svg { width: 13px; height: 13px; }
 
-    /* ─── RESPONSIVE ─────────────────────────────────────────── */
     @media (max-width: 640px) {
       nav { padding: 0 16px; }
       .hero { padding: 48px 16px 40px; }
-      .about {
-        grid-template-columns: 1fr;
-        gap: 16px;
-        padding: 36px 16px;
-      }
+      .about { grid-template-columns: 1fr; gap: 16px; padding: 36px 16px; }
       .projects { padding: 36px 16px 56px; }
       .project-grid { grid-template-columns: 1fr; }
       .footer-inner { flex-direction: column; align-items: flex-start; gap: 12px; }
@@ -430,33 +326,24 @@
 </head>
 <body>
 
-  <!-- ── NAVBAR ── -->
   <nav>
     <div class="nav-inner">
       <a href="/" class="nav-brand">
-        emtypyie
-        <span class="slash">/</span>
-        <span class="wiki-part">wiki</span>
+        emtypyie<span class="slash">/</span><span class="wiki-part">wiki</span>
       </a>
       <div class="nav-actions">
         <button class="nav-btn" id="themeToggle" aria-label="Toggle theme">
           <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="5"/>
-            <line x1="12" y1="1" x2="12" y2="3"/>
-            <line x1="12" y1="21" x2="12" y2="23"/>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-            <line x1="1" y1="12" x2="3" y2="12"/>
-            <line x1="21" y1="12" x2="23" y2="12"/>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
           </svg>
           <span id="themeLabel">light</span>
         </button>
         <a href="https://github.com/emtypyie" target="_blank" rel="noopener" class="nav-btn">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
           <span>github</span>
         </a>
       </div>
@@ -465,7 +352,6 @@
 
   <div class="page">
 
-    <!-- ── HERO ── -->
     <header class="hero">
       <div class="hero-eyebrow">personal engineering wiki</div>
       <h1>Wiki<span class="tilde">.</span></h1>
@@ -473,179 +359,173 @@
       <p class="hero-tag">No fluff. Just builds.</p>
     </header>
 
-    <!-- ── ABOUT ── -->
     <section class="about">
       <div class="about-label">About this wiki</div>
       <div class="about-body">
-        <p>
-          This is a running log of projects — not a portfolio. It includes failures, half-finished experiments, 
-          architecture decisions, and the kind of notes I'd want if I had to come back to this six months later.
-        </p>
-        <p>
-          Entries are written as I build, not after. Expect incomplete sections, updated timestamps, 
-          and honest post-mortems. If something's here, it was worth the time to document.
-        </p>
+        <p>This is a running log of projects — not a portfolio. It includes failures, half-finished experiments, architecture decisions, and the kind of notes I'd want if I had to come back to this six months later.</p>
+        <p>Entries are written as I build, not after. Expect incomplete sections, updated timestamps, and honest post-mortems. If something's here, it was worth the time to document.</p>
       </div>
     </section>
 
-    <!-- ── PROJECTS ── -->
     <main class="projects">
       <div class="section-header">
         <span class="section-title">Projects</span>
-        <span class="section-count" id="projectCount">— entries</span>
+        <span class="section-meta">
+          <span id="projectCount">—</span>
+          <span id="fetchStatus"></span>
+        </span>
+      </div>
+
+      <div class="filter-row" id="filterRow" style="display:none;">
+        <button class="filter-pill active" data-filter="all">All</button>
+        <button class="filter-pill" data-filter="active">Active</button>
+        <button class="filter-pill" data-filter="paused">Paused</button>
+        <button class="filter-pill" data-filter="completed">Completed</button>
       </div>
 
       <div class="project-grid" id="projectGrid">
-
-        <a href="/taskd" class="project-card" data-project="taskd">
-          <div class="card-name">taskd</div>
-          <div class="card-desc">
-            Distributed task queue built on Redis. Retry logic, dead-letter queues, 
-            and a minimal Go worker runtime.
-          </div>
-          <div class="card-footer">
-            <span class="badge badge-active">Active</span>
-            <span class="card-date">2025-04-28</span>
-          </div>
-        </a>
-
-        <a href="/dns-proxy" class="project-card" data-project="dns-proxy">
-          <div class="card-name">dns-proxy</div>
-          <div class="card-desc">
-            Lightweight DNS-over-HTTPS proxy with local cache and per-domain routing rules. 
-            Single binary, zero config.
-          </div>
-          <div class="card-footer">
-            <span class="badge badge-active">Active</span>
-            <span class="card-date">2025-04-21</span>
-          </div>
-        </a>
-
-        <a href="/schemavault" class="project-card" data-project="schemavault">
-          <div class="card-name">schemavault</div>
-          <div class="card-desc">
-            Schema registry for internal APIs. Version control + diff tooling + 
-            webhook hooks for breaking change detection.
-          </div>
-          <div class="card-footer">
-            <span class="badge badge-paused">Paused</span>
-            <span class="card-date">2025-03-10</span>
-          </div>
-        </a>
-
-        <a href="/logpipe" class="project-card" data-project="logpipe">
-          <div class="card-name">logpipe</div>
-          <div class="card-desc">
-            Structured log ingestion pipeline. Parses stdin, enriches with metadata, 
-            and ships to configurable sinks (files, S3, webhooks).
-          </div>
-          <div class="card-footer">
-            <span class="badge badge-completed">Completed</span>
-            <span class="card-date">2025-02-14</span>
-          </div>
-        </a>
-
-        <a href="/this-wiki" class="project-card" data-project="this-wiki">
-          <div class="card-name">this wiki</div>
-          <div class="card-desc">
-            The wiki itself. Static HTML, no frameworks, deployed to Vercel. 
-            Includes a lightweight like/view API backend.
-          </div>
-          <div class="card-footer">
-            <span class="badge badge-active">Active</span>
-            <span class="card-date">2025-04-30</span>
-          </div>
-        </a>
-
-        <a href="/memstore" class="project-card" data-project="memstore">
-          <div class="card-name">memstore</div>
-          <div class="card-desc">
-            Embedded key-value store with an LSM-tree backend. Written in C for 
-            use in constrained environments. Experiment in storage engine fundamentals.
-          </div>
-          <div class="card-footer">
-            <span class="badge badge-paused">Paused</span>
-            <span class="card-date">2025-01-30</span>
-          </div>
-        </a>
-
+        <div class="grid-state" id="loadingState">
+          <div class="loader"></div>
+          <span class="grid-state-label">fetching devlogs/manifest.json…</span>
+        </div>
       </div>
     </main>
 
-    <!-- ── FOOTER ── -->
     <footer>
       <div class="footer-inner">
-        <div class="footer-brand">
-          emtypyie / <span>wiki</span> — updated continuously
-        </div>
+        <div class="footer-brand">emtypyie / <span>wiki</span> — updated continuously</div>
         <div class="footer-links">
           <a href="https://github.com/emtypyie" target="_blank" rel="noopener" class="footer-link">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
             github
           </a>
           <a href="https://wiki.emtypyie.in" class="footer-link">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="2" y1="12" x2="22" y2="12"/>
-              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
             wiki.emtypyie.in
           </a>
         </div>
       </div>
     </footer>
 
-  </div><!-- /page -->
+  </div>
 
   <script>
-    /* ── THEME ─────────────────────────────────── */
-    const html       = document.documentElement;
-    const toggle     = document.getElementById('themeToggle');
-    const themeLabel = document.getElementById('themeLabel');
-    const themeIcon  = document.getElementById('themeIcon');
-
-    const MOON_SVG = `<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>`;
-    const SUN_SVG  = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
+    /* ── THEME ─────────────────────────────── */
+    const html   = document.documentElement;
+    const toggle = document.getElementById('themeToggle');
+    const label  = document.getElementById('themeLabel');
+    const icon   = document.getElementById('themeIcon');
 
     function applyTheme(t) {
       html.setAttribute('data-theme', t);
       localStorage.setItem('wiki-theme', t);
-      themeLabel.textContent = t;
-      themeIcon.innerHTML = t === 'dark' ? MOON_SVG : SUN_SVG;
-      themeIcon.setAttribute('fill', t === 'dark' ? 'currentColor' : 'none');
-      if (t === 'light') {
-        themeIcon.setAttribute('stroke', 'currentColor');
-        themeIcon.setAttribute('stroke-width', '2');
-        themeIcon.setAttribute('stroke-linecap', 'round');
-        themeIcon.setAttribute('stroke-linejoin', 'round');
+      label.textContent = t;
+      const dark = t === 'dark';
+      icon.innerHTML = dark
+        ? `<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>`
+        : `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
+      icon.setAttribute('fill', dark ? 'currentColor' : 'none');
+      if (!dark) { icon.setAttribute('stroke', 'currentColor'); icon.setAttribute('stroke-width', '2'); icon.setAttribute('stroke-linecap', 'round'); icon.setAttribute('stroke-linejoin', 'round'); }
+    }
+    applyTheme(localStorage.getItem('wiki-theme') || 'light');
+    toggle.addEventListener('click', () => applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
+
+    /* ── MANIFEST FETCH + RENDER ──────────── */
+    const grid        = document.getElementById('projectGrid');
+    const countEl     = document.getElementById('projectCount');
+    const statusEl    = document.getElementById('fetchStatus');
+    const filterRow   = document.getElementById('filterRow');
+    const loadingEl   = document.getElementById('loadingState');
+
+    const STATUS_MAP = { active: 'badge-active', paused: 'badge-paused', completed: 'badge-completed' };
+    let allCards = [];
+
+    function buildCard({ id, name, desc, status, updated, lang }) {
+      const a = document.createElement('a');
+      a.className    = 'project-card';
+      a.href         = `/devlogs/${id}`;
+      a.dataset.status = (status || 'paused').toLowerCase();
+      a.tabIndex     = 0;
+      const cls = STATUS_MAP[a.dataset.status] || 'badge-paused';
+      const lbl = a.dataset.status.charAt(0).toUpperCase() + a.dataset.status.slice(1);
+      a.innerHTML = `
+        <div class="card-name">${name || id}</div>
+        ${lang ? `<div class="card-lang">${lang}</div>` : ''}
+        <div class="card-desc">${desc || ''}</div>
+        <div class="card-footer">
+          <span class="badge ${cls}">${lbl}</span>
+          <span class="card-date">${updated || '—'}</span>
+        </div>`;
+      a.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); location.href = a.href; } });
+      return a;
+    }
+
+    async function loadProjects() {
+      try {
+        const res  = await fetch('./devlogs/manifest.json', { cache: 'no-cache' });
+        if (!res.ok) throw new Error(`HTTP ${res.status} — ${res.statusText}`);
+        const data     = await res.json();
+        const projects = Array.isArray(data) ? data : (data.projects || []);
+
+        loadingEl.remove();
+
+        if (!projects.length) {
+          grid.innerHTML = `<div class="grid-state"><span class="grid-state-label">no projects yet — add entries to devlogs/manifest.json</span></div>`;
+          countEl.textContent = '0 entries';
+          return;
+        }
+
+        // sort: active → paused → completed, then by date desc
+        const order = { active: 0, paused: 1, completed: 2 };
+        projects.sort((a, b) => {
+          const sd = (order[a.status] ?? 9) - (order[b.status] ?? 9);
+          return sd !== 0 ? sd : (b.updated || '').localeCompare(a.updated || '');
+        });
+
+        projects.forEach(p => {
+          const card = buildCard(p);
+          grid.appendChild(card);
+          allCards.push(card);
+        });
+
+        countEl.textContent = `${projects.length} entr${projects.length === 1 ? 'y' : 'ies'}`;
+        statusEl.className  = 'ok';
+        statusEl.textContent = '· live';
+
+        filterRow.style.display = 'flex';
+        initFilters();
+
+      } catch (err) {
+        loadingEl.innerHTML = `
+          <span style="font-size:18px">⚠</span>
+          <span class="grid-state-label">failed to load manifest.json</span>
+          <span class="grid-state-sub">${err.message}</span>`;
+        countEl.textContent  = 'error';
+        statusEl.className   = 'err';
+        statusEl.textContent = '· unreachable';
       }
     }
 
-    const saved = localStorage.getItem('wiki-theme') || 'light';
-    applyTheme(saved);
-
-    toggle.addEventListener('click', () => {
-      const cur = html.getAttribute('data-theme');
-      applyTheme(cur === 'dark' ? 'light' : 'dark');
-    });
-
-    /* ── PROJECT COUNT ─────────────────────────── */
-    const cards = document.querySelectorAll('.project-card');
-    document.getElementById('projectCount').textContent =
-      `${cards.length} entr${cards.length === 1 ? 'y' : 'ies'}`;
-
-    /* ── CARD KEYBOARD NAV ─────────────────────── */
-    cards.forEach(card => {
-      card.setAttribute('tabindex', '0');
-      card.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          window.location.href = card.getAttribute('href');
-        }
+    function initFilters() {
+      document.querySelectorAll('.filter-pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+          document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+          pill.classList.add('active');
+          const f   = pill.dataset.filter;
+          let shown = 0;
+          allCards.forEach(card => {
+            const visible = f === 'all' || card.dataset.status === f;
+            card.dataset.hidden = visible ? 'false' : 'true';
+            if (visible) shown++;
+          });
+          countEl.textContent = f === 'all'
+            ? `${allCards.length} entr${allCards.length === 1 ? 'y' : 'ies'}`
+            : `${shown} ${f}`;
+        });
       });
-    });
+    }
+
+    loadProjects();
   </script>
 
 </body>
