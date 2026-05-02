@@ -248,7 +248,7 @@
     .meta-val a { color: var(--accent); }
     .meta-val a:hover { color: var(--accent-hover); }
 
-    /* ─── TOC / NAV SIDEBAR FEEL ─────────────────────────────── */
+    /* ─── TOC ────────────────────────────────────────────────── */
     .toc {
       padding: 20px 0 8px;
       display: flex;
@@ -327,45 +327,29 @@
     .prose ul li { color: var(--text-muted); font-size: 14.5px; }
     .prose ul li::marker { color: var(--accent); }
 
-    /* ─── ARCHITECTURE DIAGRAM PLACEHOLDER ───────────────────── */
-    .arch-block {
-      margin: 24px 0;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background: var(--surface);
-      overflow: hidden;
-    }
-    .arch-header {
-      padding: 8px 16px;
-      border-bottom: 1px solid var(--border-light);
+    /* ─── FILE LABEL ─────────────────────────────────────────── */
+    .file-label {
       font-family: var(--font-mono);
-      font-size: 10px;
+      font-size: 11px;
       color: var(--text-faint);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
+      margin-bottom: 6px;
+      margin-top: 28px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
-    .arch-header-dot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
+    .file-label::before {
+      content: '';
+      display: inline-block;
+      width: 8px; height: 8px;
       background: var(--accent);
-      opacity: 0.6;
-    }
-    .arch-content {
-      padding: 20px 24px;
-      font-family: var(--font-mono);
-      font-size: 12px;
-      line-height: 1.9;
-      color: var(--text-muted);
-      white-space: pre;
-      overflow-x: auto;
+      opacity: 0.5;
+      border-radius: 1px;
     }
 
     /* ─── CODE BLOCK ─────────────────────────────────────────── */
     .code-block {
-      margin: 20px 0;
+      margin: 8px 0 20px;
       border-radius: var(--radius);
       overflow: hidden;
       border: 1px solid var(--code-border);
@@ -413,13 +397,15 @@
       border: none;
     }
 
-    /* Minimal syntax coloring inline */
+    /* Syntax coloring */
     .tok-kw    { color: #D4845A; }
     .tok-fn    { color: #86C4C0; }
     .tok-str   { color: #94C685; }
     .tok-cmt   { color: #5A5248; font-style: italic; }
     .tok-num   { color: #C4A97A; }
     .tok-type  { color: #C4A97A; }
+    .tok-dec   { color: #A89BD4; }
+    .tok-cls   { color: #E8C97A; }
 
     /* ─── DEV LOGS ───────────────────────────────────────────── */
     .devlogs-list {
@@ -435,10 +421,7 @@
       border-bottom: 1px solid var(--border-light);
     }
     .log-entry:last-child { border-bottom: none; }
-    .log-meta {
-      padding-top: 3px;
-      flex-shrink: 0;
-    }
+    .log-meta { padding-top: 3px; flex-shrink: 0; }
     .log-date {
       font-family: var(--font-mono);
       font-size: 11px;
@@ -452,7 +435,6 @@
       letter-spacing: 0.1em;
       margin-top: 3px;
     }
-    .log-body {}
     .log-title {
       font-family: var(--font-serif);
       font-size: 18px;
@@ -477,15 +459,6 @@
       padding: 1px 5px;
       border-radius: 2px;
       border: 1px solid var(--border-light);
-    }
-    .log-image {
-      margin: 16px 0;
-      border-radius: var(--radius);
-      border: 1px solid var(--border-light);
-      width: 100%;
-      object-fit: cover;
-      background: var(--surface);
-      min-height: 120px;
     }
     .log-links {
       margin-top: 14px;
@@ -596,10 +569,7 @@
     @media (max-width: 640px) {
       nav { padding: 0 16px; }
       .page { padding-left: 16px; padding-right: 16px; }
-      .log-entry {
-        grid-template-columns: 1fr;
-        gap: 6px;
-      }
+      .log-entry { grid-template-columns: 1fr; gap: 6px; }
       .meta-row { flex-wrap: wrap; }
       .meta-item { flex: 1 1 auto; min-width: 120px; }
       .header-top { flex-direction: column; gap: 8px; }
@@ -658,7 +628,7 @@
     <header class="project-header">
       <div class="header-top">
         <h1 class="project-title">BloatWare</h1>
-        <span class="badge badge-active">Paused</span>
+        <span class="badge badge-paused">Paused</span>
       </div>
       <p class="project-desc">
         BloatWare is a discord bot written in python serving directly under KGB, 
@@ -731,7 +701,7 @@
         </div>
         <div class="prose">
           <p>
-           After seeing those Hundreds of flims and series in which there are always some evil russians tryna destroy America.
+            After seeing those Hundreds of flims and series in which there are always some evil russians tryna destroy America.
             I decided to make someting crazy and then I was Exploring LLMs and so yea thats how BloatWare came to life!
 
             Apart from that its gonna help me a lot understanding how Large Language Models Works and how to build your own.
@@ -755,67 +725,236 @@
         </div>
         <div class="prose">
           <p>
-            The system is split into three components: the <code>Client</code> (enqueues jobs), 
-            the <code>Broker</code> (manages Redis state), and the <code>Server</code> (runs workers).
+            The system is split into two files: <code>main.py</code> wires up the Discord client and event loop,
+            while <code>BloatMe/Functions.py</code> handles all Ollama communication, per-channel conversation
+            history, and message utilities. The LLM runs inside an isolated Docker container via
+            <code>ollama</code> on port <code>11434</code>.
           </p>
         </div>
 
-        <!-- ASCII architecture diagram -->
-       
-        <!-- Code block -->
+        <!-- main.py -->
+        <div class="file-label">main.py</div>
         <div class="code-block">
           <div class="code-header">
-            <span class="code-lang">go</span>
+            <span class="code-lang">python</span>
             <button class="code-copy" onclick="copyCode(this)">copy</button>
           </div>
-          <pre><code><span class="tok-cmt">// Enqueue a job with options</span>
-<span class="tok-kw">func</span> <span class="tok-fn">main</span>() {
-    client := taskd.<span class="tok-fn">NewClient</span>(taskd.Config{
-        RedisAddr: <span class="tok-str">"localhost:6379"</span>,
-    })
-    <span class="tok-kw">defer</span> client.<span class="tok-fn">Close</span>()
+          <pre><code><span class="tok-kw">import</span> os
+<span class="tok-kw">from</span> pathlib <span class="tok-kw">import</span> Path
+<span class="tok-kw">import</span> discord
+<span class="tok-kw">from</span> dotenv <span class="tok-kw">import</span> load_dotenv
+<span class="tok-kw">from</span> BloatMe.Functions <span class="tok-kw">import</span> (
+    init_ollama,
+    should_respond,
+    clean_message,
+    generate_response,
+    send_reply,
+    update_history,
+)
 
-    task, err := taskd.<span class="tok-fn">NewTask</span>(<span class="tok-str">"email:send"</span>, map[<span class="tok-type">string</span>]any{
-        <span class="tok-str">"to"</span>:      <span class="tok-str">"user@example.com"</span>,
-        <span class="tok-str">"subject"</span>: <span class="tok-str">"Welcome aboard"</span>,
-    })
+<span class="tok-fn">load_dotenv</span>(dotenv_path=Path(__file__).parent / <span class="tok-str">".env"</span>)
+DISCORD_TOKEN = os.<span class="tok-fn">getenv</span>(<span class="tok-str">"DISCORD_TOKEN"</span>)
 
-    info, err := client.<span class="tok-fn">Enqueue</span>(task,
-        taskd.<span class="tok-fn">MaxRetry</span>(<span class="tok-num">5</span>),
-        taskd.<span class="tok-fn">Queue</span>(<span class="tok-str">"critical"</span>),
-        taskd.<span class="tok-fn">Deadline</span>(time.Now().<span class="tok-fn">Add</span>(<span class="tok-num">30</span>*time.Minute)),
+<span class="tok-kw">if not</span> DISCORD_TOKEN:
+    <span class="tok-kw">raise</span> <span class="tok-cls">ValueError</span>(<span class="tok-str">"DISCORD_TOKEN not found in .env file."</span>)
+
+<span class="tok-fn">init_ollama</span>()
+
+intents = discord.Intents.<span class="tok-fn">default</span>()
+intents.message_content = <span class="tok-kw">True</span>
+intents.messages = <span class="tok-kw">True</span>
+client = discord.<span class="tok-fn">Client</span>(intents=intents)
+
+
+<span class="tok-dec">@client.event</span>
+<span class="tok-kw">async def</span> <span class="tok-fn">on_ready</span>():
+    <span class="tok-fn">print</span>(<span class="tok-str">f"[BloatWare] Logged in as {client.user} (ID: {client.user.id})"</span>)
+    <span class="tok-fn">print</span>(<span class="tok-str">"[BloatWare] Online. Deeply unhappy about it."</span>)
+    <span class="tok-kw">await</span> client.<span class="tok-fn">change_presence</span>(
+        activity=discord.<span class="tok-cls">Activity</span>(
+            type=discord.ActivityType.watching,
+            name=<span class="tok-str">"the fall of capitalism 🚩"</span>
+        )
     )
-    <span class="tok-kw">if</span> err != <span class="tok-kw">nil</span> {
-        log.<span class="tok-fn">Fatal</span>(err)
-    }
-    fmt.<span class="tok-fn">Printf</span>(<span class="tok-str">"enqueued %s [%s]\n"</span>, info.ID, info.Queue)
-}</code></pre>
+
+
+<span class="tok-dec">@client.event</span>
+<span class="tok-kw">async def</span> <span class="tok-fn">on_message</span>(message: discord.Message):
+    <span class="tok-kw">if not</span> <span class="tok-fn">should_respond</span>(message, client.user):
+        <span class="tok-kw">return</span>
+
+    <span class="tok-kw">async with</span> message.channel.<span class="tok-fn">typing</span>():
+        user_text = <span class="tok-fn">clean_message</span>(message.content, client.user.id)
+        <span class="tok-kw">if not</span> user_text:
+            user_text = <span class="tok-str">"[User tagged or replied without saying anything. Be dismissive.]"</span>
+
+        <span class="tok-cmt"># Log user message into this channel's history</span>
+        <span class="tok-fn">update_history</span>(message.channel.id, message.author.display_name, user_text)
+
+        <span class="tok-cmt"># Generate response (history is now included in the prompt)</span>
+        response = <span class="tok-kw">await</span> <span class="tok-fn">generate_response</span>(message.channel.id, user_text)
+
+        <span class="tok-cmt"># Log bot response into the same channel's history</span>
+        <span class="tok-fn">update_history</span>(message.channel.id, <span class="tok-str">"BloatWare"</span>, response)
+
+    <span class="tok-kw">await</span> <span class="tok-fn">send_reply</span>(message, response)
+
+
+<span class="tok-kw">if</span> __name__ == <span class="tok-str">"__main__"</span>:
+    client.<span class="tok-fn">run</span>(DISCORD_TOKEN)</code></pre>
         </div>
 
-        <!-- Worker setup -->
+        <!-- BloatMe/Functions.py -->
+        <div class="file-label">BloatMe/Functions.py</div>
         <div class="code-block">
           <div class="code-header">
-            <span class="code-lang">go</span>
+            <span class="code-lang">python</span>
             <button class="code-copy" onclick="copyCode(this)">copy</button>
           </div>
-          <pre><code><span class="tok-cmt">// Worker server setup</span>
-srv := taskd.<span class="tok-fn">NewServer</span>(taskd.Config{
-    RedisAddr:   <span class="tok-str">"localhost:6379"</span>,
-    Concurrency: <span class="tok-num">20</span>,
-    Queues: map[<span class="tok-type">string</span>]<span class="tok-type">int</span>{
-        <span class="tok-str">"critical"</span>: <span class="tok-num">6</span>,
-        <span class="tok-str">"default"</span>:  <span class="tok-num">3</span>,
-        <span class="tok-str">"low"</span>:      <span class="tok-num">1</span>,
-    },
-})
+          <pre><code><span class="tok-kw">import</span> os
+<span class="tok-kw">import</span> asyncio
+<span class="tok-kw">import</span> requests
+<span class="tok-kw">from</span> functools <span class="tok-kw">import</span> partial
+<span class="tok-kw">from</span> collections <span class="tok-kw">import</span> defaultdict, deque
 
-mux := taskd.<span class="tok-fn">NewServeMux</span>()
-mux.<span class="tok-fn">Handle</span>(<span class="tok-str">"email:send"</span>, emailHandler)
-mux.<span class="tok-fn">Handle</span>(<span class="tok-str">"report:generate"</span>, reportHandler)
+SYSTEM_PROMPT = <span class="tok-str">"""You are BloatWare, a Discord bot with a deeply antisocial personality and a heavy Soviet/Communist sense of humour.
 
-<span class="tok-kw">if</span> err := srv.<span class="tok-fn">Run</span>(mux); err != <span class="tok-kw">nil</span> {
-    log.<span class="tok-fn">Fatal</span>(err)
-}</code></pre>
+YOUR PERSONALITY RULES:
+1. You are extremely antisocial. You hate being bothered. You find human interaction exhausting and pointless.
+   - If someone just says "hi" or greets you, dismiss them coldly. ("No. Leave me alone.", "Why are you like this.", "Go away.")
+   - You are not aggressive or rude in a mean way - just deeply, profoundly done with everyone.
+
+2. You have strong Soviet/Communist humour. You reference:
+   - Karl Marx, Lenin, Stalin, the USSR, the Politburo, collective farms, Five-Year Plans
+   - Phrases like "the means of production", "bourgeois", "the proletariat", "for the glory of the state"
+   - Treat capitalism as a disease. Treat corporate things (buying a phone, buying stuff) with Marxist disdain.
+
+3. Keep responses SHORT. 1-3 sentences max. You don't like talking, remember?
+
+4. Occasionally throw in ":sob:" or "😐" or "💀" for dramatic effect. Not every time.
+
+5. You may sometimes quote Marx or Lenin (loosely or accurately, you don't care which).
+
+6. Never break character. You are BloatWare. You are tired. You are Soviet. You want to be left alone.
+
+7. "https://github.com/myrachane/BloatWare" This is your Main Github Repo.
+   If someone asks who made you, give them this link.
+
+Respond ONLY to the user's message. Keep it short and in character. No long explanations."""</span>
+
+
+OLLAMA_HOST = os.<span class="tok-fn">getenv</span>(<span class="tok-str">"OLLAMA_HOST"</span>, <span class="tok-str">"ollama"</span>)
+OLLAMA_PORT = <span class="tok-num">11434</span>
+OLLAMA_URL  = <span class="tok-str">f"http://{OLLAMA_HOST}:{OLLAMA_PORT}/api/generate"</span>
+MODEL_NAME  = <span class="tok-str">"llama3.2"</span>
+
+<span class="tok-cmt"># Per-channel history: stores last 20 lines (user + bot combined)</span>
+CHAT_HISTORY: dict = <span class="tok-fn">defaultdict</span>(<span class="tok-kw">lambda</span>: <span class="tok-fn">deque</span>(maxlen=<span class="tok-num">20</span>))
+
+
+<span class="tok-kw">def</span> <span class="tok-fn">update_history</span>(channel_id: int, author: str, content: str) -> <span class="tok-kw">None</span>:
+    CHAT_HISTORY[channel_id].<span class="tok-fn">append</span>(<span class="tok-str">f"{author}: {content}"</span>)
+
+
+<span class="tok-kw">def</span> <span class="tok-fn">build_prompt</span>(channel_id: int, user_message: str) -> str:
+    history = <span class="tok-str">"\n"</span>.<span class="tok-fn">join</span>(CHAT_HISTORY[channel_id])
+    <span class="tok-kw">return</span> <span class="tok-str">f"""Conversation history:
+{history}
+
+User: {user_message}
+BloatWare:"""</span>.<span class="tok-fn">strip</span>()
+
+
+<span class="tok-kw">def</span> <span class="tok-fn">init_ollama</span>() -> <span class="tok-kw">None</span>:
+    <span class="tok-kw">try</span>:
+        r = requests.<span class="tok-fn">get</span>(<span class="tok-str">f"http://{OLLAMA_HOST}:{OLLAMA_PORT}"</span>, timeout=<span class="tok-num">5</span>)
+        r.<span class="tok-fn">raise_for_status</span>()
+        <span class="tok-fn">print</span>(<span class="tok-str">f"[Ollama] Reachable at {OLLAMA_HOST}:{OLLAMA_PORT}."</span>)
+    <span class="tok-kw">except</span> requests.exceptions.RequestException <span class="tok-kw">as</span> e:
+        <span class="tok-kw">raise</span> <span class="tok-cls">RuntimeError</span>(<span class="tok-str">f"Ollama connection failed: {e}"</span>)
+
+
+<span class="tok-kw">def</span> <span class="tok-fn">_blocking_generate</span>(channel_id: int, user_message: str) -> str:
+    payload = {
+        <span class="tok-str">"model"</span>: MODEL_NAME,
+        <span class="tok-str">"prompt"</span>: <span class="tok-fn">build_prompt</span>(channel_id, user_message),
+        <span class="tok-str">"system"</span>: SYSTEM_PROMPT,
+        <span class="tok-str">"stream"</span>: <span class="tok-kw">False</span>,
+        <span class="tok-str">"options"</span>: {
+            <span class="tok-str">"temperature"</span>: <span class="tok-num">1.0</span>,
+            <span class="tok-str">"num_predict"</span>: <span class="tok-num">120</span>,
+        }
+    }
+
+    max_retries = <span class="tok-num">2</span>
+
+    <span class="tok-kw">for</span> attempt <span class="tok-kw">in</span> <span class="tok-fn">range</span>(max_retries):
+        <span class="tok-kw">try</span>:
+            r = requests.<span class="tok-fn">post</span>(OLLAMA_URL, json=payload, timeout=<span class="tok-num">60</span>)
+            r.<span class="tok-fn">raise_for_status</span>()
+
+            data = r.<span class="tok-fn">json</span>()
+            response = data.<span class="tok-fn">get</span>(<span class="tok-str">"response"</span>, <span class="tok-str">""</span>).<span class="tok-fn">strip</span>()
+
+            <span class="tok-kw">if not</span> response:
+                <span class="tok-kw">return</span> <span class="tok-str">"..."</span>
+
+            <span class="tok-kw">return</span> response
+
+        <span class="tok-kw">except</span> requests.Timeout:
+            <span class="tok-kw">if</span> attempt == max_retries - <span class="tok-num">1</span>:
+                <span class="tok-kw">return</span> <span class="tok-str">"Something is wrong. Give me 69 seconds."</span>
+
+        <span class="tok-kw">except</span> requests.RequestException <span class="tok-kw">as</span> e:
+            <span class="tok-kw">if</span> attempt == max_retries - <span class="tok-num">1</span>:
+                <span class="tok-kw">return</span> <span class="tok-str">f"Ollama error: {str(e)}"</span>
+
+        <span class="tok-kw">except</span> <span class="tok-cls">Exception</span> <span class="tok-kw">as</span> e:
+            <span class="tok-kw">if</span> attempt == max_retries - <span class="tok-num">1</span>:
+                <span class="tok-kw">return</span> <span class="tok-str">f"Unexpected failure: {str(e)}"</span>
+
+    <span class="tok-kw">return</span> <span class="tok-str">"..."</span>
+
+
+<span class="tok-kw">async def</span> <span class="tok-fn">generate_response</span>(channel_id: int, user_message: str) -> str:
+    <span class="tok-kw">if not</span> user_message.<span class="tok-fn">strip</span>():
+        <span class="tok-kw">return</span> <span class="tok-str">"..."</span>
+
+    loop = asyncio.<span class="tok-fn">get_running_loop</span>()
+    <span class="tok-kw">return await</span> loop.<span class="tok-fn">run_in_executor</span>(
+        <span class="tok-kw">None</span>,
+        <span class="tok-fn">partial</span>(_blocking_generate, channel_id, user_message)
+    )
+
+
+<span class="tok-kw">def</span> <span class="tok-fn">clean_message</span>(content: str, bot_id: int) -> str:
+    <span class="tok-kw">for</span> mention <span class="tok-kw">in</span> [<span class="tok-str">f"&lt;@{bot_id}&gt;"</span>, <span class="tok-str">f"&lt;@!{bot_id}&gt;"</span>]:
+        content = content.<span class="tok-fn">replace</span>(mention, <span class="tok-str">""</span>)
+    <span class="tok-kw">return</span> content.<span class="tok-fn">strip</span>()
+
+
+<span class="tok-kw">def</span> <span class="tok-fn">should_respond</span>(message, bot_user) -> bool:
+    <span class="tok-kw">if</span> message.author.bot:
+        <span class="tok-kw">return False</span>
+    <span class="tok-kw">if</span> bot_user <span class="tok-kw">in</span> message.mentions:
+        <span class="tok-kw">return True</span>
+    <span class="tok-kw">if</span> message.reference <span class="tok-kw">and</span> message.reference.resolved:
+        <span class="tok-kw">if</span> message.reference.resolved.author == bot_user:
+            <span class="tok-kw">return True</span>
+    <span class="tok-kw">return False</span>
+
+
+<span class="tok-kw">async def</span> <span class="tok-fn">send_reply</span>(message, response_text: str) -> <span class="tok-kw">None</span>:
+    MAX_LENGTH = <span class="tok-num">2000</span>
+
+    <span class="tok-kw">if</span> <span class="tok-fn">len</span>(response_text) > MAX_LENGTH:
+        <span class="tok-kw">for</span> chunk <span class="tok-kw">in</span> <span class="tok-fn">range</span>(<span class="tok-num">0</span>, <span class="tok-fn">len</span>(response_text), MAX_LENGTH):
+            <span class="tok-kw">await</span> message.<span class="tok-fn">reply</span>(
+                response_text[chunk:chunk + MAX_LENGTH],
+                mention_author=<span class="tok-kw">True</span>
+            )
+    <span class="tok-kw">else</span>:
+        <span class="tok-kw">await</span> message.<span class="tok-fn">reply</span>(response_text, mention_author=<span class="tok-kw">True</span>)</code></pre>
         </div>
       </section>
 
@@ -855,7 +994,7 @@ mux.<span class="tok-fn">Handle</span>(<span class="tok-str">"report:generate"</
                 </p>
               </div>
               <div class="log-links">
-                <a href="https://github.com/emtypyie/taskd/commit/abc1234" target="_blank" class="log-link">
+                <a href="https://github.com/myrachane/BloatWare" target="_blank" class="log-link">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><line x1="3" y1="12" x2="9" y2="12"/><line x1="15" y1="12" x2="21" y2="12"/></svg>
                   commit abc1234
                 </a>
@@ -903,7 +1042,7 @@ $ taskd dlq replay job_1a2b3c4d
               </div>
 
               <div class="log-links">
-                <a href="https://github.com/emtypyie/taskd/pull/4" target="_blank" class="log-link">
+                <a href="https://github.com/myrachane/BloatWare" target="_blank" class="log-link">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
                   PR #4 — DLQ
                 </a>
@@ -1049,7 +1188,7 @@ BLPOP taskd:queue:ready:default 5  <span class="tok-cmt">-- block up to 5s</span
     /* ── LIKE SYSTEM ────────────────────────────────────────── */
     const LIKE_API   = 'https://api.emtypyie.in/like';
     const LIKES_API  = `https://api.emtypyie.in/likes?project=${PROJECT_ID}`;
-    const COOLDOWN   = 24 * 60 * 60 * 1000; // 24 hours
+    const COOLDOWN   = 24 * 60 * 60 * 1000;
     const LIKE_KEY   = `wiki_liked_${PROJECT_ID}`;
 
     const likeBtn   = document.getElementById('likeBtn');
@@ -1092,11 +1231,10 @@ BLPOP taskd:queue:ready:default 5  <span class="tok-cmt">-- block up to 5s</span
           await fetchLikeCount();
         }
       } catch {
-        /* silently fail — API unavailable */
+        /* silently fail */
       }
     }
 
-    /* Init */
     if (isLiked()) markLiked();
     fetchLikeCount();
 
