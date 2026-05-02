@@ -327,6 +327,84 @@
     .prose ul li { color: var(--text-muted); font-size: 14.5px; }
     .prose ul li::marker { color: var(--accent); }
 
+    /* ─── CONTRIBUTORS ───────────────────────────────────────── */
+    .contributors-section {
+      padding: 36px 0 32px;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .contributors-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin-bottom: 16px;
+    }
+    .contributors-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .contributor-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px 8px 8px;
+      background: var(--surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius);
+      transition: border-color 0.15s, background 0.15s;
+      text-decoration: none;
+    }
+    .contributor-card:hover {
+      border-color: var(--border);
+      background: var(--surface-2);
+    }
+    .contributor-pfp {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--border-light);
+      object-fit: cover;
+      display: block;
+      background: var(--surface-2);
+    }
+    .contributor-info {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+    .contributor-name {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text);
+      font-weight: 600;
+    }
+    .contributor-role {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-faint);
+    }
+    .contributor-open {
+      margin-top: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent);
+      padding: 4px 12px;
+      border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+      border-radius: 2px;
+      background: var(--accent-dim);
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .contributor-open:hover {
+      background: color-mix(in srgb, var(--accent) 12%, transparent);
+      border-color: var(--accent);
+    }
+    .contributor-open svg { width: 11px; height: 11px; }
+
     /* ─── FILE LABEL ─────────────────────────────────────────── */
     .file-label {
       font-family: var(--font-mono);
@@ -435,6 +513,14 @@
       letter-spacing: 0.1em;
       margin-top: 3px;
     }
+    .log-version {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      margin-top: 4px;
+      opacity: 0.8;
+    }
     .log-title {
       font-family: var(--font-serif);
       font-size: 18px;
@@ -484,6 +570,23 @@
       border-color: var(--accent);
     }
     .log-link svg { width: 11px; height: 11px; }
+
+    /* Status notice */
+    .status-notice {
+      margin-top: 20px;
+      padding: 12px 16px;
+      background: var(--amber-bg);
+      border: 1px solid color-mix(in srgb, var(--amber) 30%, transparent);
+      border-radius: var(--radius);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--amber);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      max-width: 620px;
+    }
+    .status-notice-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
 
     /* ─── LIKE / SHARE BAR ───────────────────────────────────── */
     .action-bar {
@@ -638,7 +741,7 @@
       <div class="meta-row">
         <div class="meta-item">
           <span class="meta-label">Started</span>
-          <span class="meta-val">2026-03-28</span>
+          <span class="meta-val">2026-03-27</span>
         </div>
         <div class="meta-item">
           <span class="meta-label">Last updated</span>
@@ -656,15 +759,46 @@
 
       <!-- TOC -->
       <div class="toc">
-        <a href="#overview"      class="toc-link">§1 Overview</a>
-        <a href="#why"           class="toc-link">§2 Why I built this</a>
-        <a href="#architecture"  class="toc-link">§3 Architecture</a>
-        <a href="#devlogs"       class="toc-link">§4 Dev Logs</a>
+        <a href="#contributors" class="toc-link">§0 Contributors</a>
+        <a href="#overview"     class="toc-link">§1 Overview</a>
+        <a href="#why"          class="toc-link">§2 Why I built this</a>
+        <a href="#architecture" class="toc-link">§3 Architecture</a>
+        <a href="#devlogs"      class="toc-link">§4 Dev Logs</a>
       </div>
     </header>
 
     <!-- ── CONTENT ── -->
     <div class="content">
+
+      <!-- §0 CONTRIBUTORS -->
+      <section class="contributors-section doc-section" id="contributors">
+        <div class="section-label">
+          <span class="section-num">§0</span>
+          <span class="section-name">Contributors</span>
+        </div>
+        <div class="contributors-list">
+          <a href="https://github.com/myrachane" target="_blank" rel="noopener" class="contributor-card">
+            <img
+              class="contributor-pfp"
+              src="https://github.com/myrachane.png"
+              alt="myrachane"
+              width="32"
+              height="32"
+              onerror="this.style.background='var(--surface-2)'"
+            />
+            <div class="contributor-info">
+              <span class="contributor-name">myrachane</span>
+              <span class="contributor-role">author &amp; maintainer</span>
+            </div>
+          </a>
+        </div>
+        <a href="https://github.com/myrachane/BloatWare" target="_blank" rel="noopener" class="contributor-open">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+          open for contributions → github.com/myrachane/BloatWare
+        </a>
+      </section>
 
       <!-- §1 OVERVIEW -->
       <section class="doc-section" id="overview">
@@ -967,60 +1101,138 @@ BloatWare:"""</span>.<span class="tok-fn">strip</span>()
 
         <div class="devlogs-list">
 
-          <!-- Log Entry 3 -->
+          <!-- Log Entry 4 — v2.0 -->
           <div class="log-entry">
             <div class="log-meta">
-              <div class="log-date">2025-04-28</div>
-              <div class="log-index">log #3</div>
+              <div class="log-date">2026-04-30</div>
+              <div class="log-index">log #4</div>
+              <div class="log-version">v2.0</div>
             </div>
             <div class="log-body">
-              <div class="log-title">Jitter fixed, metrics wired up</div>
+              <div class="log-title">v2.0 — Chat Memory &amp; Docker overhaul</div>
               <div class="log-content">
                 <p>
-                  The retry backoff implementation had a bug where jitter was calculated once at 
-                  enqueue time rather than per-attempt. This meant all retries of a batch of failed 
-                  jobs would still pile up at the same second, defeating the purpose.
+                  Big one. Added per-channel <strong>chat memory</strong> using a <code>deque(maxlen=20)</code> so BloatWare now
+                  remembers the last 20 messages per channel and feeds them into the prompt as conversation history.
+                  Answers are noticeably more coherent — it actually knows what was said two messages ago now.
                 </p>
                 <p>
-                  Fixed by storing <code>max_retry</code> and <code>attempt</code> on the job struct 
-                  and computing the next run time inside the broker at ack time. Jitter is now 
-                  <code>rand.Float64() * 0.3 * base_delay</code> — rough but effective.
+                  Updated the event loop handling and rewrote the Docker Compose files to be cleaner.
+                  The Ollama container now restarts automatically and the networking between containers is
+                  properly scoped. Previous bugs from v1.x are all resolved in this build.
                 </p>
                 <p>
-                  Also wired up a <code>/metrics</code> endpoint exposing 
-                  <code>taskd_jobs_enqueued_total</code>, <code>taskd_jobs_processed_total</code>, 
-                  and <code>taskd_jobs_failed_total</code> as Prometheus counters. Labels include 
-                  queue name and task type.
+                  Released as <strong>v2.0</strong> — full changelog from v1.3 at
+                  <a href="https://github.com/myrachane/BloatWare/compare/v1.3...v2.0" target="_blank" style="color:var(--accent)">v1.3...v2.0 ↗</a>.
                 </p>
               </div>
+
+              <div class="status-notice">
+                <span class="status-notice-icon">⚠</span>
+                <span>
+                  <strong>Known issue:</strong> Chat history is not persisting correctly across certain
+                  restarts. Currently being investigated — fix incoming. Progress tracked on GitHub.
+                </span>
+              </div>
+
               <div class="log-links">
-                <a href="https://github.com/myrachane/BloatWare" target="_blank" class="log-link">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><line x1="3" y1="12" x2="9" y2="12"/><line x1="15" y1="12" x2="21" y2="12"/></svg>
-                  commit abc1234
+                <a href="https://github.com/myrachane/BloatWare/releases/tag/v2.0" target="_blank" class="log-link">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                  release v2.0
+                </a>
+                <a href="https://github.com/myrachane/BloatWare/compare/v1.3...v2.0" target="_blank" class="log-link">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 01-9 9"/></svg>
+                  changelog v1.3→v2.0
                 </a>
               </div>
             </div>
           </div>
 
-          <!-- Log Entry 2 -->
+          <!-- Log Entry 3 — v1.2 -->
           <div class="log-entry">
             <div class="log-meta">
-              <div class="log-date">2025-04-09</div>
-              <div class="log-index">log #2</div>
+              <div class="log-date">2026-04-11</div>
+              <div class="log-index">log #3</div>
+              <div class="log-version">v1.2</div>
             </div>
             <div class="log-body">
-              <div class="log-title">Dead-letter queue + replay tooling</div>
+              <div class="log-title">v1.2 — More stability patches</div>
               <div class="log-content">
                 <p>
-                  Jobs that exceed <code>MaxRetry</code> are moved to a dead-letter sorted set 
-                  (<code>taskd:dead</code>) with the final error stored in the job payload. 
-                  The retention window defaults to 30 days — configurable.
+                  Second weekly patch. Continued ironing out the rough edges from launch — edge cases in
+                  <code>should_respond</code> where the bot would occasionally fire on its own messages, and a race
+                  in the typing indicator that could leave the channel stuck showing "BloatWare is typing…" forever.
                 </p>
                 <p>
-                  Added a CLI command <code>taskd dlq ls</code> to list dead jobs by queue, 
-                  and <code>taskd dlq replay &lt;id&gt;</code> to re-enqueue with a fresh attempt counter.
-                  This ended up being more useful than I expected — caught three categories of bugs 
-                  I hadn't accounted for just by inspecting the DLQ after a test run.
+                  Also tightened up the <code>send_reply</code> chunking logic. Previously long responses over 2000
+                  characters could produce malformed splits mid-word. Now chunks break cleanly on whitespace boundaries.
+                </p>
+              </div>
+              <div class="log-links">
+                <a href="https://github.com/myrachane/BloatWare" target="_blank" class="log-link">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+                  v1.2 on github
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Log Entry 2 — v1.1 -->
+          <div class="log-entry">
+            <div class="log-meta">
+              <div class="log-date">2026-04-04</div>
+              <div class="log-index">log #2</div>
+              <div class="log-version">v1.1</div>
+            </div>
+            <div class="log-body">
+              <div class="log-title">v1.1 — Runtime crashes &amp; the system prompt pivot</div>
+              <div class="log-content">
+                <p>
+                  Post-launch the bot was crashing hard at runtime. The original plan was to feed it a
+                  fully custom-trained model from day one, but the dataset isn't ready yet and the bare
+                  <code>ollama</code> call with no grounding was producing completely unhinged output —
+                  and then dying.
+                </p>
+                <p>
+                  Pivoted to using a <strong>system prompt</strong> to give the base <code>llama3.2</code> model
+                  BloatWare's personality instead of waiting for the fine-tune. This immediately stabilised
+                  the runtime and the responses were actually good — antisocial, Soviet, exactly the vibe.
+                  The custom LLM path is still the long-term goal, but the system prompt holds it together for now.
+                </p>
+                <p>
+                  Also fixed the Docker restart policy so the container actually recovers when Ollama
+                  takes too long to initialise on cold boot.
+                </p>
+              </div>
+              <div class="log-links">
+                <a href="https://github.com/myrachane/BloatWare" target="_blank" class="log-link">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+                  v1.1 on github
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Log Entry 1 — v1.0.0 -->
+          <div class="log-entry">
+            <div class="log-meta">
+              <div class="log-date">2026-03-27</div>
+              <div class="log-index">log #1</div>
+              <div class="log-version">v1.0.0</div>
+            </div>
+            <div class="log-body">
+              <div class="log-title">Initial release — BloatWare v1.0.0</div>
+              <div class="log-content">
+                <p>
+                  First public release. Got the core done: <code>main.py</code> wires up the Discord client
+                  and event loop, and <code>BloatMe/Functions.py</code> handles all the Ollama communication.
+                  Modular structure from the start so the LLM backend can be swapped out later when the
+                  fine-tuned model is ready.
+                </p>
+                <p>
+                  Docker Compose support included so the whole thing — bot + Ollama — spins up with a single
+                  <code>docker compose up -d</code>. No local Python environment needed.
+                  Tagged and cut as <strong>v1.0.0</strong> at commit <code>3803d72</code>.
                 </p>
               </div>
 
@@ -1029,80 +1241,23 @@ BloatWare:"""</span>.<span class="tok-fn">strip</span>()
                   <span class="code-lang">shell</span>
                   <button class="code-copy" onclick="copyCode(this)">copy</button>
                 </div>
-                <pre><code><span class="tok-cmt"># list dead jobs in the "critical" queue</span>
-$ taskd dlq ls --queue critical
+                <pre><code><span class="tok-cmt"># spin up the whole stack</span>
+docker compose up -d
 
-  ID               TASK           FAILED AT            ERROR
-  job_1a2b3c4d     email:send     2025-04-08 14:02     dial tcp: connection refused
-  job_9x8y7z6w     report:gen     2025-04-08 14:07     context deadline exceeded
-
-<span class="tok-cmt"># replay a specific job</span>
-$ taskd dlq replay job_1a2b3c4d
-  ✓ job_1a2b3c4d re-enqueued → critical</code></pre>
+<span class="tok-cmt"># bot + ollama container start, bot connects to Discord</span>
+<span class="tok-cmt"># [BloatWare] Logged in as BloatWare#XXXX</span>
+<span class="tok-cmt"># [BloatWare] Online. Deeply unhappy about it.</span></code></pre>
               </div>
 
               <div class="log-links">
-                <a href="https://github.com/myrachane/BloatWare" target="_blank" class="log-link">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
-                  PR #4 — DLQ
+                <a href="https://github.com/myrachane/BloatWare/releases/tag/v1.0.0" target="_blank" class="log-link">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                  release v1.0.0
                 </a>
-                <a href="https://redis.io/docs/data-types/sorted-sets/" target="_blank" class="log-link">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                  Redis sorted sets
+                <a href="https://github.com/myrachane/BloatWare/tree/v1.0.0" target="_blank" class="log-link">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 01-9 9"/></svg>
+                  tree @ 3803d72
                 </a>
-              </div>
-            </div>
-          </div>
-
-          <!-- Log Entry 1 -->
-          <div class="log-entry">
-            <div class="log-meta">
-              <div class="log-date">2025-03-08</div>
-              <div class="log-index">log #1</div>
-            </div>
-            <div class="log-body">
-              <div class="log-title">Initial Redis schema + basic enqueue/dequeue</div>
-              <div class="log-content">
-                <p>
-                  Started by mapping out the Redis key schema before writing any Go. 
-                  Wanted to understand the data model first rather than letting the library 
-                  design drive it.
-                </p>
-                <p>
-                  Jobs are serialized as JSON and stored in a Redis hash (<code>taskd:job:&lt;id&gt;</code>).
-                  Queue membership is tracked in a sorted set scored by the scheduled run time 
-                  (<code>taskd:queue:pending:&lt;name&gt;</code>). Workers dequeue by moving the lowest-scored 
-                  member to an active list using <code>LMOVE</code>.
-                </p>
-                <p>
-                  First cut had workers poll on a 500ms timer which was obviously wrong. 
-                  Switched to <code>BLPOP</code> with a 5s timeout — much cleaner, no busy-wait. 
-                  The timer approach is useful for visibility (you can see the poll in logs) 
-                  but wasteful in production.
-                </p>
-              </div>
-
-              <div class="code-block">
-                <div class="code-header">
-                  <span class="code-lang">redis</span>
-                  <button class="code-copy" onclick="copyCode(this)">copy</button>
-                </div>
-                <pre><code><span class="tok-cmt">-- Key schema (design notes)</span>
-
-taskd:job:&lt;id&gt;          HASH    full job payload + metadata
-taskd:queue:pending:&lt;q&gt;  ZSET    scored by run_at (unix timestamp)
-taskd:queue:active:&lt;q&gt;   LIST    jobs being processed
-taskd:dead               ZSET    failed jobs, scored by failed_at
-taskd:stats:&lt;date&gt;       HASH    daily counters per queue+type
-
-<span class="tok-cmt">-- Enqueue a job (atomic via MULTI/EXEC)</span>
-MULTI
-  HSET taskd:job:&lt;id&gt; type "email:send" payload "..." ...
-  ZADD taskd:queue:pending:default &lt;run_at&gt; &lt;id&gt;
-EXEC
-
-<span class="tok-cmt">-- Dequeue (worker side)</span>
-BLPOP taskd:queue:ready:default 5  <span class="tok-cmt">-- block up to 5s</span></code></pre>
               </div>
             </div>
           </div>
