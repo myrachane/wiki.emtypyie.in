@@ -76,7 +76,20 @@
       opacity: 0.3;
     }
     [data-theme="dark"] body::before { opacity: 0.12; }
+.bg-right {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 55%;
+  height: 100vh;
 
+  background: url('assets/scribble.png') no-repeat right center;
+  background-size: cover;
+
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: 0;
+}
     /* NAV */
     nav {
       position: fixed;
@@ -326,7 +339,7 @@
   </style>
 </head>
 <body>
-
+<div class="assets/bg_look"></div>   
   <nav>
     <div class="nav-inner">
       <a href="/" class="nav-brand">
