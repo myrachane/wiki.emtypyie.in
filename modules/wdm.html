@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Decision Matrix</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=Martian+Mono:wght@300;400;500&display=swap"
+    rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    :root {
+      --bg: #0c0c0d;
+      --surface: #131315;
+      --surface2: #1a1a1d;
+      --border: rgba(255, 255, 255, 0.07);
+      --border2: rgba(255, 255, 255, 0.13);
+      --text: #edeae2;
+      --muted: #6b6864;
+      --dim: #333;
+      --amber: #d4902a;
+      --amber-dim: #2a1f0a;
+      --font: 'Syne', sans-serif;
+      --mono: 'Martian Mono', monospace;
+      --radius: 10px;
+    }
+
+    [data-theme="light"] {
+      --bg: #f4f2ed;
+      --surface: #ffffff;
+      --surface2: #eeebe5;
+      --border: rgba(0, 0, 0, 0.07);
+      --border2: rgba(0, 0, 0, 0.14);
+      --text: #18181a;
+      --muted: #999;
+      --dim: #ccc;
+      --amber: #a0620a;
+      --amber-dim: #fdf0dc;
+    }
+
+    html,
+    body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font)
+    }
+
+    /* ── LAYOUT ── */
+    .shell {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4rem
+    }
+
+    /* ── HEADER ── */
+    .hd {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 2.5rem
+    }
+
+    .wordmark {
+      font-size: 11px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 500;
+      margin-bottom: 6px
+    }
+
+    .title {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      line-height: 1
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 6px;
+      font-family: var(--mono);
+      font-weight: 300
+    }
+
+    .hd-right {
+      display: flex;
+      gap: 8px;
+      align-items: center
+    }
+
+    .btn-ghost {
+      background: none;
+      border: 1px solid var(--border2);
+      color: var(--muted);
+      padding: 7px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      font-family: var(--mono);
+      font-weight: 400;
+      letter-spacing: .05em;
+      transition: border-color .15s, color .15s;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--text);
+      color: var(--text)
+    }
+
+    /* ── GRID ── */
+    .two {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px
+    }
+
+    @media(max-width:600px) {
+      .two {
+        grid-template-columns: 1fr
+      }
+    }
+
+    /* ── PANEL ── */
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+    }
+
+    .panel-title {
+      font-size: 10px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border)
+    }
+
+    /* ── TAGS / ITEMS ── */
+    .item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin-bottom: 5px;
+      transition: border-color .15s;
+    }
+
+    .item:hover {
+      border-color: var(--border2)
+    }
+
+    .item-name {
+      flex: 1;
+      font-size: 13px;
+      font-weight: 500
+    }
+
+    .item-del {
+      background: none;
+      border: none;
+      color: var(--dim);
+      cursor: pointer;
+      font-size: 16px;
+      line-height: 1;
+      padding: 0 2px;
+      transition: color .15s;
+    }
+
+    .item-del:hover {
+      color: #c0392b
+    }
+
+    /* weight row */
+    .weight-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 10px 8px;
+      margin-top: -2px
+    }
+
+    .weight-row input[type=range] {
+      flex: 1;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 3px;
+      background: var(--border2);
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .weight-row input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 13px;
+      height: 13px;
+      background: var(--amber);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .weight-row input[type=range]::-moz-range-thumb {
+      width: 13px;
+      height: 13px;
+      background: var(--amber);
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+    }
+
+    .w-val {
+      font-size: 11px;
+      font-family: var(--mono);
+      color: var(--muted);
+      min-width: 22px;
+      text-align: right;
+    }
+
+    /* ── ADD ROW ── */
+    .add-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px
+    }
+
+    .add-row input {
+      flex: 1;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: var(--font);
+      outline: none;
+      transition: border-color .15s;
+    }
+
+    .add-row input:focus {
+      border-color: var(--border2)
+    }
+
+    .add-row input::placeholder {
+      color: var(--muted)
+    }
+
+    .btn-add {
+      background: var(--amber);
+      color: #1a0e00;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: var(--font);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity .15s;
+    }
+
+    .btn-add:hover {
+      opacity: .85
+    }
+
+    /* ── SCORE TABLE ── */
+    .table-scroll {
+      overflow-x: auto
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse
+    }
+
+    thead th {
+      font-size: 10px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0 8px 10px;
+      font-weight: 600;
+    }
+
+    thead th:first-child {
+      text-align: left
+    }
+
+    tbody tr {
+      border-top: 1px solid var(--border)
+    }
+
+    tbody td {
+      padding: 8px;
+      text-align: center;
+      font-size: 13px
+    }
+
+    tbody td:first-child {
+      text-align: left;
+      font-weight: 500;
+      padding-left: 0
+    }
+
+    /* score stepper */
+    .stepper {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .stepper button {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      width: 22px;
+      height: 28px;
+      font-size: 14px;
+      line-height: 1;
+      transition: background .1s, color .1s;
+      flex-shrink: 0;
+    }
+
+    .stepper button:hover {
+      background: var(--border2);
+      color: var(--text)
+    }
+
+    .stepper span {
+      font-family: var(--mono);
+      font-size: 12px;
+      width: 22px;
+      text-align: center;
+      color: var(--text);
+      font-weight: 400;
+    }
+
+    /* ── RESULTS ── */
+    .result-empty {
+      color: var(--muted);
+      font-size: 13px;
+      font-family: var(--mono)
+    }
+
+    .result-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .result-row:last-child {
+      border-bottom: none
+    }
+
+    .r-rank {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      width: 18px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .r-rank.top {
+      color: var(--amber)
+    }
+
+    .r-name {
+      font-size: 13px;
+      font-weight: 600;
+      width: 130px;
+      flex-shrink: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap
+    }
+
+    .r-bar {
+      flex: 1;
+      height: 3px;
+      background: var(--border2);
+      border-radius: 2px;
+      overflow: hidden
+    }
+
+    .r-fill {
+      height: 100%;
+      background: var(--amber);
+      border-radius: 2px;
+      transition: width .5s cubic-bezier(.4, 0, .2, 1);
+      width: 0
+    }
+
+    .r-score {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      min-width: 36px;
+      text-align: right
+    }
+
+    .r-score.top {
+      color: var(--amber)
+    }
+
+    .r-badge {
+      font-size: 10px;
+      font-family: var(--mono);
+      letter-spacing: .05em;
+      background: var(--amber-dim);
+      color: var(--amber);
+      border-radius: 4px;
+      padding: 2px 6px;
+      flex-shrink: 0;
+    }
+
+    /* divider */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 12px 0
+    }
+
+    .empty-hint {
+      font-size: 12px;
+      font-family: var(--mono);
+      color: var(--dim);
+      padding: 4px 0
+    }
+  </style>
+</head>
+
+<body>
+  <div class="shell">
+
+    <div class="hd">
+      <div class="hd-left">
+        <div class="wordmark">Tool</div>
+        <div class="title">Decision Matrix</div>
+        <div class="subtitle">weight · score · decide</div>
+      </div>
+      <div class="hd-right">
+        <button class="btn-ghost" onclick="reset()">Reset</button>
+        <button class="btn-ghost" onclick="toggleTheme()">Theme</button>
+      </div>
+    </div>
+
+    <div class="two">
+      <div class="panel">
+        <div class="panel-title">Criteria</div>
+        <div id="crit-list">
+          <p class="empty-hint">No criteria yet.</p>
+        </div>
+        <div class="add-row">
+          <input id="crit-in" placeholder="e.g. Cost, Speed, Quality" onkeydown="if(event.key==='Enter')addCrit()" />
+          <button class="btn-add" onclick="addCrit()">+ Add</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Options</div>
+        <div id="opt-list">
+          <p class="empty-hint">No options yet.</p>
+        </div>
+        <div class="add-row">
+          <input id="opt-in" placeholder="e.g. Option A, Vendor B" onkeydown="if(event.key==='Enter')addOpt()" />
+          <button class="btn-add" onclick="addOpt()">+ Add</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-bottom:12px">
+      <div class="panel-title">Score Matrix <span
+          style="font-size:10px;font-weight:400;opacity:.5;letter-spacing:.05em;text-transform:none">— 0 to 10 per
+          cell</span></div>
+      <div class="table-scroll">
+        <div id="table-wrap">
+          <p class="empty-hint">Add criteria and options above to populate the matrix.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Results</div>
+      <div id="results">
+        <p class="result-empty">—</p>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let crits = [], opts = [], scores = {};
+
+    (function () {
+      const t = localStorage.getItem('dm-theme');
+      if (t) document.documentElement.dataset.theme = t;
+    })();
+
+    function uid() { return Math.random().toString(36).slice(2, 8) }
+    function sk(o, c) { return o + '|' + c }
+    function gs(o, c) { return scores[sk(o, c)] ?? 5 }
+    function ss(o, c, v) { scores[sk(o, c)] = Math.min(10, Math.max(0, v)); renderResults() }
+
+    function toggleTheme() {
+      const cur = document.documentElement.dataset.theme;
+      const next = cur === 'light' ? 'dark' : 'light';
+      document.documentElement.dataset.theme = next;
+      localStorage.setItem('dm-theme', next);
+    }
+
+    function reset() {
+      if (!confirm('Reset everything?')) return;
+      crits = []; opts = []; scores = {}; render();
+    }
+
+    function addCrit() {
+      const el = document.getElementById('crit-in');
+      const v = el.value.trim(); if (!v) return;
+      crits.push({ id: uid(), name: v, weight: 5 });
+      el.value = ''; render();
+    }
+
+    function addOpt() {
+      const el = document.getElementById('opt-in');
+      const v = el.value.trim(); if (!v) return;
+      opts.push({ id: uid(), name: v });
+      el.value = ''; render();
+    }
+
+    function delCrit(id) { crits = crits.filter(c => c.id !== id); render() }
+    function delOpt(id) { opts = opts.filter(o => o.id !== id); render() }
+
+    function setWeight(id, v) {
+      const c = crits.find(c => c.id === id);
+      if (c) { c.weight = +v; document.getElementById('wv-' + id).textContent = v; }
+      renderResults();
+    }
+
+    function step(oid, cid, delta) {
+      const cur = gs(oid, cid);
+      const next = Math.min(10, Math.max(0, cur + delta));
+      ss(oid, cid, next);
+      document.getElementById('sv-' + oid + '-' + cid).textContent = next;
+    }
+
+    function calculate() {
+      const tw = crits.reduce((s, c) => s + c.weight, 0) || 1;
+      return opts.map(o => {
+        const raw = crits.reduce((s, c) => s + gs(o.id, c.id) * (c.weight / tw), 0);
+        return { id: o.id, name: o.name, score: +raw.toFixed(2) };
+      }).sort((a, b) => b.score - a.score);
+    }
+
+    function render() { renderCrits(); renderOpts(); renderTable(); renderResults() }
+
+    function renderCrits() {
+      const el = document.getElementById('crit-list');
+      if (!crits.length) { el.innerHTML = '<p class="empty-hint">No criteria yet.</p>'; return }
+      el.innerHTML = crits.map(c => `
+    <div class="item">
+      <span class="item-name">${esc(c.name)}</span>
+      <button class="item-del" onclick="delCrit('${c.id}')">×</button>
+    </div>
+    <div class="weight-row">
+      <input type="range" min="1" max="10" step="1" value="${c.weight}"
+        oninput="setWeight('${c.id}',this.value)"/>
+      <span class="w-val" id="wv-${c.id}">${c.weight}</span>
+    </div>
+  `).join('');
+    }
+
+    function renderOpts() {
+      const el = document.getElementById('opt-list');
+      if (!opts.length) { el.innerHTML = '<p class="empty-hint">No options yet.</p>'; return }
+      el.innerHTML = opts.map(o => `
+    <div class="item">
+      <span class="item-name">${esc(o.name)}</span>
+      <button class="item-del" onclick="delOpt('${o.id}')">×</button>
+    </div>
+  `).join('');
+    }
+
+    function renderTable() {
+      const el = document.getElementById('table-wrap');
+      if (!crits.length || !opts.length) {
+        el.innerHTML = '<p class="empty-hint">Add criteria and options above to populate the matrix.</p>';
+        return;
+      }
+      el.innerHTML = `<table>
+    <thead><tr>
+      <th>Option</th>
+      ${crits.map(c => `<th>${esc(c.name)}</th>`).join('')}
+    </tr></thead>
+    <tbody>
+    ${opts.map(o => `<tr>
+      <td>${esc(o.name)}</td>
+      ${crits.map(c => `<td>
+        <div class="stepper">
+          <button onclick="step('${o.id}','${c.id}',-1)">−</button>
+          <span id="sv-${o.id}-${c.id}">${gs(o.id, c.id)}</span>
+          <button onclick="step('${o.id}','${c.id}',1)">+</button>
+        </div>
+      </td>`).join('')}
+    </tr>`).join('')}
+    </tbody>
+  </table>`;
+    }
+
+    function renderResults() {
+      const el = document.getElementById('results');
+      if (!opts.length || !crits.length) { el.innerHTML = '<p class="result-empty">—</p>'; return }
+      const data = calculate();
+      const max = data[0]?.score || 1;
+      el.innerHTML = data.map((r, i) => `
+    <div class="result-row">
+      <span class="r-rank${i === 0 ? ' top' : ''}">${i + 1}</span>
+      <span class="r-name">${esc(r.name)}</span>
+      <div class="r-bar"><div class="r-fill" style="width:${(r.score / 10) * 100}%"></div></div>
+      ${i === 0 ? '<span class="r-badge">winner</span>' : ''}
+      <span class="r-score${i === 0 ? ' top' : ''}">${r.score.toFixed(1)}</span>
+    </div>
+  `).join('');
+      requestAnimationFrame(() => {
+        document.querySelectorAll('.r-fill').forEach((b, i) => {
+          b.style.width = (data[i].score / 10) * 100 + '%';
+        });
+      });
+    }
+
+    function esc(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+  </script>
+</body>
+
+</html>
