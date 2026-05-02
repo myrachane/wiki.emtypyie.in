@@ -1,12 +1,12 @@
 {
   "projects": [
     {
-      "id": "taskd",
-      "name": "taskd",
-      "desc": "Distributed task queue built on Redis. Retry logic, dead-letter queues, and a minimal Go worker runtime.",
+      "id": "Slyr.cpp",
+      "name": "Slyr.cpp",
+      "desc": "Autonomous Flight Computer for long runs",
       "status": "active",
-      "updated": "2025-04-28",
-      "lang": "Go"
+      "updated": "2025-10-28",
+      "lang": "cpp"
     },
     {
       "id": "dns-proxy",
