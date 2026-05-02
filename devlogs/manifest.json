@@ -1,7 +1,7 @@
 {
   "projects": [
     {
-      "id": "Slyr.cpp",
+      "id": "slyr.html",
       "name": "Slyr.cpp",
       "desc": "Autonomous Flight Computer for long runs",
       "status": "active",
