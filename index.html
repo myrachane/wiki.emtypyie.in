@@ -14,8 +14,8 @@
       --border:       #C9BEB0;
       --border-light: #DDD6CA;
       --text:         #1C1917;
-      --text-muted:   #4A4035; /* darkened from #6B6152 */
-      --text-faint:   #6B6152; /* darkened from #9A8F82 */
+      --text-muted:   #4A4035;
+      --text-faint:   #6B6152;
       --accent:       #B45309;
       --accent-hover: #92400E;
       --accent-dim:   #FEF3C7;
@@ -25,12 +25,15 @@
       --amber-bg:     #FEF3C7;
       --slate:        #334155;
       --slate-bg:     #E2E8F0;
+      --purple:       #5B21B6;
+      --purple-bg:    #EDE9FE;
       --radius:       3px;
       --font-serif:   'Georgia', 'Times New Roman', serif;
       --font-sans:    system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
       --font-mono:    'Courier New', 'Lucida Console', Courier, monospace;
       --max-w:        900px;
       --nav-h:        52px;
+      --toc-w:        200px;
     }
     [data-theme="dark"] {
       --bg:           #0E0D0B;
@@ -39,8 +42,8 @@
       --border:       #2C2924;
       --border-light: #252220;
       --text:         #E8E2D6;
-      --text-muted:   #A89E92; /* darkened from #8C8274 */
-      --text-faint:   #7A7268; /* darkened from #5A5248 */
+      --text-muted:   #A89E92;
+      --text-faint:   #7A7268;
       --accent:       #D97706;
       --accent-hover: #F59E0B;
       --accent-dim:   #1C1407;
@@ -50,6 +53,8 @@
       --amber-bg:     #1C1100;
       --slate:        #94A3B8;
       --slate-bg:     #0F172A;
+      --purple:       #A78BFA;
+      --purple-bg:    #1E0F3A;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -77,11 +82,10 @@
     }
     [data-theme="dark"] body::before { opacity: 0.12; }
 
-    /* ── RIGHT BG IMAGE (fixed) ─────────── */
+    /* ── RIGHT BG IMAGE ─────────────────── */
     .bg-right {
       position: fixed;
-      top: 0;
-      right: 0;
+      top: 0; right: 0;
       width: 50%;
       height: 100vh;
       background: url('assets/bg_look.png') no-repeat center center;
@@ -90,25 +94,76 @@
       pointer-events: none;
       z-index: 0;
     }
-    [data-theme="dark"] .bg-right { opacity: 0.28; } /* raised from 0.06 → visible in dark mode */
+    [data-theme="dark"] .bg-right { opacity: 0.28; }
 
-    /* ── LEFT SCRIBBLES ─────────────────── */
-    .scribble-left {
+    /* ── TOC SIDEBAR ────────────────────── */
+    .toc-sidebar {
       position: fixed;
-      top: 0;
+      top: var(--nav-h);
       left: 0;
-      width: 320px;
-      height: 100vh;
+      width: var(--toc-w);
+      height: calc(100vh - var(--nav-h));
+      padding: 36px 20px 36px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
       pointer-events: none;
-      z-index: 0;
+      z-index: 10;
       overflow: hidden;
     }
-    .scribble-left svg {
-      width: 100%;
-      height: 100%;
-      opacity: 0.11;
+
+    .toc-title {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      opacity: 0.6;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-light);
+      pointer-events: all;
     }
-    [data-theme="dark"] .scribble-left svg { opacity: 0.07; }
+
+    .toc-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 5px 0;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-faint);
+      text-decoration: none;
+      cursor: pointer;
+      pointer-events: all;
+      transition: color 0.15s;
+      position: relative;
+    }
+    .toc-item::before {
+      content: '';
+      display: block;
+      width: 14px;
+      height: 1px;
+      background: var(--border);
+      flex-shrink: 0;
+      transition: width 0.2s, background 0.2s;
+    }
+    .toc-item:hover { color: var(--text-muted); }
+    .toc-item:hover::before { width: 20px; background: var(--text-faint); }
+    .toc-item.active {
+      color: var(--accent);
+    }
+    .toc-item.active::before {
+      width: 20px;
+      background: var(--accent);
+    }
+
+    .toc-divider {
+      height: 1px;
+      background: var(--border-light);
+      margin: 10px 0;
+      opacity: 0.5;
+    }
 
     /* NAV */
     nav {
@@ -152,6 +207,17 @@
     }
     .nav-btn:hover { color: var(--text); border-color: var(--text-muted); background: var(--surface); }
     .nav-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+    /* Main site button — slightly highlighted */
+    .nav-btn-home {
+      border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+      color: var(--accent);
+    }
+    .nav-btn-home:hover {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--accent-hover);
+    }
 
     /* PAGE */
     .page { position: relative; z-index: 1; padding-top: var(--nav-h); }
@@ -212,8 +278,10 @@
     .about-body p { color: var(--text-muted); font-size: 14.5px; line-height: 1.75; max-width: 580px; }
     .about-body p + p { margin-top: 12px; }
 
-    /* PROJECTS */
+    /* PROJECTS / RESEARCH shared */
     .projects { padding: 48px 24px 72px; max-width: var(--max-w); margin: 0 auto; }
+    .research  { padding: 0 24px 72px;   max-width: var(--max-w); margin: 0 auto; border-top: 1px solid var(--border-light); padding-top: 48px; }
+
     .section-header {
       display: flex;
       align-items: baseline;
@@ -224,9 +292,26 @@
     }
     .section-title { font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); letter-spacing: 0.14em; text-transform: uppercase; }
     .section-meta { font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); display: flex; align-items: center; gap: 10px; }
-    #fetchStatus { font-size: 10px; }
-    #fetchStatus.ok   { color: var(--green); }
-    #fetchStatus.err  { color: #DC2626; }
+    #fetchStatus  { font-size: 10px; }
+    #fetchStatus.ok  { color: var(--green); }
+    #fetchStatus.err { color: #DC2626; }
+    #researchStatus  { font-size: 10px; }
+    #researchStatus.ok  { color: var(--green); }
+    #researchStatus.err { color: #DC2626; }
+
+    /* Section description */
+    .section-desc {
+      font-size: 13px;
+      color: var(--text-faint);
+      font-family: var(--font-mono);
+      margin-bottom: 20px;
+      padding: 10px 14px;
+      border-left: 2px solid var(--border);
+      background: var(--surface);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      line-height: 1.6;
+    }
+    .section-desc::before { content: '// '; color: var(--accent); opacity: 0.7; }
 
     /* FILTERS */
     .filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
@@ -245,6 +330,9 @@
     }
     .filter-pill:hover { color: var(--text-muted); border-color: var(--text-faint); }
     .filter-pill.active { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, transparent); background: var(--accent-dim); }
+
+    /* Research filters */
+    .research-filter-pill.active { color: var(--purple); border-color: color-mix(in srgb, var(--purple) 40%, transparent); background: var(--purple-bg); }
 
     /* GRID */
     .project-grid {
@@ -281,6 +369,9 @@
     .project-card:hover::after { color: var(--accent); transform: translateX(2px); }
     .project-card[data-hidden="true"] { display: none; }
 
+    /* Research card — slightly different accent on hover arrow */
+    .research-card:hover::after { color: var(--purple); }
+
     .card-name { font-family: var(--font-serif); font-size: 17px; color: var(--text); font-weight: 700; line-height: 1.2; padding-right: 24px; }
     .card-lang { font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); }
     .card-desc { font-size: 13px; color: var(--text-muted); line-height: 1.55; flex: 1; }
@@ -302,9 +393,13 @@
       font-weight: 700;
       border: 1px solid transparent;
     }
-    .badge-active    { color: var(--green); background: var(--green-bg); border-color: color-mix(in srgb, var(--green) 25%, transparent); }
-    .badge-paused    { color: var(--amber); background: var(--amber-bg); border-color: color-mix(in srgb, var(--amber) 25%, transparent); }
-    .badge-completed { color: var(--slate); background: var(--slate-bg); border-color: color-mix(in srgb, var(--slate) 25%, transparent); }
+    .badge-active    { color: var(--green);  background: var(--green-bg);  border-color: color-mix(in srgb, var(--green)  25%, transparent); }
+    .badge-paused    { color: var(--amber);  background: var(--amber-bg);  border-color: color-mix(in srgb, var(--amber)  25%, transparent); }
+    .badge-completed { color: var(--slate);  background: var(--slate-bg);  border-color: color-mix(in srgb, var(--slate)  25%, transparent); }
+    .badge-planning  { color: var(--purple); background: var(--purple-bg); border-color: color-mix(in srgb, var(--purple) 25%, transparent); }
+    .badge-draft     { color: var(--slate);  background: var(--slate-bg);  border-color: color-mix(in srgb, var(--slate)  25%, transparent); }
+    .badge-published { color: var(--green);  background: var(--green-bg);  border-color: color-mix(in srgb, var(--green)  25%, transparent); }
+
     .card-date { font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); }
 
     /* STATES */
@@ -327,6 +422,7 @@
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
     }
+    .loader-purple { border-top-color: var(--purple); }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* FOOTER */
@@ -347,25 +443,40 @@
     .footer-link:hover { color: var(--accent); }
     .footer-link svg { width: 13px; height: 13px; }
 
+    /* ── RESPONSIVE ─────────────────────── */
+    @media (max-width: 1100px) {
+      .toc-sidebar { display: none; }
+    }
     @media (max-width: 640px) {
       nav { padding: 0 16px; }
       .hero { padding: 48px 16px 40px; }
       .about { grid-template-columns: 1fr; gap: 16px; padding: 36px 16px; }
       .projects { padding: 36px 16px 56px; }
+      .research { padding: 0 16px 56px; padding-top: 36px; }
       .project-grid { grid-template-columns: 1fr; }
       .footer-inner { flex-direction: column; align-items: flex-start; gap: 12px; }
       .nav-btn span { display: none; }
-      .scribble-left { display: none; }
       .bg-right { display: none; }
     }
   </style>
 </head>
 <body>
 
-  <!-- RIGHT BG IMAGE (fixed, in the right half panel) -->
+  <!-- RIGHT BG IMAGE -->
   <div class="bg-right"></div>
 
- 
+  <!-- TABLE OF CONTENTS SIDEBAR -->
+  <aside class="toc-sidebar" aria-label="Table of contents">
+    <div class="toc-title">On this page</div>
+
+    <a class="toc-item active" href="#hero">Overview</a>
+    <a class="toc-item" href="#about">About</a>
+
+    <div class="toc-divider"></div>
+
+    <a class="toc-item" href="#projects">Projects</a>
+    <a class="toc-item" href="#research">Research</a>
+  </aside>
 
   <nav>
     <div class="nav-inner">
@@ -373,6 +484,15 @@
         emtypyie<span class="slash">/</span><span class="wiki-part">wiki</span>
       </a>
       <div class="nav-actions">
+        <!-- Main site link -->
+        <a href="https://emtypyie.in" target="_blank" rel="noopener" class="nav-btn nav-btn-home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          <span>emtypyie.in</span>
+        </a>
+
         <button class="nav-btn" id="themeToggle" aria-label="Toggle theme">
           <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="5"/>
@@ -393,23 +513,24 @@
 
   <div class="page">
 
-    <header class="hero">
+    <header class="hero" id="hero">
       <div class="hero-eyebrow">personal engineering wiki</div>
       <h1>Wiki<span class="tilde">.</span></h1>
       <p class="hero-sub">Dev logs, builds, and technical breakdowns from things I'm actually working on.</p>
       <p class="hero-tag">No fluff. Just builds.</p>
     </header>
 
-    <section class="about">
+    <section class="about" id="about">
       <div class="about-label">About this wiki</div>
       <div class="about-body">
         <p>This wiki serves as a structured record of ongoing projects, experiments, and technical work.
-It captures development as it occurs, including design decisions, implementation details, challenges encountered, and iterative progress. Entries may be incomplete or evolving, reflecting the active nature of the work rather than a finalized presentation. </p>
+It captures development as it occurs, including design decisions, implementation details, challenges encountered, and iterative progress. Entries may be incomplete or evolving, reflecting the active nature of the work rather than a finalized presentation.</p>
         <p>The intent is to maintain clear, detailed documentation that supports continuity—enabling projects to be revisited, understood, and extended over time without loss of context.</p>
       </div>
     </section>
 
-    <main class="projects">
+    <!-- ── PROJECTS ───────────────────────── -->
+    <main class="projects" id="projects">
       <div class="section-header">
         <span class="section-title">Projects</span>
         <span class="section-meta">
@@ -433,6 +554,35 @@ It captures development as it occurs, including design decisions, implementation
       </div>
     </main>
 
+    <!-- ── TECHNICAL RESEARCH ─────────────── -->
+    <section class="research" id="research">
+      <div class="section-header">
+        <span class="section-title">Technical Research</span>
+        <span class="section-meta">
+          <span id="researchCount">—</span>
+          <span id="researchStatus"></span>
+        </span>
+      </div>
+
+      <div class="section-desc">
+        Planning notes, yapping, calculations, and raw thinking — related to a project or not. Work in progress by nature.
+      </div>
+
+      <div class="filter-row" id="researchFilterRow" style="display:none;">
+        <button class="filter-pill research-filter-pill active" data-rfilter="all">All</button>
+        <button class="filter-pill research-filter-pill" data-rfilter="planning">Planning</button>
+        <button class="filter-pill research-filter-pill" data-rfilter="draft">Draft</button>
+        <button class="filter-pill research-filter-pill" data-rfilter="published">Published</button>
+      </div>
+
+      <div class="project-grid" id="researchGrid">
+        <div class="grid-state" id="researchLoadingState">
+          <div class="loader loader-purple"></div>
+          <span class="grid-state-label">fetching research/manifest.json…</span>
+        </div>
+      </div>
+    </section>
+
     <footer>
       <div class="footer-inner">
         <div class="footer-brand">emtypyie / <span>wiki</span> — updated continuously</div>
@@ -440,6 +590,13 @@ It captures development as it occurs, including design decisions, implementation
           <a href="https://github.com/myrachane" target="_blank" rel="noopener" class="footer-link">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
             github
+          </a>
+          <a href="https://emtypyie.in" target="_blank" rel="noopener" class="footer-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            emtypyie.in
           </a>
           <a href="https://wiki.emtypyie.in" class="footer-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
@@ -467,27 +624,50 @@ It captures development as it occurs, including design decisions, implementation
         ? `<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>`
         : `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
       icon.setAttribute('fill', dark ? 'currentColor' : 'none');
-      if (!dark) { icon.setAttribute('stroke', 'currentColor'); icon.setAttribute('stroke-width', '2'); icon.setAttribute('stroke-linecap', 'round'); icon.setAttribute('stroke-linejoin', 'round'); }
+      if (!dark) {
+        icon.setAttribute('stroke', 'currentColor');
+        icon.setAttribute('stroke-width', '2');
+        icon.setAttribute('stroke-linecap', 'round');
+        icon.setAttribute('stroke-linejoin', 'round');
+      }
     }
     applyTheme(localStorage.getItem('wiki-theme') || 'light');
     toggle.addEventListener('click', () => applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
 
-    /* ── MANIFEST FETCH + RENDER ──────────── */
-    const grid        = document.getElementById('projectGrid');
-    const countEl     = document.getElementById('projectCount');
-    const statusEl    = document.getElementById('fetchStatus');
-    const filterRow   = document.getElementById('filterRow');
-    const loadingEl   = document.getElementById('loadingState');
+    /* ── TOC ACTIVE STATE ──────────────────── */
+    (function initTOC() {
+      const tocLinks = document.querySelectorAll('.toc-item');
+      const sections = ['hero', 'about', 'projects', 'research'].map(id => document.getElementById(id)).filter(Boolean);
 
-    const STATUS_MAP = { active: 'badge-active', paused: 'badge-paused', completed: 'badge-completed' };
-    let allCards = [];
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            tocLinks.forEach(l => l.classList.remove('active'));
+            const active = document.querySelector(`.toc-item[href="#${entry.target.id}"]`);
+            if (active) active.classList.add('active');
+          }
+        });
+      }, { rootMargin: `-${52}px 0px -60% 0px`, threshold: 0 });
 
-    function buildCard({ id, name, desc, status, updated, lang }) {
+      sections.forEach(s => observer.observe(s));
+    })();
+
+    /* ── SHARED CARD BUILDER ───────────────── */
+    const STATUS_MAP = {
+      active:    'badge-active',
+      paused:    'badge-paused',
+      completed: 'badge-completed',
+      planning:  'badge-planning',
+      draft:     'badge-draft',
+      published: 'badge-published',
+    };
+
+    function buildCard({ id, name, desc, status, updated, lang }, basePath, extraClass) {
       const a = document.createElement('a');
-      a.className    = 'project-card';
-      a.href         = `/devlogs/${id}`;
+      a.className      = 'project-card' + (extraClass ? ' ' + extraClass : '');
+      a.href           = `/${basePath}/${id}`;
       a.dataset.status = (status || 'paused').toLowerCase();
-      a.tabIndex     = 0;
+      a.tabIndex       = 0;
       const cls = STATUS_MAP[a.dataset.status] || 'badge-paused';
       const lbl = a.dataset.status.charAt(0).toUpperCase() + a.dataset.status.slice(1);
       a.innerHTML = `
@@ -498,9 +678,19 @@ It captures development as it occurs, including design decisions, implementation
           <span class="badge ${cls}">${lbl}</span>
           <span class="card-date">${updated || '—'}</span>
         </div>`;
-      a.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); location.href = a.href; } });
+      a.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); location.href = a.href; }
+      });
       return a;
     }
+
+    /* ── PROJECTS ──────────────────────────── */
+    const grid      = document.getElementById('projectGrid');
+    const countEl   = document.getElementById('projectCount');
+    const statusEl  = document.getElementById('fetchStatus');
+    const filterRow = document.getElementById('filterRow');
+    const loadingEl = document.getElementById('loadingState');
+    let allCards    = [];
 
     async function loadProjects() {
       try {
@@ -524,15 +714,14 @@ It captures development as it occurs, including design decisions, implementation
         });
 
         projects.forEach(p => {
-          const card = buildCard(p);
+          const card = buildCard(p, 'devlogs', '');
           grid.appendChild(card);
           allCards.push(card);
         });
 
-        countEl.textContent = `${projects.length} entr${projects.length === 1 ? 'y' : 'ies'}`;
-        statusEl.className  = 'ok';
+        countEl.textContent  = `${projects.length} entr${projects.length === 1 ? 'y' : 'ies'}`;
+        statusEl.className   = 'ok';
         statusEl.textContent = '· live';
-
         filterRow.style.display = 'flex';
         initFilters();
 
@@ -548,11 +737,11 @@ It captures development as it occurs, including design decisions, implementation
     }
 
     function initFilters() {
-      document.querySelectorAll('.filter-pill').forEach(pill => {
+      document.querySelectorAll('.filter-pill:not(.research-filter-pill)').forEach(pill => {
         pill.addEventListener('click', () => {
-          document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+          document.querySelectorAll('.filter-pill:not(.research-filter-pill)').forEach(p => p.classList.remove('active'));
           pill.classList.add('active');
-          const f   = pill.dataset.filter;
+          const f = pill.dataset.filter;
           let shown = 0;
           allCards.forEach(card => {
             const visible = f === 'all' || card.dataset.status === f;
@@ -566,7 +755,79 @@ It captures development as it occurs, including design decisions, implementation
       });
     }
 
+    /* ── RESEARCH ──────────────────────────── */
+    const rgrid          = document.getElementById('researchGrid');
+    const rCountEl       = document.getElementById('researchCount');
+    const rStatusEl      = document.getElementById('researchStatus');
+    const rFilterRow     = document.getElementById('researchFilterRow');
+    const rLoadingEl     = document.getElementById('researchLoadingState');
+    let allResearchCards = [];
+
+    async function loadResearch() {
+      try {
+        const res  = await fetch('./research/manifest.json', { cache: 'no-cache' });
+        if (!res.ok) throw new Error(`HTTP ${res.status} — ${res.statusText}`);
+        const data  = await res.json();
+        const items = Array.isArray(data) ? data : (data.entries || []);
+
+        rLoadingEl.remove();
+
+        if (!items.length) {
+          rgrid.innerHTML = `<div class="grid-state"><span class="grid-state-label">no entries yet — add entries to research/manifest.json</span></div>`;
+          rCountEl.textContent = '0 entries';
+          return;
+        }
+
+        const order = { planning: 0, draft: 1, published: 2 };
+        items.sort((a, b) => {
+          const sd = (order[a.status] ?? 9) - (order[b.status] ?? 9);
+          return sd !== 0 ? sd : (b.updated || '').localeCompare(a.updated || '');
+        });
+
+        items.forEach(p => {
+          const card = buildCard(p, 'research', 'research-card');
+          rgrid.appendChild(card);
+          allResearchCards.push(card);
+        });
+
+        rCountEl.textContent  = `${items.length} entr${items.length === 1 ? 'y' : 'ies'}`;
+        rStatusEl.className   = 'ok';
+        rStatusEl.textContent = '· live';
+        rFilterRow.style.display = 'flex';
+        initResearchFilters();
+
+      } catch (err) {
+        rLoadingEl.innerHTML = `
+          <span style="font-size:18px">⚠</span>
+          <span class="grid-state-label">failed to load research/manifest.json</span>
+          <span class="grid-state-sub">${err.message}</span>`;
+        rCountEl.textContent  = 'error';
+        rStatusEl.className   = 'err';
+        rStatusEl.textContent = '· unreachable';
+      }
+    }
+
+    function initResearchFilters() {
+      document.querySelectorAll('.research-filter-pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+          document.querySelectorAll('.research-filter-pill').forEach(p => p.classList.remove('active'));
+          pill.classList.add('active');
+          const f = pill.dataset.rfilter;
+          let shown = 0;
+          allResearchCards.forEach(card => {
+            const visible = f === 'all' || card.dataset.status === f;
+            card.dataset.hidden = visible ? 'false' : 'true';
+            if (visible) shown++;
+          });
+          rCountEl.textContent = f === 'all'
+            ? `${allResearchCards.length} entr${allResearchCards.length === 1 ? 'y' : 'ies'}`
+            : `${shown} ${f}`;
+        });
+      });
+    }
+
     loadProjects();
+    loadResearch();
   </script>
 
 </body>
