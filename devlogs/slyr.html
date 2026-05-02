@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SLYR — Emtypyie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@300;400;500;600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+:root,[data-theme="light"]{--bg:#f9f7f3;--paper:#f3f0ea;--card:#ffffff;--ink:#0e0f0d;--ink2:#2a2b28;--muted:#5a5c56;--faint:#c8c6bf;--line:#d6d3cb;--teal:#006b5c;--teal-lt:#d0ebe6;--amber:#b35c00;--pixel-glow:#00e896;--pixel-dim:#003d25;--foot-bg:#080c08;--foot-lbl:#2a3828;--foot-sub:#1c2a1c;--foot-copy:#2a3828;--term-bg:#0c0f0b;--term-border:#2a3328;--nav-bg:rgba(249,247,243,0.92);--shadow-lg:0 8px 40px rgba(0,0,0,0.12);}
+[data-theme="dark"]{--bg:#0d0f0d;--paper:#111410;--card:#161a15;--ink:#eceae4;--ink2:#c8c6be;--muted:#8a8c84;--faint:#3a3c36;--line:#252722;--teal:#00c49a;--teal-lt:#0a2620;--amber:#e07a20;--pixel-glow:#00e896;--pixel-dim:#003d25;--foot-bg:#050705;--foot-lbl:#1e2a1e;--foot-sub:#141e14;--foot-copy:#1e2a1e;--term-bg:#080c08;--term-border:#1e2a1e;--nav-bg:rgba(13,15,13,0.94);--shadow-lg:0 8px 40px rgba(0,0,0,0.5);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;font-size:16px;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);overflow-x:hidden;line-height:1.75;-webkit-font-smoothing:antialiased;transition:background 0.35s ease,color 0.35s ease;}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:var(--paper);}::-webkit-scrollbar-thumb{background:var(--faint);border-radius:4px;}
+.theme-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;padding:6px 12px;border:1px solid var(--line);border-radius:20px;background:var(--paper);color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.16em;text-transform:uppercase;transition:border-color 0.2s,background 0.2s,color 0.2s;user-select:none;}
+.theme-toggle:hover{border-color:var(--teal);color:var(--teal);}
+.toggle-track{width:28px;height:15px;background:var(--line);border-radius:10px;position:relative;transition:background 0.3s;flex-shrink:0;}
+[data-theme="dark"] .toggle-track{background:var(--teal);}
+.toggle-thumb{position:absolute;top:2px;left:2px;width:11px;height:11px;background:var(--bg);border-radius:50%;transition:transform 0.3s;box-shadow:0 1px 3px rgba(0,0,0,0.2);}
+[data-theme="dark"] .toggle-thumb{transform:translateX(13px);}
+nav{position:fixed;inset:0 0 auto 0;z-index:200;display:flex;justify-content:space-between;align-items:center;padding:16px 52px;background:var(--nav-bg);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);transition:background 0.35s,border-color 0.35s;}
+.logo{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:15px;letter-spacing:0.3em;color:var(--teal);}
+.nav-right{display:flex;align-items:center;gap:24px;}
+.nav-links{display:flex;gap:28px;list-style:none;}
+.nav-links a{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color 0.2s;}
+.nav-links a:hover{color:var(--teal);}
+.nav-burger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;}
+.nav-burger span{display:block;width:22px;height:1.5px;background:var(--ink);transition:0.25s;}
+.mobile-menu{display:none;position:fixed;top:57px;left:0;right:0;background:var(--bg);border-bottom:1px solid var(--line);z-index:199;padding:20px 28px;flex-direction:column;gap:18px;}
+.mobile-menu a{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);text-decoration:none;}
+.mobile-menu.open{display:flex;}
+.hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:110px 52px 80px;gap:64px;position:relative;border-bottom:1px solid var(--line);}
+.hero::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 39px,var(--line) 39px,var(--line) 40px);opacity:0.35;pointer-events:none;}
+.hero-left{position:relative;}
+.hero-tag{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.35em;color:var(--teal);text-transform:uppercase;display:flex;align-items:center;gap:12px;margin-bottom:28px;opacity:0;animation:fadeUp 0.7s 0.2s forwards;}
+.hero-tag::before{content:'';width:22px;height:1px;background:var(--teal);}
+.headline{font-family:'DM Serif Display',serif;font-weight:400;font-size:clamp(48px,5.5vw,82px);line-height:1.04;letter-spacing:-0.02em;color:var(--ink);margin-bottom:28px;opacity:0;animation:fadeUp 0.8s 0.35s forwards;}
+.headline em{font-style:italic;color:var(--teal);}
+.hero-desc{font-size:15px;line-height:1.9;color:var(--muted);max-width:500px;margin-bottom:44px;opacity:0;animation:fadeUp 0.8s 0.5s forwards;}
+.hero-badges{display:flex;flex-wrap:wrap;gap:8px;opacity:0;animation:fadeUp 0.8s 0.65s forwards;}
+.badge{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;padding:5px 11px;border:1px solid var(--line);border-radius:3px;color:var(--muted);background:var(--paper);transition:background 0.3s,border-color 0.3s,color 0.3s;}
+.badge.hi{border-color:var(--teal);color:var(--teal);background:var(--teal-lt);}
+.terminal-outer{opacity:0;animation:fadeUp 0.9s 0.7s forwards;}
+.terminal{background:var(--term-bg);border:1px solid var(--term-border);border-radius:10px;overflow:hidden;font-family:'IBM Plex Mono',monospace;box-shadow:var(--shadow-lg),0 1px 0 rgba(255,255,255,0.04) inset;}
+.term-bar{display:flex;align-items:center;gap:7px;padding:11px 18px;background:rgba(255,255,255,0.025);border-bottom:1px solid rgba(255,255,255,0.05);}
+.tdot{width:11px;height:11px;border-radius:50%;}
+.tdot.r{background:#ff5f57;}.tdot.y{background:#febc2e;}.tdot.g{background:#28c840;}
+.term-title{margin-left:8px;font-size:10.5px;color:#5a6858;letter-spacing:0.12em;}
+.term-body{padding:20px 22px 24px;min-height:230px;position:relative;background:var(--term-bg);}
+.term-body::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0px,transparent 3px,rgba(0,0,0,0.12) 3px,rgba(0,0,0,0.12) 4px);pointer-events:none;border-radius:0 0 10px 10px;}
+.tline{display:flex;align-items:flex-start;gap:10px;font-size:11.5px;line-height:1.65;margin-bottom:2px;opacity:0;transform:translateX(-6px);transition:opacity 0.12s,transform 0.15s;}
+.tline.show{opacity:1;transform:translateX(0);}
+.tp{color:#28c840;flex-shrink:0;user-select:none;}.tg{color:#28c840;}.td{color:#8a9988;}.tw{color:#e8c430;}.tc{color:#4ecdc4;}
+.cursor{display:inline-block;width:6px;height:12px;background:#28c840;vertical-align:middle;margin-left:2px;animation:cblink 1.1s step-end infinite;}
+@keyframes cblink{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.rule-label{display:flex;align-items:center;gap:18px;padding:0 52px;border-bottom:1px solid var(--line);overflow:hidden;}
+.rule-label span{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.35em;text-transform:uppercase;color:var(--faint);white-space:nowrap;padding:14px 0;}
+.rule-label::after{content:'';flex:1;height:1px;background:var(--line);}
+.section{max-width:1060px;margin:0 auto;padding:96px 52px;opacity:0;transform:translateY(36px);transition:opacity 0.85s ease,transform 0.85s ease;}
+.section.vis{opacity:1;transform:translateY(0);}
+.stag{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.34em;color:var(--teal);text-transform:uppercase;display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+.stag::before{content:'';width:18px;height:1px;background:var(--teal);}
+.stitle{font-family:'DM Serif Display',serif;font-weight:400;font-size:clamp(30px,3.5vw,50px);letter-spacing:-0.02em;line-height:1.1;margin-bottom:20px;color:var(--ink);}
+.sbody{font-size:15.5px;line-height:1.9;color:var(--muted);max-width:660px;}
+.callout{margin-top:40px;border:1px solid var(--line);border-left:3px solid var(--teal);background:var(--paper);border-radius:6px;padding:22px 26px;max-width:660px;transition:background 0.35s;}
+.callout-label{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--teal);margin-bottom:8px;}
+.callout p{font-size:14.5px;line-height:1.85;color:var(--ink2);}
+
+/* ── BLUEPRINT LAYOUT ── */
+.with-blueprint{display:grid;grid-template-columns:1fr auto;gap:52px;align-items:start;}
+.blueprint-panel{opacity:0.65;transition:opacity 0.35s;flex-shrink:0;}
+.blueprint-panel:hover{opacity:1;}
+/* shared SVG classes */
+.bp-l{stroke:var(--teal);stroke-width:0.8;fill:none;opacity:0.65;}
+.bp-ld{stroke:var(--teal);stroke-width:0.4;fill:none;opacity:0.28;}
+.bp-f{fill:var(--teal);opacity:0.05;}
+.bp-fm{fill:var(--teal);opacity:0.09;}
+.bp-t{font-family:'IBM Plex Mono',monospace;font-size:6px;fill:var(--teal);opacity:0.45;letter-spacing:0.1em;}
+.bp-th{font-family:'IBM Plex Mono',monospace;font-size:5.5px;fill:var(--teal);opacity:0.65;letter-spacing:0.08em;}
+.bp-d{fill:var(--teal);opacity:0.55;}
+.bp-c{stroke:var(--teal);stroke-width:1;fill:none;opacity:0.45;}
+
+.arch-grid{margin-top:48px;display:flex;flex-direction:column;gap:0;max-width:760px;}
+.arch-block{flex:1;border:1px solid var(--line);padding:16px 20px;background:var(--bg);transition:border-color 0.2s,background 0.2s;position:relative;}
+.arch-block:hover{border-color:var(--teal);background:var(--teal-lt);z-index:1;}
+.arch-block.hi{background:var(--paper);border-color:var(--faint);}
+.arch-lbl{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--teal);margin-bottom:5px;}
+.arch-sub{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);line-height:1.65;}
+.arch-arrow{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint);padding:7px 0 7px 28px;letter-spacing:0.1em;display:flex;align-items:center;gap:8px;}
+.arch-arrow::after{content:attr(data-label);font-size:10px;color:var(--faint);}
+.specs{margin-top:40px;border:1px solid var(--line);border-radius:8px;overflow:hidden;max-width:720px;}
+.spec-row{display:grid;grid-template-columns:180px 1fr;border-bottom:1px solid var(--line);transition:background 0.15s;}
+.spec-row:last-child{border-bottom:none;}
+.spec-row:hover{background:var(--paper);}
+.spec-k{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.08em;color:var(--teal);padding:13px 18px;border-right:1px solid var(--line);display:flex;align-items:center;}
+.spec-v{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink2);padding:13px 18px;line-height:1.6;}
+#rm-outer{position:relative;height:500vh;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--paper);transition:background 0.35s;}
+.rm-header{max-width:1060px;margin:0 auto;padding:96px 52px 0;opacity:0;transform:translateY(36px);transition:opacity 0.85s ease,transform 0.85s ease;}
+.rm-header.vis{opacity:1;transform:translateY(0);}
+#rm-sticky{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+#rm-sticky::before{content:'';position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:48px 48px;opacity:0.5;}
+#rm-sticky::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,var(--paper) 0%,transparent 7%,transparent 93%,var(--paper) 100%),linear-gradient(to bottom,var(--paper) 0%,transparent 7%,transparent 90%,var(--paper) 100%);pointer-events:none;z-index:2;}
+.rm-canvas{position:relative;width:100%;max-width:1140px;padding:0 36px;z-index:3;}
+#rmSvg{width:100%;overflow:visible;display:block;}
+#rmGlow{fill:none;stroke:rgba(0,107,92,0.1);stroke-width:10;filter:blur(6px);}
+#rmPath{fill:none;stroke:var(--teal);stroke-width:1.8;stroke-linecap:round;}
+.rm-hud{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:16px;z-index:4;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.22em;color:var(--muted);}
+.rm-track{width:160px;height:1px;background:var(--line);position:relative;border-radius:2px;}
+.rm-fill{position:absolute;left:0;top:0;bottom:0;background:var(--teal);border-radius:2px;width:0%;transition:width 0.08s linear;}
+.ms-card{position:absolute;width:158px;background:var(--card);border:1px solid var(--line);border-radius:7px;padding:11px 14px;opacity:0;transform:scale(0.87);transition:opacity 0.35s ease,transform 0.35s ease,background 0.35s;pointer-events:none;z-index:5;}
+.ms-card.show{opacity:1;transform:scale(1);pointer-events:auto;}
+.ms-card-date{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.2em;margin-bottom:4px;}
+.ms-card-label{font-weight:600;font-size:11.5px;line-height:1.4;}
+.ms-card-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;line-height:1.5;}
+.s-done .ms-card-date,.s-done .ms-card-label{color:var(--teal);}
+.s-done{border-color:rgba(0,107,92,0.3)!important;}
+.s-crash .ms-card-date,.s-crash .ms-card-label{color:var(--amber);}
+.s-crash{border-color:rgba(179,92,0,0.3)!important;}
+.s-pause .ms-card-date,.s-pause .ms-card-label{color:var(--muted);}
+.s-now .ms-card-date,.s-now .ms-card-label{color:var(--teal);}
+.s-now{border-color:var(--teal)!important;box-shadow:0 0 0 3px rgba(0,107,92,0.08);}
+.s-future .ms-card-date{color:var(--muted);}
+.s-future .ms-card-label{color:var(--faint);}
+.ms-line{position:absolute;width:1px;background:var(--line);pointer-events:none;z-index:4;opacity:0;transition:opacity 0.35s ease 0.12s;}
+.ms-line.show{opacity:1;}
+.team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;margin-top:48px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--line);}
+.team-card{background:var(--bg);padding:28px 24px;display:flex;flex-direction:column;gap:12px;transition:background 0.2s;position:relative;}
+.team-card:hover{background:var(--paper);}
+.team-card.late-joiner::before{content:'Joined Later';position:absolute;top:12px;right:12px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--teal);background:var(--teal-lt);border:1px solid var(--teal);padding:2px 7px;border-radius:3px;}
+.team-avatar{width:46px;height:46px;border-radius:8px;background:var(--paper);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:600;color:var(--teal);}
+.team-name{font-family:'DM Serif Display',serif;font-size:19px;color:var(--ink);line-height:1.2;}
+.team-role{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.16em;color:var(--teal);text-transform:uppercase;line-height:1.5;}
+.team-desc{font-size:13px;color:var(--muted);line-height:1.7;}
+.team-github{display:inline-flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);text-decoration:none;border:1px solid var(--line);padding:4px 10px;border-radius:4px;width:fit-content;margin-top:4px;transition:border-color 0.2s,color 0.2s;}
+.team-github:hover{color:var(--teal);border-color:var(--teal);}
+.team-github svg{width:12px;height:12px;fill:currentColor;}
+.funding-hero{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:48px;align-items:start;}
+.fund-main{border:1px solid var(--line);border-radius:10px;padding:32px;background:var(--paper);}
+.fund-label{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.32em;text-transform:uppercase;color:var(--teal);margin-bottom:16px;}
+.fund-amount{font-family:'DM Serif Display',serif;font-size:clamp(36px,4vw,58px);color:var(--ink);line-height:1;margin-bottom:6px;}
+.fund-amount span{color:var(--teal);}
+.fund-of{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.12em;margin-bottom:24px;}
+.fund-bar-wrap{height:6px;background:var(--line);border-radius:4px;overflow:hidden;margin-bottom:10px;}
+.fund-bar{height:100%;background:var(--teal);border-radius:4px;width:0%;transition:width 1.4s cubic-bezier(0.16,1,0.3,1);}
+.fund-pct{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.2em;}
+.fund-breakdown{display:flex;flex-direction:column;gap:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--bg);}
+.fund-item{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line);transition:background 0.15s;}
+.fund-item:last-child{border-bottom:none;}
+.fund-item:hover{background:var(--paper);}
+.fund-item-label{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.1em;}
+.fund-item-val{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink2);font-weight:500;}
+.fund-item-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-right:10px;}
+.fund-item-dot.amber{background:var(--amber);}
+.fund-item-dot.faint{background:var(--faint);}
+.fund-note{margin-top:24px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.14em;line-height:1.8;border-left:2px solid var(--teal);padding-left:14px;}
+.blog-filters{display:flex;gap:8px;flex-wrap:wrap;margin:28px 0 36px;}
+.blog-filter-btn{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.16em;text-transform:uppercase;padding:5px 12px;border:1px solid var(--line);border-radius:3px;background:var(--bg);color:var(--muted);cursor:pointer;transition:all 0.2s;}
+.blog-filter-btn:hover,.blog-filter-btn.active{border-color:var(--teal);color:var(--teal);background:var(--teal-lt);}
+.blog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+.blog-card{background:var(--bg);padding:28px;display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:background 0.2s;}
+.blog-card:hover{background:var(--paper);}
+.blog-tag{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.24em;text-transform:uppercase;color:var(--teal);background:var(--teal-lt);border:1px solid rgba(0,107,92,0.2);padding:2px 8px;border-radius:3px;width:fit-content;}
+.blog-title{font-family:'DM Serif Display',serif;font-size:19px;color:var(--ink);line-height:1.3;}
+.blog-excerpt{font-size:13.5px;color:var(--muted);line-height:1.75;}
+.blog-meta{display:flex;align-items:center;gap:14px;margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);letter-spacing:0.12em;}
+.blog-meta-sep{width:1px;height:10px;background:var(--line);}
+.blog-loading{grid-column:1/-1;text-align:center;padding:60px 20px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.2em;color:var(--muted);}
+.blog-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:900;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity 0.3s;backdrop-filter:blur(4px);}
+.blog-modal-overlay.open{opacity:1;pointer-events:auto;}
+.blog-modal{background:var(--bg);border:1px solid var(--line);border-radius:12px;max-width:680px;width:100%;max-height:80vh;overflow-y:auto;transform:scale(0.95) translateY(16px);transition:transform 0.3s,background 0.35s;padding:40px 44px;}
+.blog-modal-overlay.open .blog-modal{transform:scale(1) translateY(0);}
+.blog-modal-tag{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.24em;text-transform:uppercase;color:var(--teal);margin-bottom:14px;display:block;}
+.blog-modal-title{font-family:'DM Serif Display',serif;font-size:clamp(26px,3vw,38px);color:var(--ink);line-height:1.15;margin-bottom:12px;}
+.blog-modal-meta{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.14em;margin-bottom:28px;display:flex;gap:14px;flex-wrap:wrap;}
+.blog-modal-body{font-size:15px;line-height:1.9;color:var(--ink2);}
+.blog-modal-body p{margin-bottom:16px;}
+.blog-modal-body h3{font-family:'DM Serif Display',serif;font-size:20px;color:var(--ink);margin:28px 0 10px;}
+.blog-modal-body code{font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--paper);border:1px solid var(--line);padding:2px 6px;border-radius:3px;color:var(--teal);}
+.blog-modal-close{position:sticky;top:0;float:right;margin:-12px -16px 8px 0;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:6px 12px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.18em;color:var(--muted);cursor:pointer;transition:all 0.2s;z-index:1;}
+.blog-modal-close:hover{border-color:var(--teal);color:var(--teal);}
+footer{border-top:1px solid var(--line);background:var(--foot-bg);overflow:hidden;cursor:default;}
+.foot-inner{display:flex;flex-direction:column;align-items:center;padding:56px 24px 40px;}
+.foot-meta{display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:40px;}
+.foot-meta-label{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.32em;color:var(--foot-lbl);text-transform:uppercase;}
+.foot-meta-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.2em;color:var(--foot-sub);text-transform:uppercase;}
+.pixel-word{display:flex;gap:3px;justify-content:center;align-items:flex-end;transition:filter 0.4s ease;}
+.pixel-word:hover{filter:drop-shadow(0 0 18px rgba(0,232,150,0.45)) drop-shadow(0 0 40px rgba(0,232,150,0.2));}
+.pixel-letter rect{fill:none;stroke:var(--pixel-dim);stroke-width:1;transition:stroke 0.35s ease,fill 0.35s ease;}
+.pixel-word:hover .pixel-letter rect{stroke:var(--pixel-glow);fill:rgba(0,232,150,0.05);}
+.pixel-word:hover .pixel-letter:nth-child(1) rect{transition-delay:0s;}
+.pixel-word:hover .pixel-letter:nth-child(2) rect{transition-delay:0.05s;}
+.pixel-word:hover .pixel-letter:nth-child(3) rect{transition-delay:0.1s;}
+.pixel-word:hover .pixel-letter:nth-child(4) rect{transition-delay:0.15s;}
+.foot-copy{margin-top:28px;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.28em;color:var(--foot-copy);text-transform:uppercase;text-align:center;}
+@media(max-width:900px){
+  nav{padding:14px 24px;}.nav-links{display:none;}.nav-burger{display:flex;}
+  .hero{grid-template-columns:1fr;padding:90px 24px 60px;gap:44px;min-height:auto;}
+  .section{padding:64px 24px;}.rule-label{padding:0 24px;}
+  .rm-header{padding:64px 24px 0;}.rm-canvas{padding:0 12px;}
+  .ms-card{width:130px;}.specs{overflow-x:auto;}.spec-row{grid-template-columns:140px 1fr;}
+  .funding-hero{grid-template-columns:1fr;}
+  .with-blueprint{grid-template-columns:1fr;}.blueprint-panel{display:none;}
+}
+@media(max-width:600px){
+  .hero{padding:80px 18px 52px;}.section{padding:52px 18px;}.rule-label{padding:0 18px;}
+  .rm-header{padding:52px 18px 0;}.ms-card{width:110px;padding:8px 10px;}.ms-card-sub{display:none;}
+  .spec-row{grid-template-columns:120px 1fr;}.spec-k,.spec-v{font-size:10px;padding:10px 12px;}
+  .pixel-word{gap:2px;}.blog-modal{padding:28px 20px;}.theme-toggle .tgl-label{display:none;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">SLYR</div>
+  <ul class="nav-links">
+    <li><a href="#problem-section">Research</a></li>
+    <li><a href="#arch-section">Architecture</a></li>
+    <li><a href="#spec-section">Specs</a></li>
+    <li><a href="#rm-outer">Timeline</a></li>
+    <li><a href="#team-section">Team</a></li>
+    <li><a href="#funding-section">Funding</a></li>
+    <li><a href="#blog-section">Blog</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+      <span class="tgl-label" id="themeLabel">LIGHT</span>
+      <div class="toggle-track"><div class="toggle-thumb"></div></div>
+    </button>
+    <div class="nav-burger" id="burger" aria-label="Menu" role="button" tabindex="0">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#problem-section" onclick="closeMobile()">Research</a>
+  <a href="#arch-section" onclick="closeMobile()">Architecture</a>
+  <a href="#spec-section" onclick="closeMobile()">Specs</a>
+  <a href="#rm-outer" onclick="closeMobile()">Timeline</a>
+  <a href="#team-section" onclick="closeMobile()">Team</a>
+  <a href="#funding-section" onclick="closeMobile()">Funding</a>
+  <a href="#blog-section" onclick="closeMobile()">Blog</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-tag">Autonomous Avionics Research</div>
+    <h1 class="headline">Built for<br><em>real-time</em><br>autonomy.</h1>
+    <p class="hero-desc">SLYR is a dual-compute avionics platform that separates deterministic flight control from AI-assisted decision making — enforced at the hardware level.</p>
+    <div class="hero-badges">
+      <span class="badge hi">Research &amp; Education</span>
+      <span class="badge">STM32H7</span>
+      <span class="badge">Raspberry Pi 5</span>
+      <span class="badge">UAV</span>
+    </div>
+  </div>
+  <div class="terminal-outer">
+    <div class="terminal">
+      <div class="term-bar">
+        <div class="tdot r"></div><div class="tdot y"></div><div class="tdot g"></div>
+        <span class="term-title">slyr-core — boot v0.4.2-dev</span>
+      </div>
+      <div class="term-body" id="termBody"></div>
+    </div>
+  </div>
+</section>
+
+<!-- §01 PROBLEM -->
+<div class="rule-label"><span>§ 01 — Design Rationale</span></div>
+<div class="section" id="problem-section">
+  <div class="with-blueprint">
+    <div>
+      <div class="stag">Research Context</div>
+      <h2 class="stitle">The cost of<br>tight coupling.</h2>
+      <p class="sbody">Most UAV systems bind flight control and autonomy into a single processing loop. When AI inference stutters under load, the aircraft stutters. Latency in one layer becomes instability in another.</p>
+      <div class="callout">
+        <div class="callout-label">Core Thesis</div>
+        <p>SLYR isolates safety-critical execution from adaptive reasoning at the silicon level. The STM32 flight kernel never waits on the Pi. Safety becomes structural — not a runtime policy.</p>
+      </div>
+    </div>
+    <!-- DRONE BLUEPRINT SVG -->
+    <div class="blueprint-panel">
+      <svg width="270" height="270" viewBox="0 0 270 270" xmlns="http://www.w3.org/2000/svg">
+        <!-- frame corners -->
+        <path class="bp-c" d="M4,16 L4,4 L16,4"/><path class="bp-c" d="M254,16 L254,4 L242,4"/>
+        <path class="bp-c" d="M4,254 L4,266 L16,266"/><path class="bp-c" d="M254,254 L254,266 L242,266"/>
+        <!-- crosshairs -->
+        <line class="bp-ld" x1="135" y1="8" x2="135" y2="262"/>
+        <line class="bp-ld" x1="8" y1="135" x2="262" y2="135"/>
+        <!-- body -->
+        <rect class="bp-fm" x="109" y="109" width="52" height="52" rx="5"/>
+        <rect class="bp-l" x="109" y="109" width="52" height="52" rx="5"/>
+        <rect class="bp-ld" x="119" y="119" width="32" height="32" rx="3"/>
+        <circle class="bp-l" cx="135" cy="135" r="9"/>
+        <circle class="bp-d" cx="135" cy="135" r="2.5"/>
+        <!-- arms diagonal -->
+        <line class="bp-l" x1="109" y1="117" x2="58" y2="66"/>
+        <line class="bp-l" x1="161" y1="117" x2="212" y2="66"/>
+        <line class="bp-l" x1="109" y1="153" x2="58" y2="204"/>
+        <line class="bp-l" x1="161" y1="153" x2="212" y2="204"/>
+        <!-- motor circles -->
+        <circle class="bp-f" cx="50" cy="58" r="22"/><circle class="bp-l" cx="50" cy="58" r="22"/>
+        <circle class="bp-l" cx="50" cy="58" r="12"/><circle class="bp-d" cx="50" cy="58" r="3"/>
+        <circle class="bp-f" cx="220" cy="58" r="22"/><circle class="bp-l" cx="220" cy="58" r="22"/>
+        <circle class="bp-l" cx="220" cy="58" r="12"/><circle class="bp-d" cx="220" cy="58" r="3"/>
+        <circle class="bp-f" cx="50" cy="212" r="22"/><circle class="bp-l" cx="50" cy="212" r="22"/>
+        <circle class="bp-l" cx="50" cy="212" r="12"/><circle class="bp-d" cx="50" cy="212" r="3"/>
+        <circle class="bp-f" cx="220" cy="212" r="22"/><circle class="bp-l" cx="220" cy="212" r="22"/>
+        <circle class="bp-l" cx="220" cy="212" r="12"/><circle class="bp-d" cx="220" cy="212" r="3"/>
+        <!-- prop rotation arcs -->
+        <path class="bp-ld" d="M 30,58 A 20,20 0 0 1 70,58"/>
+        <path class="bp-ld" d="M 200,58 A 20,20 0 0 1 240,58"/>
+        <path class="bp-ld" d="M 30,212 A 20,20 0 0 0 70,212"/>
+        <path class="bp-ld" d="M 200,212 A 20,20 0 0 0 240,212"/>
+        <!-- landing gear -->
+        <line class="bp-ld" x1="116" y1="161" x2="103" y2="186"/>
+        <line class="bp-ld" x1="154" y1="161" x2="167" y2="186"/>
+        <line class="bp-ld" x1="96" y1="186" x2="174" y2="186"/>
+        <!-- camera gimbal -->
+        <rect class="bp-l" x="122" y="155" width="26" height="18" rx="2"/>
+        <circle class="bp-ld" cx="135" cy="164" r="5"/>
+        <!-- dimension -->
+        <line class="bp-ld" x1="28" y1="248" x2="242" y2="248"/>
+        <line class="bp-ld" x1="28" y1="244" x2="28" y2="252"/>
+        <line class="bp-ld" x1="242" y1="244" x2="242" y2="252"/>
+        <text class="bp-t" x="135" y="260" text-anchor="middle">220mm FRAME</text>
+        <!-- labels -->
+        <text class="bp-th" x="50" y="22" text-anchor="middle">MTR·FL</text>
+        <text class="bp-th" x="220" y="22" text-anchor="middle">MTR·FR</text>
+        <text class="bp-th" x="50" y="234" text-anchor="middle">MTR·RL</text>
+        <text class="bp-th" x="220" y="234" text-anchor="middle">MTR·RR</text>
+        <text class="bp-t" x="135" y="103" text-anchor="middle">FLIGHT CTRL</text>
+        <text class="bp-t" x="162" y="172" text-anchor="start">CAM</text>
+        <text class="bp-t" x="264" y="135" text-anchor="end" transform="rotate(90,264,135)">SLYR·UAV·v2·REV·A</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- §02 ARCHITECTURE -->
+<div class="rule-label"><span>§ 02 — System Design</span></div>
+<div class="section" id="arch-section">
+  <div class="stag">Architecture</div>
+  <h2 class="stitle">Dual-layer<br>hardware separation.</h2>
+  <p class="sbody">Strict isolation of deterministic real-time execution from adaptive reasoning. Every command passing from the autonomy layer is validated, clamped, and smoothed before it reaches the flight kernel.</p>
+  <div class="arch-grid">
+    <div class="arch-block hi"><div class="arch-lbl">[ Sensors ]</div><div class="arch-sub">IMU · GPS · Barometer · Optical Flow</div></div>
+    <div class="arch-arrow" data-label="raw telemetry">↓</div>
+    <div class="arch-block hi"><div class="arch-lbl">[ STM32 Flight Kernel ]&emsp;~1 kHz real-time loop</div><div class="arch-sub">State Estimation · Attitude &amp; Rate PID · Motor Mixing (DShot) · Failsafe</div></div>
+    <div class="arch-arrow" data-label="UART/SPI · CRC validated · Heartbeat watchdog">↕</div>
+    <div class="arch-block"><div class="arch-lbl">[ Autonomy Layer — Raspberry Pi 5 ]</div><div class="arch-sub">Waypoint Nav · Obstacle Avoidance · Mission Planning · SLM Decision Engine (int8)</div></div>
+    <div class="arch-arrow" data-label="intent signals">↓</div>
+    <div class="arch-block"><div class="arch-lbl">[ Behavior Manager ]</div><div class="arch-sub">Command Shaping · Rate Limiting · Constraint Enforcement</div></div>
+    <div class="arch-arrow" data-label="validated control targets">↓</div>
+    <div class="arch-block hi"><div class="arch-lbl">[ STM32 Execution ]</div><div class="arch-sub">All inputs validated · clamped · smoothed before motor application</div></div>
+  </div>
+</div>
+
+<!-- §03 SPECS -->
+<div class="rule-label"><span>§ 03 — Hardware Specification</span></div>
+<div class="section" id="spec-section">
+  <div class="with-blueprint" style="align-items:center;gap:56px;">
+    <div>
+      <div class="stag">Hardware</div>
+      <h2 class="stitle">System<br>specifications.</h2>
+      <p class="sbody">Component selection prioritises determinism and power efficiency, keeping the real-time kernel isolated from variable AI workloads.</p>
+      <div class="specs">
+        <div class="spec-row"><div class="spec-k">Flight Controller</div><div class="spec-v">STM32H7 · ~1 kHz control loop</div></div>
+        <div class="spec-row"><div class="spec-k">Compute Board</div><div class="spec-v">Raspberry Pi 5 · 8 GB RAM</div></div>
+        <div class="spec-row"><div class="spec-k">IMU</div><div class="spec-v">ICM-42688-P · 1 kHz sampling</div></div>
+        <div class="spec-row"><div class="spec-k">Barometer</div><div class="spec-v">BMP388 · nominal</div></div>
+        <div class="spec-row"><div class="spec-k">Motor Protocol</div><div class="spec-v">DShot (bidirectional)</div></div>
+        <div class="spec-row"><div class="spec-k">Comm Interface</div><div class="spec-v">UART / SPI · CRC validated</div></div>
+        <div class="spec-row"><div class="spec-k">Decision Engine</div><div class="spec-v">SLM · int8 quantised · 12M params</div></div>
+        <div class="spec-row"><div class="spec-k">Watchdog</div><div class="spec-v">Heartbeat · autonomous failsafe</div></div>
+        <div class="spec-row"><div class="spec-k">Status</div><div class="spec-v">v0.4.2-dev · active research</div></div>
+      </div>
+    </div>
+    <!-- STM32 + Pi 5 stacked blueprints -->
+    <div class="blueprint-panel" style="display:flex;flex-direction:column;gap:20px;">
+      <!-- STM32H7 -->
+      <svg width="230" height="156" viewBox="0 0 230 156" xmlns="http://www.w3.org/2000/svg">
+        <path class="bp-c" d="M3,11 L3,3 L11,3"/><path class="bp-c" d="M227,11 L227,3 L219,3"/>
+        <path class="bp-c" d="M3,145 L3,153 L11,153"/><path class="bp-c" d="M227,145 L227,153 L219,153"/>
+        <rect class="bp-f" x="18" y="16" width="194" height="124" rx="3"/>
+        <rect class="bp-l" x="18" y="16" width="194" height="124" rx="3"/>
+        <!-- chip body -->
+        <rect class="bp-fm" x="72" y="48" width="86" height="60" rx="2"/>
+        <rect class="bp-l" x="72" y="48" width="86" height="60" rx="2"/>
+        <rect class="bp-ld" x="80" y="56" width="70" height="44" rx="1"/>
+        <!-- pin 1 dot -->
+        <circle class="bp-d" cx="74" cy="50" r="2.2"/>
+        <!-- left pins -->
+        <line class="bp-l" x1="18" y1="52" x2="72" y2="52"/><line class="bp-l" x1="18" y1="60" x2="72" y2="60"/>
+        <line class="bp-l" x1="18" y1="68" x2="72" y2="68"/><line class="bp-l" x1="18" y1="76" x2="72" y2="76"/>
+        <line class="bp-l" x1="18" y1="84" x2="72" y2="84"/><line class="bp-l" x1="18" y1="92" x2="72" y2="92"/>
+        <line class="bp-l" x1="18" y1="100" x2="72" y2="100"/>
+        <!-- right pins -->
+        <line class="bp-l" x1="158" y1="52" x2="212" y2="52"/><line class="bp-l" x1="158" y1="60" x2="212" y2="60"/>
+        <line class="bp-l" x1="158" y1="68" x2="212" y2="68"/><line class="bp-l" x1="158" y1="76" x2="212" y2="76"/>
+        <line class="bp-l" x1="158" y1="84" x2="212" y2="84"/><line class="bp-l" x1="158" y1="92" x2="212" y2="92"/>
+        <line class="bp-l" x1="158" y1="100" x2="212" y2="100"/>
+        <!-- top pins -->
+        <line class="bp-l" x1="88" y1="16" x2="88" y2="48"/><line class="bp-l" x1="102" y1="16" x2="102" y2="48"/>
+        <line class="bp-l" x1="116" y1="16" x2="116" y2="48"/><line class="bp-l" x1="130" y1="16" x2="130" y2="48"/>
+        <line class="bp-l" x1="144" y1="16" x2="144" y2="48"/>
+        <!-- bottom pins -->
+        <line class="bp-l" x1="88" y1="108" x2="88" y2="140"/><line class="bp-l" x1="102" y1="108" x2="102" y2="140"/>
+        <line class="bp-l" x1="116" y1="108" x2="116" y2="140"/><line class="bp-l" x1="130" y1="108" x2="130" y2="140"/>
+        <line class="bp-l" x1="144" y1="108" x2="144" y2="140"/>
+        <text class="bp-th" x="115" y="73" text-anchor="middle">STM32H7</text>
+        <text class="bp-t" x="115" y="82" text-anchor="middle">480MHz · LQFP144</text>
+        <text class="bp-t" x="115" y="91" text-anchor="middle">1MB FLASH · 1MHz ADC</text>
+        <text class="bp-t" x="115" y="8" text-anchor="middle">FLIGHT CONTROLLER · REV·B</text>
+      </svg>
+      <!-- Raspberry Pi 5 -->
+      <svg width="230" height="166" viewBox="0 0 230 166" xmlns="http://www.w3.org/2000/svg">
+        <path class="bp-c" d="M3,11 L3,3 L11,3"/><path class="bp-c" d="M227,11 L227,3 L219,3"/>
+        <path class="bp-c" d="M3,155 L3,163 L11,163"/><path class="bp-c" d="M227,155 L227,163 L219,163"/>
+        <!-- board -->
+        <rect class="bp-f" x="14" y="14" width="202" height="138" rx="5"/>
+        <rect class="bp-l" x="14" y="14" width="202" height="138" rx="5"/>
+        <!-- GPIO header block -->
+        <rect class="bp-fm" x="20" y="18" width="86" height="20" rx="1"/>
+        <rect class="bp-l" x="20" y="18" width="86" height="20" rx="1"/>
+        <!-- gpio pin dots (2 rows) -->
+        <circle class="bp-d" cx="27" cy="24" r="1.8"/><circle class="bp-d" cx="35" cy="24" r="1.8"/>
+        <circle class="bp-d" cx="43" cy="24" r="1.8"/><circle class="bp-d" cx="51" cy="24" r="1.8"/>
+        <circle class="bp-d" cx="59" cy="24" r="1.8"/><circle class="bp-d" cx="67" cy="24" r="1.8"/>
+        <circle class="bp-d" cx="75" cy="24" r="1.8"/><circle class="bp-d" cx="83" cy="24" r="1.8"/>
+        <circle class="bp-d" cx="91" cy="24" r="1.8"/><circle class="bp-d" cx="99" cy="24" r="1.8"/>
+        <circle class="bp-d" cx="27" cy="32" r="1.8"/><circle class="bp-d" cx="35" cy="32" r="1.8"/>
+        <circle class="bp-d" cx="43" cy="32" r="1.8"/><circle class="bp-d" cx="51" cy="32" r="1.8"/>
+        <circle class="bp-d" cx="59" cy="32" r="1.8"/><circle class="bp-d" cx="67" cy="32" r="1.8"/>
+        <circle class="bp-d" cx="75" cy="32" r="1.8"/><circle class="bp-d" cx="83" cy="32" r="1.8"/>
+        <circle class="bp-d" cx="91" cy="32" r="1.8"/><circle class="bp-d" cx="99" cy="32" r="1.8"/>
+        <!-- SoC -->
+        <rect class="bp-fm" x="78" y="55" width="76" height="64" rx="2"/>
+        <rect class="bp-l" x="78" y="55" width="76" height="64" rx="2"/>
+        <rect class="bp-ld" x="86" y="63" width="60" height="48" rx="1"/>
+        <!-- LPDDR5 chip -->
+        <rect class="bp-f" x="162" y="57" width="40" height="28" rx="2"/>
+        <rect class="bp-l" x="162" y="57" width="40" height="28" rx="2"/>
+        <!-- USB-A ports x2 -->
+        <rect class="bp-l" x="158" y="93" width="26" height="13" rx="1"/><rect class="bp-f" x="158" y="93" width="26" height="13" rx="1"/>
+        <rect class="bp-l" x="158" y="110" width="26" height="13" rx="1"/><rect class="bp-f" x="158" y="110" width="26" height="13" rx="1"/>
+        <!-- ethernet -->
+        <rect class="bp-l" x="158" y="127" width="30" height="20" rx="1"/><rect class="bp-f" x="158" y="127" width="30" height="20" rx="1"/>
+        <!-- micro HDMI x2 -->
+        <rect class="bp-l" x="18" y="142" width="20" height="9" rx="1"/><rect class="bp-f" x="18" y="142" width="20" height="9" rx="1"/>
+        <rect class="bp-l" x="42" y="142" width="20" height="9" rx="1"/><rect class="bp-f" x="42" y="142" width="20" height="9" rx="1"/>
+        <!-- microSD -->
+        <rect class="bp-l" x="14" y="82" width="9" height="18" rx="1"/>
+        <!-- USB-C power -->
+        <rect class="bp-l" x="68" y="142" width="16" height="9" rx="1"/><rect class="bp-f" x="68" y="142" width="16" height="9" rx="1"/>
+        <!-- labels -->
+        <text class="bp-th" x="116" y="83" text-anchor="middle">BCM2712</text>
+        <text class="bp-t" x="116" y="92" text-anchor="middle">2.4GHz · 4-CORE A76</text>
+        <text class="bp-t" x="116" y="100" text-anchor="middle">VideoCore VII GPU</text>
+        <text class="bp-t" x="182" y="74" text-anchor="middle">8GB</text>
+        <text class="bp-t" x="182" y="81" text-anchor="middle">LPDDR5</text>
+        <text class="bp-t" x="171" y="102" text-anchor="start">USB3</text>
+        <text class="bp-t" x="171" y="119" text-anchor="start">USB3</text>
+        <text class="bp-t" x="171" y="140" text-anchor="start">GbE</text>
+        <text class="bp-t" x="115" y="8" text-anchor="middle">RASPBERRY PI 5 · AUTONOMY LAYER</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- §04 ROADMAP -->
+<div class="rule-label"><span>§ 04 — Project Timeline</span></div>
+<div id="rm-outer">
+  <div class="rm-header" id="rm-header">
+    <div class="stag">Timeline</div>
+    <h2 class="stitle">From blank page<br>to maiden flight.</h2>
+    <p class="sbody" style="margin-top:14px">Every crash, redesign, and breakthrough — scroll to trace the full journey.</p>
+  </div>
+  <div id="rm-sticky">
+    <div class="rm-canvas" id="rmCanvas">
+      <svg id="rmSvg" viewBox="0 0 1100 380" xmlns="http://www.w3.org/2000/svg">
+        <defs><filter id="gf" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter></defs>
+        <path id="rmGlow" d="M 40 330 C 120 300 180 255 230 245 C 285 233 320 280 365 300 C 415 322 448 350 510 355 C 575 360 620 265 685 230 C 730 205 768 182 808 176 C 850 170 875 210 912 204 C 952 196 990 140 1030 108 C 1060 84 1085 68 1110 52" filter="url(#gf)"/>
+        <path id="rmPath" d="M 40 330 C 120 300 180 255 230 245 C 285 233 320 280 365 300 C 415 322 448 350 510 355 C 575 360 620 265 685 230 C 730 205 768 182 808 176 C 850 170 875 210 912 204 C 952 196 990 140 1030 108 C 1060 84 1085 68 1110 52"/>
+        <g id="svgDots"></g>
+        <g id="flyer" opacity="0">
+          <polygon points="0,-6 12,0 0,6" fill="var(--teal)" opacity="0.9"/>
+          <line x1="-1" y1="0" x2="-10" y2="0" stroke="var(--teal)" stroke-width="1" opacity="0.4"/>
+          <circle cx="0" cy="0" r="13" fill="none" stroke="rgba(0,107,92,0.2)" stroke-width="1"/>
+        </g>
+      </svg>
+      <div id="rmCards"></div>
+    </div>
+    <div class="rm-hud">
+      <span id="rmPct">0%</span>
+      <div class="rm-track"><div class="rm-fill" id="rmFill"></div></div>
+      <span id="rmPhase">INITIALIZING</span>
+    </div>
+  </div>
+</div>
+
+<!-- §05 TEAM -->
+<div class="rule-label"><span>§ 05 — Project Team</span></div>
+<div class="section" id="team-section">
+  <div class="stag">Contributors</div>
+  <h2 class="stitle">The people<br>behind SLYR.</h2>
+  <p class="sbody">A small, focused team pushing the boundaries of autonomous avionics research.</p>
+  <div class="team-grid">
+    <div class="team-card">
+      <div class="team-avatar"></div>
+      <div><div class="team-name">emtypyie</div><div class="team-role">Lead Systems Architect</div></div>
+      <div class="team-desc">Oversees hardware architecture, dual-compute separation design, and PCB layout. Initiated the SLYR project in April 2025.</div>
+      <a href="https://github.com/myrachane" class="team-github" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        @myrachane
+      </a>
+    </div>
+    <div class="team-card">
+      <div class="team-avatar"></div>
+      <div><div class="team-name">Bynatics</div><div class="team-role">Backend Lead</div></div>
+      <div class="team-desc">Owns the STM32H7 flight kernel, real-time control loop implementation, and DShot motor protocol integration.</div>
+      <a href="https://github.com/bynatics" class="team-github" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        @bynatics
+      </a>
+    </div>
+    <div class="team-card">
+      <div class="team-avatar"></div>
+      <div><div class="team-name">Abhranil Paul</div><div class="team-role">Electronics</div></div>
+      <div class="team-desc">Responsible for the SLM decision engine, int8 quantisation pipeline, and the electronic systems.</div>
+      <a href="https://github.com/" class="team-github" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        @nilabhranil
+      </a>
+    </div>
+    <div class="team-card">
+      <div class="team-avatar"></div>
+      <div><div class="team-name">Jaxa</div><div class="team-role">System Designs</div></div>
+      <div class="team-desc">Responsible for the System design and functions.</div>
+      <a href="https://github.com/" class="team-github" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        @jaxa
+      </a>
+    </div>
+    <div class="team-card">
+      <div class="team-avatar"></div>
+      <div><div class="team-name">Sudipto Routh</div><div class="team-role">not assigned</div></div>
+      <div class="team-desc">Responsible for someting we dont know</div>
+      <a href="https://github.com/" class="team-github" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        @routh
+      </a>
+    </div>
+    <div class="team-card">
+      <div class="team-avatar"></div>
+      <div><div class="team-name"></div><div class="team-role">Electronics</div></div>
+      <div class="team-desc"></div>
+      <a href="https://github.com/idkuskaidkyah" class="team-github" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        @soon
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- §06 FUNDING -->
+<div class="rule-label"><span>§ 06 — R&amp;D Funding</span></div>
+<div class="section" id="funding-section">
+  <div class="stag">Financials</div>
+  <h2 class="stitle">Self-funded<br>from scratch.</h2>
+  <p class="sbody">Every component, PCB spin, and crash test has been funded out-of-pocket.</p>
+  <div class="funding-hero">
+    <div class="fund-main">
+      <div class="fund-label">Total Invested</div>
+      <div class="fund-amount">₹<span id="fundCountUp">0</span></div>
+      <div class="fund-of">of ₹30,000+ estimated total</div>
+      <div class="fund-bar-wrap"><div class="fund-bar" id="fundBar"></div></div>
+      <div class="fund-pct" id="fundPct">Calculating...</div>
+      <div class="fund-note" style="margin-top:20px">All figures are self-funded R&amp;D expenditure.<br>No external investors. No grants. Pure grit.</div>
+    </div>
+    <div>
+      <div class="fund-breakdown">
+        <div class="fund-item"><div style="display:flex;align-items:center"><div class="fund-item-dot"></div><span class="fund-item-label">PCB Fabrication &amp; Components</span></div><span class="fund-item-val">₹900</span></div>
+        <div class="fund-item"><div style="display:flex;align-items:center"><div class="fund-item-dot"></div><span class="fund-item-label">Esp32s</span></div><span class="fund-item-val">₹600</span></div>
+        <div class="fund-item"><div style="display:flex;align-items:center"><div class="fund-item-dot"></div><span class="fund-item-label">Sensors (IMU, Baro, GPS)</span></div><span class="fund-item-val">₹2,400</span></div>
+        <div class="fund-item"><div style="display:flex;align-items:center"><div class="fund-item-dot amber"></div><span class="fund-item-label">Frame, Motors &amp; ESCs</span></div><span class="fund-item-val">₹3,900</span></div>
+        <div class="fund-item"><div style="display:flex;align-items:center"><div class="fund-item-dot amber"></div><span class="fund-item-label">Test Crash Replacement Parts</span></div><span class="fund-item-val">₹480</span></div>
+        <div class="fund-item"><div style="display:flex;align-items:center"><div class="fund-item-dot faint"></div><span class="fund-item-label">Tools, Misc &amp; Consumables</span></div><span class="fund-item-val">~₹500</span></div>
+        <div class="fund-item" style="background:var(--teal-lt);">
+          <div style="display:flex;align-items:center"><div class="fund-item-dot"></div><span class="fund-item-label" style="color:var(--teal);font-weight:600">Total Spent</span></div>
+          <span class="fund-item-val" style="color:var(--teal);font-weight:600">₹8,780</span>
+        </div>
+      </div>
+      <div class="fund-note" style="margin-top:16px">Remaining ₹18,000+ covers STM32H7 dev boards,<br>v2 PCB spins, RF modules &amp; final test flights.</div>
+    </div>
+  </div>
+</div>
+
+<!-- §07 BLOG -->
+<div class="rule-label"><span>§ 07 — Field Notes &amp; Research Log</span></div>
+<div class="section" id="blog-section">
+  <div class="stag">Blog</div>
+  <h2 class="stitle">From the<br>bench &amp; beyond.</h2>
+  <p class="sbody">Raw notes, build logs, and research findings from the repo.</p>
+  <div class="blog-filters" id="blogFilters"><button class="blog-filter-btn active" data-tag="all">All Posts</button></div>
+  <div class="blog-grid" id="blogGrid">
+    <div class="blog-loading">
+      <span style="animation:cblink 1.1s step-end infinite;display:inline-block;width:6px;height:11px;background:var(--teal);vertical-align:middle;margin-right:8px"></span>
+      FETCHING POSTS FROM GITHUB...
+    </div>
+  </div>
+</div>
+
+<div class="blog-modal-overlay" id="blogModal">
+  <div class="blog-modal">
+    <button class="blog-modal-close" id="blogModalClose">✕ CLOSE</button>
+    <span class="blog-modal-tag" id="modalTag"></span>
+    <h2 class="blog-modal-title" id="modalTitle"></h2>
+    <div class="blog-modal-meta" id="modalMeta"></div>
+    <div class="blog-modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<footer>
+  <div class="foot-inner">
+    <div class="foot-meta">
+      <div class="foot-meta-label">Autonomous Systems Research</div>
+      <div class="foot-meta-sub">Educational &amp; Research Use Only</div>
+    </div>
+    <div class="pixel-word" aria-label="SLYR">
+      <svg class="pixel-letter" viewBox="0 0 60 80" width="90" height="120" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="56" height="12"/><rect x="2" y="2" width="12" height="37"/><rect x="2" y="34" width="56" height="12"/><rect x="46" y="34" width="12" height="37"/><rect x="2" y="66" width="56" height="12"/></svg>
+      <svg class="pixel-letter" viewBox="0 0 60 80" width="90" height="120" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="12" height="76"/><rect x="2" y="66" width="56" height="12"/></svg>
+      <svg class="pixel-letter" viewBox="0 0 60 80" width="90" height="120" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="12" height="40"/><rect x="46" y="2" width="12" height="40"/><rect x="24" y="36" width="12" height="42"/><rect x="2" y="34" width="56" height="12"/></svg>
+      <svg class="pixel-letter" viewBox="0 0 60 80" width="90" height="120" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="12" height="76"/><rect x="2" y="2" width="56" height="12"/><rect x="46" y="2" width="12" height="37"/><rect x="2" y="34" width="56" height="12"/><rect x="30" y="44" width="12" height="10"/><rect x="40" y="52" width="10" height="10"/><rect x="48" y="60" width="10" height="18"/></svg>
+    </div>
+    <div class="foot-copy">© 2025 SLYR Project &nbsp;·&nbsp; Research Use Only</div>
+  </div>
+</footer>
+
+<script>
+const html=document.documentElement,themeToggle=document.getElementById('themeToggle'),themeLabel=document.getElementById('themeLabel');
+function setTheme(t){html.setAttribute('data-theme',t);themeLabel.textContent=t==='dark'?'DARK':'LIGHT';try{localStorage.setItem('slyr-theme',t);}catch(e){}}
+try{const s=localStorage.getItem('slyr-theme');if(s)setTheme(s);}catch(e){}
+themeToggle.addEventListener('click',()=>{setTheme(html.getAttribute('data-theme')==='light'?'dark':'light');if(window._rm)updateRoadmap();});
+const burger=document.getElementById('burger'),mobileMenu=document.getElementById('mobileMenu');
+burger.addEventListener('click',()=>mobileMenu.classList.toggle('open'));
+function closeMobile(){mobileMenu.classList.remove('open');}
+const BOOT=[
+  {delay:200,cls:'tc',text:'SLYR FLIGHT OS  v0.4.2-dev'},
+  {delay:600,cls:'td',text:'──────────────────────────────'},
+  {delay:900,cls:'td',text:'Initializing hardware abstraction...'},
+  {delay:1300,cls:'tg',prefix:'[  OK  ]',text:'STM32H7 Flight Kernel: detected'},
+  {delay:1700,cls:'tg',prefix:'[  OK  ]',text:'IMU — ICM-42688-P: 1 kHz'},
+  {delay:2000,cls:'tg',prefix:'[  OK  ]',text:'Barometer — BMP388: nominal'},
+  {delay:2300,cls:'tw',prefix:'[ WAIT ]',text:'GPS — acquiring lock...'},
+  {delay:2800,cls:'tg',prefix:'[  OK  ]',text:'UART/SPI comm layer: nominal'},
+  {delay:3200,cls:'tg',prefix:'[  OK  ]',text:'Autonomy layer — Pi 5: online'},
+  {delay:3700,cls:'tg',prefix:'[ SEXY ]',text:'SLM engine: int8 · 12M params'},
+  {delay:4200,cls:'td',text:'──────────────────────────────'},
+  {delay:4600,cls:'tc',text:'All systems nominal. Awaiting mission.'},
+  {delay:5100,cls:'td',text:'',cursor:true},
+];
+(function(){const body=document.getElementById('termBody');BOOT.forEach(item=>{setTimeout(()=>{const old=body.querySelector('.cursor');if(old)old.remove();const line=document.createElement('div');line.className='tline';if(item.prefix){const p=document.createElement('span');p.className='tp';p.textContent=item.prefix;line.appendChild(p);}const t=document.createElement('span');t.className=item.cls;t.textContent=item.text;if(item.cursor){const c=document.createElement('span');c.className='cursor';t.appendChild(c);}line.appendChild(t);body.appendChild(line);requestAnimationFrame(()=>line.classList.add('show'));},item.delay);});})();
+const revObs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis');}),{threshold:0.1});
+document.querySelectorAll('.section,.rm-header').forEach(el=>revObs.observe(el));
+const fundObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(!e.isIntersecting)return;fundObs.unobserve(e.target);setTimeout(()=>{document.getElementById('fundBar').style.width='30%';document.getElementById('fundPct').textContent='30% of estimated total reached';},300);const target=8780,duration=1800,el=document.getElementById('fundCountUp');let start=null;function step(ts){if(!start)start=ts;const prog=Math.min((ts-start)/duration,1),eased=1-Math.pow(1-prog,3);el.textContent=Math.floor(eased*target).toLocaleString('en-IN');if(prog<1)requestAnimationFrame(step);}requestAnimationFrame(step);});},{threshold:0.3});
+const fs=document.getElementById('funding-section');if(fs)fundObs.observe(fs);
+const MILESTONES=[
+  {t:0.00,date:'APR 2025',label:'Project Start',sub:'Foundations & research',status:'s-done',up:true},
+  {t:0.12,date:'AUG 2025',label:'v1 System Design',sub:'Dual-compute spec',status:'s-done',up:false},
+  {t:0.24,date:'SEP 2025',label:'PCB In Hand',sub:'First hardware build',status:'s-done',up:true},
+  {t:0.38,date:'OCT 2025',label:'Maiden Test',sub:'ESP32 — barely stable',status:'s-crash',up:true},
+  {t:0.50,date:'2026',label:'Redesign Phase',sub:'Back to drawing board',status:'s-pause',up:false},
+  {t:0.60,date:'JUN 2026',label:'Work Resumes',sub:'Full redesign underway',status:'s-now',up:true},
+  {t:0.70,date:'AUG 2026',label:'Firmware Dev',sub:'STM32 flight kernel',status:'s-future',up:false},
+  {t:0.80,date:'OCT 2026',label:'Simulation',sub:'SITL & HIL validation',status:'s-future',up:true},
+  {t:0.90,date:'EARLY 2027',label:'HW Testing',sub:'Full integration',status:'s-future',up:false},
+  {t:1.00,date:'LATE 2027',label:'Maiden Flight',sub:'SLYR takes to the sky',status:'s-future',up:true},
+];
+const PHASES=['INITIALIZING','PROJECT START','SYSTEM DESIGN','PCB MILESTONE','MAIDEN TEST','REDESIGN','RESUMING','FIRMWARE','SIMULATION','HW TESTING','MAIDEN FLIGHT'];
+let cardEls=[],lineEls=[],dotEls=[];
+function setupRoadmap(){
+  const rmPath=document.getElementById('rmPath'),rmGlow=document.getElementById('rmGlow'),rmDots=document.getElementById('svgDots'),rmCards=document.getElementById('rmCards'),flyerGroup=document.getElementById('flyer'),pathLen=rmPath.getTotalLength();
+  rmPath.style.strokeDasharray=rmGlow.style.strokeDasharray=pathLen;
+  rmPath.style.strokeDashoffset=rmGlow.style.strokeDashoffset=pathLen;
+  const svg=document.getElementById('rmSvg'),vb=svg.viewBox.baseVal,rect=svg.getBoundingClientRect(),scaleX=rect.width/vb.width,scaleY=rect.height/vb.height;
+  MILESTONES.forEach((ms,i)=>{
+    const pt=rmPath.getPointAtLength(ms.t*pathLen);
+    const dotG=document.createElementNS('http://www.w3.org/2000/svg','g');
+    const outer=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    outer.setAttribute('cx',pt.x);outer.setAttribute('cy',pt.y);outer.setAttribute('r','7');outer.setAttribute('fill','var(--bg)');
+    const inner=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    inner.setAttribute('cx',pt.x);inner.setAttribute('cy',pt.y);inner.setAttribute('r','3');
+    const col=ms.status==='s-done'||ms.status==='s-now'?'var(--teal)':ms.status==='s-crash'?'var(--amber)':'var(--faint)';
+    outer.setAttribute('stroke',col);outer.setAttribute('stroke-width','1.8');inner.setAttribute('fill',col);
+    if(ms.status==='s-now'){const pulse=document.createElementNS('http://www.w3.org/2000/svg','circle');pulse.setAttribute('cx',pt.x);pulse.setAttribute('cy',pt.y);pulse.setAttribute('r','12');pulse.setAttribute('fill','none');pulse.setAttribute('stroke','var(--teal)');pulse.setAttribute('stroke-width','1');pulse.style.animation='pulsering 2s ease-out infinite';dotG.appendChild(pulse);}
+    dotG.appendChild(outer);dotG.appendChild(inner);dotG.style.opacity='0';dotG.style.transition='opacity 0.4s ease';
+    rmDots.appendChild(dotG);dotEls.push(dotG);
+    const CARD_W=158,GAP=ms.status==='s-crash'?28:22,pxX=pt.x*scaleX,pxY=pt.y*scaleY;
+    const card=document.createElement('div');card.className=`ms-card ${ms.status}`;
+    card.innerHTML=`<div class="ms-card-date">${ms.date}</div><div class="ms-card-label">${ms.label}</div><div class="ms-card-sub">${ms.sub}</div>`;
+    const cardLeft=Math.min(Math.max(pxX-CARD_W/2,0),rect.width-CARD_W);
+    const line=document.createElement('div');line.className='ms-line';
+    let cardTop;
+    if(ms.up){const CARD_H=70;cardTop=pxY-GAP-CARD_H;line.style.left=(pxX-0.5)+'px';line.style.top=(cardTop+CARD_H)+'px';line.style.height=GAP+'px';}
+    else{cardTop=pxY+GAP;line.style.left=(pxX-0.5)+'px';line.style.top=pxY+'px';line.style.height=GAP+'px';}
+    card.style.left=cardLeft+'px';card.style.top=cardTop+'px';
+    rmCards.appendChild(card);rmCards.appendChild(line);cardEls.push(card);lineEls.push(line);
+  });
+  window._rm={rmPath,rmGlow,flyerGroup,pathLen};
+}
+function updateRoadmap(){
+  if(!window._rm)return;
+  const{rmPath,rmGlow,flyerGroup,pathLen}=window._rm;
+  const outer=document.getElementById('rm-outer'),oTop=outer.getBoundingClientRect().top+window.scrollY,oH=outer.offsetHeight-window.innerHeight,prog=Math.max(0,Math.min(1,(window.scrollY-oTop)/oH));
+  const offset=pathLen*(1-prog);rmPath.style.strokeDashoffset=rmGlow.style.strokeDashoffset=offset;
+  const pct=Math.round(prog*100);document.getElementById('rmFill').style.width=pct+'%';document.getElementById('rmPct').textContent=pct+'%';
+  document.getElementById('rmPhase').textContent=PHASES[Math.min(Math.floor(prog*MILESTONES.length),MILESTONES.length)]||PHASES[PHASES.length-1];
+  MILESTONES.forEach((ms,i)=>{const triggered=prog>=ms.t-0.01;dotEls[i].style.opacity=triggered?'1':'0';triggered?(cardEls[i].classList.add('show'),lineEls[i].classList.add('show')):(cardEls[i].classList.remove('show'),lineEls[i].classList.remove('show'));});
+  const clamp=Math.min(prog,0.999),pt0=rmPath.getPointAtLength(clamp*pathLen),pt1=rmPath.getPointAtLength(Math.min((clamp+0.008)*pathLen,pathLen));
+  flyerGroup.setAttribute('transform',`translate(${pt0.x} ${pt0.y}) rotate(${Math.atan2(pt1.y-pt0.y,pt1.x-pt0.x)*(180/Math.PI)})`);
+  flyerGroup.setAttribute('opacity',prog>0.01?'1':'0');
+}
+const styleEl=document.createElement('style');styleEl.textContent='@keyframes pulsering{0%{r:10;opacity:0.5}100%{r:22;opacity:0}}';document.head.appendChild(styleEl);
+window.addEventListener('load',()=>{setupRoadmap();updateRoadmap();});
+window.addEventListener('scroll',updateRoadmap,{passive:true});
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{document.getElementById('svgDots').innerHTML='';document.getElementById('rmCards').innerHTML='';cardEls=[];lineEls=[];dotEls=[];setupRoadmap();updateRoadmap();},200);});
+const BLOGS_JSON_URL='https://raw.githubusercontent.com/placeholder-user/slyr-blogs/main/blogs.json';
+const DEMO_BLOGS=[
+  {id:1,title:"Why We Split the Compute: The Architecture Decision",tag:"Architecture",date:"2025-08-12",author:"Emtypyie",excerpt:"The single biggest design choice in SLYR — running two brains instead of one.",content:"<p>When we started SLYR, the tempting path was to run everything on a single board. Basically ESP32. One loop, one headache. But tight coupling between AI inference and flight control is a silent killer.</p><h3>The Core Problem</h3><p>AI inference is variable-latency by nature. A transformer forward pass can spike from 8ms to 80ms depending on thermal throttling or memory pressure. If your PID controller is waiting on that output, you have an 80ms gap of blind flight.</p><h3>Our Answer</h3><p>The STM32H7 runs a <code>~1kHz</code> deterministic loop. It doesn't care what the Pi is doing. It will never wait for it. Safety isn't a software policy. It's a hardware constraint.</p>"},
+  {id:2,title:"The Hand-Launch Test: A Lesson in Configuration",tag:"Field Report",date:"2025-10-02",author:"Abhranil Paul",excerpt:"We rushed a manual test of our fixed-wing prototype. It flew briefly — then a misconfigured control input brought it down.",content:"<p>We pushed ahead with a manual hand-launch — no autonomous system, no full validation. The launch was clean. Initial lift was stable for approximately 3–4 meters.</p><h3>What Happened</h3><p>Upon applying elevator input, the aircraft pitched down instead of climbing. The control response was inverted due to a configuration error. At such a low altitude, there was no room for recovery.</p><h3>Takeaway</h3><p>Never skip validation steps for control surfaces. Even a fully functional build becomes unstable with incorrect configuration.</p>"},
+  {id:3,title:"Redesigning the Decision Layer",tag:"AI/ML",date:"2026-04-01",author:"Emtypyie",excerpt:"Before optimisation, before quantisation — we had a bigger problem: we didn't clearly define what the model was supposed to decide.",content:"<p>We had a 12M parameter SLM, but no strict boundary around what it should do. We were asking a probabilistic system to behave like a deterministic controller.</p><h3>Constraining the Output Space</h3><p>We defined a bounded decision space: REROUTE, HOLD, ASCEND/DESCEND, ABORT. Each decision maps to predefined behaviours. The model doesn't invent actions — it selects from structured options.</p><p>Before you make a model faster, make sure it knows its job.</p>"}
+];
+let allBlogs=[],activeTag='all';
+async function loadBlogs(){
+  try{const res=await fetch(BLOGS_JSON_URL);if(!res.ok)throw new Error();allBlogs=await res.json();}
+  catch(e){allBlogs=DEMO_BLOGS;}
+  buildFilters();renderBlogs();
+}
+function buildFilters(){
+  const tags=['all',...new Set(allBlogs.map(b=>b.tag))];
+  const container=document.getElementById('blogFilters');container.innerHTML='';
+  tags.forEach(tag=>{const btn=document.createElement('button');btn.className='blog-filter-btn'+(tag==='all'?' active':'');btn.dataset.tag=tag;btn.textContent=tag==='all'?'All Posts':tag;btn.addEventListener('click',()=>{activeTag=tag;document.querySelectorAll('.blog-filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderBlogs();});container.appendChild(btn);});
+}
+function renderBlogs(){
+  const grid=document.getElementById('blogGrid');const filtered=activeTag==='all'?allBlogs:allBlogs.filter(b=>b.tag===activeTag);grid.innerHTML='';
+  if(!filtered.length){grid.innerHTML='<div class="blog-loading">NO POSTS FOUND.</div>';return;}
+  filtered.forEach(post=>{const card=document.createElement('div');card.className='blog-card';const dateStr=new Date(post.date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}).toUpperCase();card.innerHTML=`<span class="blog-tag">${post.tag}</span><div class="blog-title">${post.title}</div><div class="blog-excerpt">${post.excerpt}</div><div class="blog-meta"><span>${dateStr}</span><div class="blog-meta-sep"></div><span>${post.author}</span></div>`;card.addEventListener('click',()=>openModal(post));grid.appendChild(card);});
+}
+function openModal(post){
+  const dateStr=new Date(post.date).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}).toUpperCase();
+  document.getElementById('modalTag').textContent=post.tag;document.getElementById('modalTitle').textContent=post.title;document.getElementById('modalMeta').innerHTML=`<span>${dateStr}</span><span>·</span><span>${post.author}</span>`;document.getElementById('modalBody').innerHTML=post.content||`<p>${post.excerpt}</p>`;document.getElementById('blogModal').classList.add('open');document.body.style.overflow='hidden';
+}
+function closeModal(){document.getElementById('blogModal').classList.remove('open');document.body.style.overflow='';}
+document.getElementById('blogModalClose').addEventListener('click',closeModal);
+document.getElementById('blogModal').addEventListener('click',e=>{if(e.target===document.getElementById('blogModal'))closeModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+loadBlogs();
+</script>
+</body>
+</html>
