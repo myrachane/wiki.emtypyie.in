@@ -14,8 +14,8 @@
       --border:       #C9BEB0;
       --border-light: #DDD6CA;
       --text:         #1C1917;
-      --text-muted:   #6B6152;
-      --text-faint:   #1C1917;
+      --text-muted:   #4A4035; /* darkened from #6B6152 */
+      --text-faint:   #6B6152; /* darkened from #9A8F82 */
       --accent:       #B45309;
       --accent-hover: #92400E;
       --accent-dim:   #FEF3C7;
@@ -39,8 +39,8 @@
       --border:       #2C2924;
       --border-light: #252220;
       --text:         #E8E2D6;
-      --text-muted:   #8C8274;
-      --text-faint:   #5A5248;
+      --text-muted:   #A89E92; /* darkened from #8C8274 */
+      --text-faint:   #7A7268; /* darkened from #5A5248 */
       --accent:       #D97706;
       --accent-hover: #F59E0B;
       --accent-dim:   #1C1407;
@@ -90,7 +90,7 @@
       pointer-events: none;
       z-index: 0;
     }
-    [data-theme="dark"] .bg-right { opacity: 0.06; }
+    [data-theme="dark"] .bg-right { opacity: 0.28; } /* raised from 0.06 → visible in dark mode */
 
     /* ── LEFT SCRIBBLES ─────────────────── */
     .scribble-left {
