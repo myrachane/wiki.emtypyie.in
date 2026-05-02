@@ -7,6 +7,14 @@
       "status": "active",
       "updated": "2025-10-28",
       "lang": "cpp"
+    },
+     {
+      "id": "bloatware.html",
+      "name": "BloatWare",
+      "desc": "BloatWare is discord bot serving directly under KGB, Our beloved commrade!",
+      "status": "paused",
+      "updated": "2026-4-30",
+      "lang": "python"
     }
     
   ]
