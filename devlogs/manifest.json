@@ -1,0 +1,52 @@
+{
+  "projects": [
+    {
+      "id": "taskd",
+      "name": "taskd",
+      "desc": "Distributed task queue built on Redis. Retry logic, dead-letter queues, and a minimal Go worker runtime.",
+      "status": "active",
+      "updated": "2025-04-28",
+      "lang": "Go"
+    },
+    {
+      "id": "dns-proxy",
+      "name": "dns-proxy",
+      "desc": "Lightweight DNS-over-HTTPS proxy with local cache and per-domain routing rules. Single binary, zero config.",
+      "status": "active",
+      "updated": "2025-04-21",
+      "lang": "Go"
+    },
+    {
+      "id": "schemavault",
+      "name": "schemavault",
+      "desc": "Schema registry for internal APIs. Version control + diff tooling + webhook hooks for breaking change detection.",
+      "status": "paused",
+      "updated": "2025-03-10",
+      "lang": "TypeScript"
+    },
+    {
+      "id": "logpipe",
+      "name": "logpipe",
+      "desc": "Structured log ingestion pipeline. Parses stdin, enriches with metadata, ships to configurable sinks.",
+      "status": "completed",
+      "updated": "2025-02-14",
+      "lang": "Go"
+    },
+    {
+      "id": "this-wiki",
+      "name": "this wiki",
+      "desc": "The wiki itself. Static HTML, no frameworks, deployed to Vercel. Includes a lightweight like/view API backend.",
+      "status": "active",
+      "updated": "2025-04-30",
+      "lang": "HTML"
+    },
+    {
+      "id": "memstore",
+      "name": "memstore",
+      "desc": "Embedded key-value store with an LSM-tree backend. Written in C for constrained environments.",
+      "status": "paused",
+      "updated": "2025-01-30",
+      "lang": "C"
+    }
+  ]
+}
