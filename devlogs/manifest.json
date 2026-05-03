@@ -3,19 +3,20 @@
     {
       "id": "slyr.html",
       "name": "Slyr.cpp",
+      "nameHi": "स्लायर.सीपीपी",
       "desc": "SLYR is a dual-compute avionics platform that separates deterministic flight control from AI-assisted decision making — enforced at the hardware level.",
       "status": "active",
       "updated": "2025-10-28",
       "lang": "cpp"
     },
-     {
+    {
       "id": "bloatware.html",
       "name": "BloatWare",
+      "nameHi": "ब्लोटवेयर",
       "desc": "BloatWare is discord bot serving directly under KGB, Our beloved commrade!",
       "status": "paused",
-      "updated": "2026-4-30",
+      "updated": "2026-04-30",
       "lang": "python"
     }
-    
   ]
 }
