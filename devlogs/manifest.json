@@ -17,6 +17,15 @@
       "status": "paused",
       "updated": "2026-04-30",
       "lang": "python"
+    },
+    {
+      "id": "wdm.html",
+      "name": "W.Decision-Matrix",
+      "nameHi": "ब्डब्ल्यू.निर्णय-मैट्रिक्स",
+      "desc": "A zero-dependency, single-file weighted decision matrix tool. Add criteria with adjustable weights, add options, score each cell on a 0–10 stepper, and get a ranked results list with animated bars ",
+      "status": "completed",
+      "updated": "2026-05-1",
+      "lang": "html"
     }
   ]
 }
