@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="W.Decision-Matrix is a zero-dependency weighted decision matrix tool — criteria, weights, scores, winner." />
+  <title>wiki W.Decision-Matrix</title>
+  <style>
+    /* ─── DESIGN TOKENS ──────────────────────────────────────── */
+    :root {
+      --bg:           #F4EFE6;
+      --surface:      #EDE7DA;
+      --surface-2:    #E5DDD0;
+      --border:       #C9BEB0;
+      --border-light: #DDD6CA;
+      --text:         #1C1917;
+      --text-muted:   #6B6152;
+      --text-faint:   #9A8F82;
+      --accent:       #B45309;
+      --accent-hover: #92400E;
+      --accent-dim:   #FEF3C7;
+      --green:        #2F6B3E;
+      --green-bg:     #DCFCE7;
+      --amber:        #92400E;
+      --amber-bg:     #FEF3C7;
+      --slate:        #334155;
+      --slate-bg:     #E2E8F0;
+      --code-bg:      #201C18;
+      --code-text:    #E8DFD0;
+      --code-border:  #302A24;
+      --shadow:       0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+      --shadow-md:    0 4px 12px rgba(0,0,0,0.10), 0 2px 4px rgba(0,0,0,0.06);
+      --radius:       3px;
+      --font-serif:   'Georgia', 'Times New Roman', serif;
+      --font-sans:    system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+      --font-mono:    'Courier New', 'Lucida Console', Courier, monospace;
+      --max-w:        900px;
+      --nav-h:        52px;
+    }
+
+    [data-theme="dark"] {
+      --bg:           #0E0D0B;
+      --surface:      #181614;
+      --surface-2:    #201E1A;
+      --border:       #2C2924;
+      --border-light: #252220;
+      --text:         #E8E2D6;
+      --text-muted:   #8C8274;
+      --text-faint:   #5A5248;
+      --accent:       #D97706;
+      --accent-hover: #F59E0B;
+      --accent-dim:   #1C1407;
+      --green:        #4ADE80;
+      --green-bg:     #052E16;
+      --amber:        #FCD34D;
+      --amber-bg:     #1C1100;
+      --slate:        #94A3B8;
+      --slate-bg:     #0F172A;
+      --code-bg:      #0A0907;
+      --code-text:    #D4C9B4;
+      --code-border:  #1E1C18;
+      --shadow:       0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+      --shadow-md:    0 4px 12px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.65;
+      min-height: 100vh;
+      transition: background 0.2s, color 0.2s;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image: radial-gradient(circle, var(--border) 1px, transparent 1px);
+      background-size: 28px 28px;
+      opacity: 0.3;
+    }
+    [data-theme="dark"] body::before { opacity: 0.12; }
+
+    /* ─── NAVBAR ─────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      z-index: 100;
+      transition: background 0.2s;
+    }
+    .nav-inner {
+      width: 100%;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-brand {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+    }
+    .nav-brand .slash { color: var(--text-faint); margin: 0 5px; }
+    .nav-brand .wiki-part { color: var(--accent); font-weight: 700; }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+    .nav-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: var(--radius);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+      white-space: nowrap;
+    }
+    .nav-btn:hover {
+      color: var(--text);
+      border-color: var(--text-muted);
+      background: var(--surface);
+    }
+    .nav-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+    /* ─── PAGE ───────────────────────────────────────────────── */
+    .page {
+      position: relative;
+      z-index: 1;
+      padding-top: var(--nav-h);
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+
+    /* ─── BREADCRUMB ─────────────────────────────────────────── */
+    .breadcrumb {
+      padding: 20px 0 0;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-faint);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .breadcrumb a:hover { color: var(--accent); }
+    .breadcrumb .sep { color: var(--border); }
+
+    /* ─── PROJECT HEADER ─────────────────────────────────────── */
+    .project-header {
+      padding: 32px 0 40px;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .header-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .project-title {
+      font-family: var(--font-serif);
+      font-size: clamp(32px, 6vw, 52px);
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+    .badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 2px;
+      font-weight: 700;
+      border: 1px solid transparent;
+      flex-shrink: 0;
+      margin-top: 8px;
+    }
+    .badge-active   { color: var(--green);  background: var(--green-bg);  border-color: color-mix(in srgb, var(--green)  25%, transparent); }
+    .badge-paused   { color: var(--amber);  background: var(--amber-bg);  border-color: color-mix(in srgb, var(--amber)  25%, transparent); }
+    .badge-completed{ color: var(--slate);  background: var(--slate-bg);  border-color: color-mix(in srgb, var(--slate)  25%, transparent); }
+
+    .project-desc {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-width: 680px;
+      margin-bottom: 24px;
+    }
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .meta-item {
+      padding: 10px 16px;
+      border-right: 1px solid var(--border-light);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      background: var(--surface);
+    }
+    .meta-item:last-child { border-right: none; }
+    .meta-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+    }
+    .meta-val {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .meta-val a { color: var(--accent); }
+    .meta-val a:hover { color: var(--accent-hover); }
+
+    /* ─── TOC ────────────────────────────────────────────────── */
+    .toc {
+      padding: 20px 0 8px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .toc-link {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-faint);
+      padding: 4px 10px;
+      border: 1px solid var(--border-light);
+      border-radius: 2px;
+      transition: color 0.15s, background 0.15s, border-color 0.15s;
+    }
+    .toc-link:hover {
+      color: var(--accent);
+      background: var(--surface);
+      border-color: var(--border);
+    }
+
+    /* ─── CONTENT SECTIONS ───────────────────────────────────── */
+    .content { padding: 0 0 40px; }
+
+    .doc-section {
+      padding: 40px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .doc-section:last-of-type { border-bottom: none; }
+
+    .section-label {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .section-num {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-faint);
+      letter-spacing: 0.08em;
+    }
+    .section-name {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+
+    .prose {
+      max-width: 680px;
+      color: var(--text-muted);
+      font-size: 14.5px;
+      line-height: 1.8;
+    }
+    .prose p + p { margin-top: 14px; }
+    .prose strong { color: var(--text); font-weight: 600; }
+    .prose code {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      background: var(--surface-2);
+      color: var(--accent);
+      padding: 1px 5px;
+      border-radius: 2px;
+      border: 1px solid var(--border-light);
+    }
+    .prose ul {
+      margin: 14px 0;
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .prose ul li { color: var(--text-muted); font-size: 14.5px; }
+    .prose ul li::marker { color: var(--accent); }
+
+    /* ─── CONTRIBUTORS ───────────────────────────────────────── */
+    .contributors-section {
+      padding: 36px 0 32px;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .contributors-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin-bottom: 16px;
+    }
+    .contributors-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .contributor-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px 8px 8px;
+      background: var(--surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius);
+      transition: border-color 0.15s, background 0.15s;
+      text-decoration: none;
+    }
+    .contributor-card:hover {
+      border-color: var(--border);
+      background: var(--surface-2);
+    }
+    .contributor-pfp {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--border-light);
+      object-fit: cover;
+      display: block;
+      background: var(--surface-2);
+    }
+    .contributor-info { display: flex; flex-direction: column; gap: 1px; }
+    .contributor-name {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text);
+      font-weight: 600;
+    }
+    .contributor-role {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-faint);
+    }
+    .contributor-open {
+      margin-top: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent);
+      padding: 4px 12px;
+      border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+      border-radius: 2px;
+      background: var(--accent-dim);
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .contributor-open:hover {
+      background: color-mix(in srgb, var(--accent) 12%, transparent);
+      border-color: var(--accent);
+    }
+    .contributor-open svg { width: 11px; height: 11px; }
+
+    /* ─── FILE LABEL ─────────────────────────────────────────── */
+    .file-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-faint);
+      margin-bottom: 6px;
+      margin-top: 28px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .file-label::before {
+      content: '';
+      display: inline-block;
+      width: 8px; height: 8px;
+      background: var(--accent);
+      opacity: 0.5;
+      border-radius: 1px;
+    }
+
+    /* ─── CODE BLOCK ─────────────────────────────────────────── */
+    .code-block {
+      margin: 8px 0 20px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--code-border);
+      background: var(--code-bg);
+    }
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 14px;
+      border-bottom: 1px solid var(--code-border);
+      background: color-mix(in srgb, var(--code-bg) 60%, black);
+    }
+    .code-lang {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-faint);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .code-copy {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-faint);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 2px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .code-copy:hover { color: var(--accent); }
+    pre { margin: 0; overflow-x: auto; }
+    pre code {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      line-height: 1.75;
+      color: var(--code-text);
+      padding: 16px 18px;
+      background: none;
+      border: none;
+    }
+
+    .tok-kw   { color: #D4845A; }
+    .tok-fn   { color: #86C4C0; }
+    .tok-str  { color: #94C685; }
+    .tok-cmt  { color: #5A5248; font-style: italic; }
+    .tok-num  { color: #C4A97A; }
+    .tok-type { color: #C4A97A; }
+    .tok-dec  { color: #A89BD4; }
+    .tok-cls  { color: #E8C97A; }
+    .tok-prop { color: #86C4C0; }
+
+    /* ─── DEV LOGS ───────────────────────────────────────────── */
+    .devlogs-list { display: flex; flex-direction: column; gap: 0; }
+    .log-entry {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 0 28px;
+      padding: 32px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .log-entry:last-child { border-bottom: none; }
+    .log-meta { padding-top: 3px; flex-shrink: 0; }
+    .log-date {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-faint);
+      white-space: nowrap;
+    }
+    .log-index {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--border);
+      letter-spacing: 0.1em;
+      margin-top: 3px;
+    }
+    .log-version {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      margin-top: 4px;
+      opacity: 0.8;
+    }
+    .log-title {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+    .log-content {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.8;
+      max-width: 620px;
+    }
+    .log-content p + p { margin-top: 12px; }
+    .log-content strong { color: var(--text); font-weight: 600; }
+    .log-content code {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      background: var(--surface-2);
+      color: var(--accent);
+      padding: 1px 5px;
+      border-radius: 2px;
+      border: 1px solid var(--border-light);
+    }
+    .log-links {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .log-link {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent);
+      padding: 3px 10px;
+      border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+      border-radius: 2px;
+      background: var(--accent-dim);
+      transition: background 0.15s, border-color 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .log-link:hover {
+      background: color-mix(in srgb, var(--accent) 12%, transparent);
+      border-color: var(--accent);
+    }
+    .log-link svg { width: 11px; height: 11px; }
+
+    .status-notice {
+      margin-top: 20px;
+      padding: 12px 16px;
+      background: var(--amber-bg);
+      border: 1px solid color-mix(in srgb, var(--amber) 30%, transparent);
+      border-radius: var(--radius);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--amber);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      max-width: 620px;
+    }
+    .status-notice-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+
+    /* ─── LIKE / SHARE BAR ───────────────────────────────────── */
+    .action-bar {
+      padding: 28px 0;
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      cursor: pointer;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .action-btn:hover {
+      border-color: var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+    }
+    .action-btn.liked {
+      color: var(--accent);
+      border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+      background: var(--accent-dim);
+    }
+    .action-btn svg { width: 14px; height: 14px; }
+    .action-sep {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-faint);
+    }
+    #shareToast {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--green);
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+
+    /* ─── FOOTER ─────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      margin-top: 40px;
+    }
+    .footer-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 24px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .footer-brand {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-faint);
+    }
+    .footer-brand span { color: var(--accent); }
+    .footer-back {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-faint);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: color 0.15s;
+    }
+    .footer-back:hover { color: var(--accent); }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      nav { padding: 0 16px; }
+      .page { padding-left: 16px; padding-right: 16px; }
+      .log-entry { grid-template-columns: 1fr; gap: 6px; }
+      .meta-row { flex-wrap: wrap; }
+      .meta-item { flex: 1 1 auto; min-width: 120px; }
+      .header-top { flex-direction: column; gap: 8px; }
+      .badge { margin-top: 0; }
+      .nav-btn span { display: none; }
+      .footer-inner { flex-direction: column; align-items: flex-start; gap: 10px; }
+      .action-bar { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAVBAR ── -->
+  <nav>
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">
+        emtypyie
+        <span class="slash">/</span>
+        <span class="wiki-part">wiki</span>
+      </a>
+      <div class="nav-actions">
+        <button class="nav-btn" id="themeToggle" aria-label="Toggle theme">
+          <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <span id="themeLabel">light</span>
+        </button>
+        <a href="https://github.com/myrachane" target="_blank" rel="noopener" class="nav-btn">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+          <span>github</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page" style="padding-top: calc(var(--nav-h) + 0px)">
+
+    <!-- ── BREADCRUMB ── -->
+    <div class="breadcrumb">
+      <a href="/">wiki</a>
+      <span class="sep">/</span>
+      <span>W.Decision-Matrix</span>
+    </div>
+
+    <!-- ── PROJECT HEADER ── -->
+    <header class="project-header">
+      <div class="header-top">
+        <h1 class="project-title">W.Decision-Matrix</h1>
+        <span class="badge badge-completed">Completed</span>
+      </div>
+      <p class="project-desc">
+        A zero-dependency, single-file weighted decision matrix tool. Add criteria with adjustable weights,
+        add options, score each cell on a 0–10 stepper, and get a ranked results list with animated bars — all in the browser,
+        no build step, no frameworks, no nonsense.
+      </p>
+      <div class="meta-row">
+        <div class="meta-item">
+          <span class="meta-label">Started</span>
+          <span class="meta-val">2026-04-01</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Last updated</span>
+          <span class="meta-val">2026-04-22</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Stack</span>
+          <span class="meta-val">HTML · CSS · JS</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Source</span>
+          <span class="meta-val"><a href="https://github.com/myrachane/W.Decision-Matrix" target="_blank">github ↗</a></span>
+        </div>
+      </div>
+
+      <!-- TOC -->
+      <div class="toc">
+        <a href="#contributors" class="toc-link">§0 Contributors</a>
+        <a href="#overview"     class="toc-link">§1 Overview</a>
+        <a href="#why"          class="toc-link">§2 Why I built this</a>
+        <a href="#architecture" class="toc-link">§3 Architecture</a>
+        <a href="#devlogs"      class="toc-link">§4 Dev Logs</a>
+      </div>
+    </header>
+
+    <!-- ── CONTENT ── -->
+    <div class="content">
+
+      <!-- §0 CONTRIBUTORS -->
+      <section class="contributors-section doc-section" id="contributors">
+        <div class="section-label">
+          <span class="section-num">§0</span>
+          <span class="section-name">Contributors</span>
+        </div>
+        <div class="contributors-list">
+          <a href="https://github.com/myrachane" target="_blank" rel="noopener" class="contributor-card">
+            <img
+              class="contributor-pfp"
+              src="https://github.com/myrachane.png"
+              alt="myrachane"
+              width="32"
+              height="32"
+              onerror="this.style.background='var(--surface-2)'"
+            />
+            <div class="contributor-info">
+              <span class="contributor-name">myrachane</span>
+              <span class="contributor-role">author &amp; maintainer</span>
+            </div>
+          </a>
+        </div>
+        <a href="https://github.com/myrachane/W.Decision-Matrix" target="_blank" rel="noopener" class="contributor-open">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+          open for contributions → github.com/myrachane/W.Decision-Matrix
+        </a>
+      </section>
+
+      <!-- §1 OVERVIEW -->
+      <section class="doc-section" id="overview">
+        <div class="section-label">
+          <span class="section-num">§1</span>
+          <span class="section-name">Overview</span>
+        </div>
+        <div class="prose">
+          <p>
+            <strong>W.Decision-Matrix</strong> is a fully client-side weighted decision matrix tool — one HTML file,
+            no build pipeline, no npm install, no server. Open it in a browser and it works.
+          </p>
+          <p>
+            The idea is simple: you define <strong>criteria</strong> (cost, speed, quality — whatever matters) and
+            give each a weight from 1–10 via a range slider. Then you add <strong>options</strong> (Vendor A, Vendor B, doing nothing).
+            Score every option against every criterion with a stepper widget (0–10), and the results panel
+            calculates a weighted score in real time, ranks everything, and animates the bars to show you the winner.
+          </p>
+          <p>
+            Core features:
+          </p>
+          <ul>
+            <li>Weighted criteria with live range sliders (1–10)</li>
+            <li>Score matrix with +/− steppers — no keyboard needed</li>
+            <li>Real-time ranked results with animated progress bars</li>
+            <li>Dark / light theme toggle with <code>localStorage</code> persistence</li>
+            <li>Reset button (with confirm guard so you don't nuke yourself)</li>
+            <li>Zero dependencies — ships as a single <code>.html</code> file</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- §2 WHY -->
+      <section class="doc-section" id="why">
+        <div class="section-label">
+          <span class="section-num">§2</span>
+          <span class="section-name">Why I built this</span>
+        </div>
+        <div class="prose">
+          <p>
+            Every time I had to make a decision with more than two options I'd either open a spreadsheet
+            and spend 20 minutes setting up formulas, or just flip a coin. Neither is great.
+            There are online tools for this but they're either bloated, behind a login, or ugly.
+          </p>
+          <p>
+            I wanted something I could drop in a folder and open directly from the filesystem —
+            no account, no internet, no <code>npm install</code>.
+            The whole point of the <strong>"W."</strong> prefix is that it's <em>weighted</em> — that's the useful
+            part that most quick tools skip. Raw scores without weights are just vibes with extra steps.
+          </p>
+          <p>
+            Also I just wanted to write some vanilla JS for once without reaching for a framework.
+            Turned out fine. The whole thing is ~200 lines of logic.
+          </p>
+        </div>
+      </section>
+
+      <!-- §3 ARCHITECTURE -->
+      <section class="doc-section" id="architecture">
+        <div class="section-label">
+          <span class="section-num">§3</span>
+          <span class="section-name">Architecture / Design</span>
+        </div>
+        <div class="prose">
+          <p>
+            Everything lives in a single <code>index.html</code>. The state is three plain JS arrays — <code>crits</code>,
+            <code>opts</code>, and a flat <code>scores</code> object keyed by <code>"optId|critId"</code>.
+            Every mutation calls <code>render()</code> which rewrites the relevant DOM sections.
+            No virtual DOM, no diffing, just targeted <code>innerHTML</code> rewrites on small panels.
+          </p>
+          <p>
+            The weighted score calculation runs in <code>calculate()</code>: it normalises criterion weights
+            against their total, multiplies each score by the normalised weight, sums per option,
+            and returns a sorted array. Results re-render on every stepper click and every weight change.
+          </p>
+        </div>
+
+        <div class="file-label">State &amp; scoring core</div>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">javascript</span>
+            <button class="code-copy" onclick="copyCode(this)">copy</button>
+          </div>
+          <pre><code><span class="tok-kw">let</span> crits = [], opts = [], scores = {};
+
+<span class="tok-cmt">// stable key for the scores lookup table</span>
+<span class="tok-kw">function</span> <span class="tok-fn">sk</span>(o, c) { <span class="tok-kw">return</span> o + <span class="tok-str">'|'</span> + c }
+<span class="tok-kw">function</span> <span class="tok-fn">gs</span>(o, c) { <span class="tok-kw">return</span> scores[<span class="tok-fn">sk</span>(o, c)] ?? <span class="tok-num">5</span> }
+<span class="tok-kw">function</span> <span class="tok-fn">ss</span>(o, c, v) {
+  scores[<span class="tok-fn">sk</span>(o, c)] = <span class="tok-cls">Math</span>.<span class="tok-fn">min</span>(<span class="tok-num">10</span>, <span class="tok-cls">Math</span>.<span class="tok-fn">max</span>(<span class="tok-num">0</span>, v));
+  <span class="tok-fn">renderResults</span>();
+}
+
+<span class="tok-cmt">// weighted score — normalise weights first so they don't need to sum to anything</span>
+<span class="tok-kw">function</span> <span class="tok-fn">calculate</span>() {
+  <span class="tok-kw">const</span> tw = crits.<span class="tok-fn">reduce</span>((s, c) => s + c.weight, <span class="tok-num">0</span>) || <span class="tok-num">1</span>;
+  <span class="tok-kw">return</span> opts.<span class="tok-fn">map</span>(o => {
+    <span class="tok-kw">const</span> raw = crits.<span class="tok-fn">reduce</span>(
+      (s, c) => s + <span class="tok-fn">gs</span>(o.id, c.id) * (c.weight / tw), <span class="tok-num">0</span>
+    );
+    <span class="tok-kw">return</span> { id: o.id, name: o.name, score: +raw.<span class="tok-fn">toFixed</span>(<span class="tok-num">2</span>) };
+  }).<span class="tok-fn">sort</span>((a, b) => b.score - a.score);
+}</code></pre>
+        </div>
+
+        <div class="file-label">Stepper — per-cell score control</div>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">javascript</span>
+            <button class="code-copy" onclick="copyCode(this)">copy</button>
+          </div>
+          <pre><code><span class="tok-cmt">// called by inline onclick="step(oid, cid, ±1)" from rendered table</span>
+<span class="tok-kw">function</span> <span class="tok-fn">step</span>(oid, cid, delta) {
+  <span class="tok-kw">const</span> next = <span class="tok-cls">Math</span>.<span class="tok-fn">min</span>(<span class="tok-num">10</span>, <span class="tok-cls">Math</span>.<span class="tok-fn">max</span>(<span class="tok-num">0</span>, <span class="tok-fn">gs</span>(oid, cid) + delta));
+  <span class="tok-fn">ss</span>(oid, cid, next);
+  document.<span class="tok-fn">getElementById</span>(<span class="tok-str">`sv-${oid}-${cid}`</span>).textContent = next;
+}
+
+<span class="tok-cmt">// weight slider — normalised on read so no re-render of the whole table</span>
+<span class="tok-kw">function</span> <span class="tok-fn">setWeight</span>(id, v) {
+  <span class="tok-kw">const</span> c = crits.<span class="tok-fn">find</span>(c => c.id === id);
+  <span class="tok-kw">if</span> (c) {
+    c.weight = +v;
+    document.<span class="tok-fn">getElementById</span>(<span class="tok-str">`wv-${id}`</span>).textContent = v;
+  }
+  <span class="tok-fn">renderResults</span>();
+}</code></pre>
+        </div>
+
+        <div class="file-label">Results renderer — bars animate via rAF</div>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">javascript</span>
+            <button class="code-copy" onclick="copyCode(this)">copy</button>
+          </div>
+          <pre><code><span class="tok-kw">function</span> <span class="tok-fn">renderResults</span>() {
+  <span class="tok-kw">const</span> el = document.<span class="tok-fn">getElementById</span>(<span class="tok-str">'results'</span>);
+  <span class="tok-kw">if</span> (!opts.length || !crits.length) {
+    el.innerHTML = <span class="tok-str">'&lt;p class="result-empty"&gt;—&lt;/p&gt;'</span>;
+    <span class="tok-kw">return</span>;
+  }
+  <span class="tok-kw">const</span> data = <span class="tok-fn">calculate</span>();
+  <span class="tok-cmt">// render bars at width:0 first, then rAF to trigger CSS transition</span>
+  el.innerHTML = data.<span class="tok-fn">map</span>((r, i) => <span class="tok-str">`
+    &lt;div class="result-row"&gt;
+      &lt;span class="r-rank${i === 0 ? ' top' : ''}"&gt;${i + 1}&lt;/span&gt;
+      &lt;span class="r-name"&gt;${esc(r.name)}&lt;/span&gt;
+      &lt;div class="r-bar"&gt;&lt;div class="r-fill" style="width:0"&gt;&lt;/div&gt;&lt;/div&gt;
+      ${i === 0 ? '&lt;span class="r-badge"&gt;winner&lt;/span&gt;' : ''}
+      &lt;span class="r-score${i === 0 ? ' top' : ''}"&gt;${r.score.toFixed(1)}&lt;/span&gt;
+    &lt;/div&gt;
+  `</span>).<span class="tok-fn">join</span>(<span class="tok-str">''</span>);
+  <span class="tok-fn">requestAnimationFrame</span>(() => {
+    document.<span class="tok-fn">querySelectorAll</span>(<span class="tok-str">'.r-fill'</span>).<span class="tok-fn">forEach</span>((b, i) => {
+      b.style.width = (data[i].score / <span class="tok-num">10</span>) * <span class="tok-num">100</span> + <span class="tok-str">'%'</span>;
+    });
+  });
+}</code></pre>
+        </div>
+      </section>
+
+      <!-- §4 DEV LOGS -->
+      <section class="doc-section" id="devlogs">
+        <div class="section-label">
+          <span class="section-num">§4</span>
+          <span class="section-name">Dev Logs</span>
+        </div>
+
+        <div class="devlogs-list">
+
+          <!-- Log 3 — v1.2 -->
+          <div class="log-entry">
+            <div class="log-meta">
+              <div class="log-date">2026-04-22</div>
+              <div class="log-index">log #3</div>
+              <div class="log-version">v1.2</div>
+            </div>
+            <div class="log-body">
+              <div class="log-title">v1.2 — Theme persistence &amp; XSS guard</div>
+              <div class="log-content">
+                <p>
+                  Small but important patch. Theme preference is now saved to <code>localStorage</code> under
+                  <code>'dm-theme'</code> and restored on load — the page no longer flashes light mode for
+                  a frame before switching to dark when you revisit.
+                </p>
+                <p>
+                  Also added a proper <code>esc()</code> helper that sanitises all user-supplied strings before
+                  they hit <code>innerHTML</code>. Previous builds were technically XSS-able if you typed
+                  <code>&lt;img onerror=...&gt;</code> into a criterion name. Not a real threat for a local tool
+                  but it was bugging me.
+                </p>
+              </div>
+              <div class="log-links">
+                <a href="https://github.com/myrachane/W.Decision-Matrix" target="_blank" class="log-link">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+                  v1.2 on github
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Log 2 — v1.1 -->
+          <div class="log-entry">
+            <div class="log-meta">
+              <div class="log-date">2026-04-10</div>
+              <div class="log-index">log #2</div>
+              <div class="log-version">v1.1</div>
+            </div>
+            <div class="log-body">
+              <div class="log-title">v1.1 — Animated results &amp; the rAF trick</div>
+              <div class="log-content">
+                <p>
+                  v1.0 rendered results correctly but the bars just snapped to their final width — no animation.
+                  The fix sounds obvious: set <code>width: 0</code> in the HTML, then update to the real width.
+                  Problem is the browser batches layout, so if you write <code>style.width = '0'</code> and then
+                  immediately <code>style.width = '60%'</code> in the same frame it never sees the zero and the
+                  transition never fires.
+                </p>
+                <p>
+                  The fix is to write the <code>innerHTML</code> with bars at <code>width:0</code>, then schedule
+                  the actual widths in a <code>requestAnimationFrame</code> callback. That forces the browser to
+                  paint the zero-width state first, then the CSS transition picks up the change.
+                  Looks clean. Zero libraries required.
+                </p>
+
+                <div class="status-notice">
+                  <span class="status-notice-icon">⚠</span>
+                  <span>
+                    <strong>Known issue:</strong> When you delete a criterion while options are scored, the
+                    results panel flickers once before settling. Tracked and will be fixed in v1.2.
+                  </span>
+                </div>
+              </div>
+              <div class="log-links">
+                <a href="https://github.com/myrachane/W.Decision-Matrix" target="_blank" class="log-link">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+                  v1.1 on github
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Log 1 — v1.0 -->
+          <div class="log-entry">
+            <div class="log-meta">
+              <div class="log-date">2026-04-01</div>
+              <div class="log-index">log #1</div>
+              <div class="log-version">v1.0</div>
+            </div>
+            <div class="log-body">
+              <div class="log-title">Initial release — W.Decision-Matrix v1.0</div>
+              <div class="log-content">
+                <p>
+                  First drop. The full feature set was working in a single afternoon:
+                  criteria panel with weight sliders, options panel, score matrix with steppers,
+                  weighted ranking, dark/light toggle. Fonts are pulled from Google Fonts
+                  (<strong>Syne</strong> for UI text, <strong>Martian Mono</strong> for the mono bits).
+                </p>
+                <p>
+                  The state model is intentionally flat — three variables (<code>crits</code>, <code>opts</code>,
+                  <code>scores</code>) and a full <code>render()</code> on every mutation.
+                  For a tool this size that's plenty. No need to reach for anything heavier.
+                </p>
+              </div>
+
+              <div class="code-block">
+                <div class="code-header">
+                  <span class="code-lang">shell</span>
+                  <button class="code-copy" onclick="copyCode(this)">copy</button>
+                </div>
+                <pre><code><span class="tok-cmt"># zero setup — just open it</span>
+open index.html
+
+<span class="tok-cmt"># or serve locally if you need it over a LAN</span>
+python3 -m http.server 8080</code></pre>
+              </div>
+
+              <div class="log-links">
+                <a href="https://github.com/myrachane/W.Decision-Matrix/releases/tag/v1.0" target="_blank" class="log-link">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                  release v1.0
+                </a>
+                <a href="https://github.com/myrachane/W.Decision-Matrix" target="_blank" class="log-link">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 01-9 9"/></svg>
+                  tree @ main
+                </a>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /devlogs-list -->
+      </section>
+
+      <!-- ── LIKE / SHARE ── -->
+      <div class="action-bar">
+        <button class="action-btn" id="likeBtn" onclick="handleLike()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
+            <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+          </svg>
+          <span id="likeCount">—</span>
+        </button>
+        <span class="action-sep">·</span>
+        <button class="action-btn" onclick="handleShare()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+          </svg>
+          copy link
+        </button>
+        <span id="shareToast">✓ copied</span>
+      </div>
+
+    </div><!-- /content -->
+
+    <!-- ── FOOTER ── -->
+    <footer style="margin-left: -24px; margin-right: -24px;">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          emtypyie / <span>wiki</span>
+        </div>
+        <a href="/" class="footer-back">
+          ← all projects
+        </a>
+      </div>
+    </footer>
+
+  </div><!-- /page -->
+
+  <script>
+    /* ── THEME ─────────────────────────────────────────────── */
+    const html       = document.documentElement;
+    const toggle     = document.getElementById('themeToggle');
+    const themeLabel = document.getElementById('themeLabel');
+    const themeIcon  = document.getElementById('themeIcon');
+
+    const MOON_SVG = `<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>`;
+    const SUN_SVG  = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
+
+    function applyTheme(t) {
+      html.setAttribute('data-theme', t);
+      localStorage.setItem('wiki-theme', t);
+      themeLabel.textContent = t;
+      themeIcon.innerHTML = t === 'dark' ? MOON_SVG : SUN_SVG;
+      const isDark = t === 'dark';
+      themeIcon.setAttribute('fill', isDark ? 'currentColor' : 'none');
+      if (!isDark) {
+        themeIcon.setAttribute('stroke', 'currentColor');
+        themeIcon.setAttribute('stroke-width', '2');
+        themeIcon.setAttribute('stroke-linecap', 'round');
+        themeIcon.setAttribute('stroke-linejoin', 'round');
+      }
+    }
+
+    const saved = localStorage.getItem('wiki-theme') || 'light';
+    applyTheme(saved);
+
+    toggle.addEventListener('click', () => {
+      const cur = html.getAttribute('data-theme');
+      applyTheme(cur === 'dark' ? 'light' : 'dark');
+    });
+
+    /* ── PROJECT IDENTITY ───────────────────────────────────── */
+    const PROJECT_ID = (function() {
+      const path = window.location.pathname;
+      return path === '/' ? 'index' : path.replace(/^\//, '').split('/')[0] || 'wdecision';
+    })();
+
+    /* ── LIKE SYSTEM ────────────────────────────────────────── */
+    const LIKE_API   = 'https://api.emtypyie.in/like';
+    const LIKES_API  = `https://api.emtypyie.in/likes?project=${PROJECT_ID}`;
+    const COOLDOWN   = 24 * 60 * 60 * 1000;
+    const LIKE_KEY   = `wiki_liked_${PROJECT_ID}`;
+
+    const likeBtn   = document.getElementById('likeBtn');
+    const likeCount = document.getElementById('likeCount');
+
+    async function fetchLikeCount() {
+      try {
+        const res  = await fetch(LIKES_API);
+        const data = await res.json();
+        likeCount.textContent = data.count ?? '—';
+      } catch {
+        likeCount.textContent = '—';
+      }
+    }
+
+    function isLiked() {
+      const ts = localStorage.getItem(LIKE_KEY);
+      return ts && (Date.now() - parseInt(ts, 10)) < COOLDOWN;
+    }
+
+    function markLiked() {
+      likeBtn.classList.add('liked');
+      likeBtn.title = 'Already liked (cooldown active)';
+    }
+
+    async function handleLike() {
+      if (isLiked()) { likeBtn.classList.add('liked'); return; }
+      try {
+        const res = await fetch(LIKE_API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ project: PROJECT_ID }),
+        });
+        if (res.ok) {
+          localStorage.setItem(LIKE_KEY, Date.now().toString());
+          markLiked();
+          await fetchLikeCount();
+        }
+      } catch { /* silently fail */ }
+    }
+
+    if (isLiked()) markLiked();
+    fetchLikeCount();
+
+    /* ── SHARE SYSTEM ───────────────────────────────────────── */
+    const shareToast = document.getElementById('shareToast');
+    let toastTimeout;
+
+    async function handleShare() {
+      const url = window.location.href;
+      try {
+        await navigator.clipboard.writeText(url);
+      } catch {
+        const el = document.createElement('textarea');
+        el.value = url;
+        el.style.cssText = 'position:fixed;top:-999px;left:-999px';
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        el.remove();
+      }
+      shareToast.style.opacity = '1';
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => { shareToast.style.opacity = '0'; }, 2000);
+    }
+
+    /* ── CODE COPY ──────────────────────────────────────────── */
+    function copyCode(btn) {
+      const pre  = btn.closest('.code-block').querySelector('pre code');
+      const text = pre.innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.textContent;
+        btn.textContent = 'copied!';
+        setTimeout(() => { btn.textContent = orig; }, 1500);
+      });
+    }
+
+    /* ── SMOOTH TOC SCROLL ──────────────────────────────────── */
+    document.querySelectorAll('.toc-link').forEach(link => {
+      link.addEventListener('click', e => {
+        const id = link.getAttribute('href').slice(1);
+        const el = document.getElementById(id);
+        if (el) {
+          e.preventDefault();
+          const top = el.getBoundingClientRect().top + window.scrollY - 70;
+          window.scrollTo({ top, behavior: 'smooth' });
+        }
+      });
+    });
+
+    /* ── ACTIVE TOC HIGHLIGHT ───────────────────────────────── */
+    const sections = document.querySelectorAll('.doc-section[id]');
+    const tocLinks = document.querySelectorAll('.toc-link');
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          tocLinks.forEach(l => l.style.color = '');
+          const active = document.querySelector(`.toc-link[href="#${entry.target.id}"]`);
+          if (active) active.style.color = 'var(--accent)';
+        }
+      });
+    }, { rootMargin: `-${parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h'))}px 0px -60% 0px` });
+
+    sections.forEach(s => observer.observe(s));
+  </script>
+
+</body>
+</html>
