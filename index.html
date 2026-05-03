@@ -36,8 +36,9 @@
       --toc-w:        200px;
 
       /* transition arrow color: solid black in light */
-      --arrow-fill: #1C1917;
-      --trans-flash: #ffffff;
+      --arrow-fill:      #1C1917;
+      --trans-flash:     #ffffff;
+      --trans-name-col:  #1C1917;   /* name text: black on light */
     }
     [data-theme="dark"] {
       --bg:           #0E0D0B;
@@ -61,8 +62,9 @@
       --purple-bg:    #1E0F3A;
 
       /* transition arrow color: solid white in dark */
-      --arrow-fill: #E8E2D6;
-      --trans-flash: #0E0D0B;
+      --arrow-fill:      #E8E2D6;
+      --trans-flash:     #0E0D0B;
+      --trans-name-col:  #E8E2D6;   /* name text: white on dark */
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -457,43 +459,56 @@
     }
     #transFlash.on { opacity: 1; }
 
-    /* ── ARROWS ── */
+    /* ── ARROWS ──
+       Each arrow is ~18% wide with ~3% gap between.
+       Together they cover left ~0–62% of screen.
+       The right ~38% is intentionally clear for the name text.
+    ── */
     .trans-arrow {
       position: absolute;
       top: -5%;
       height: 110%;
-      width: 38%;
+      width: 19%;           /* narrow so all 3 are clearly distinct */
       background: var(--arrow-fill);
       /* Chevron ">" shape */
-      clip-path: polygon(0 0, 72% 0, 100% 50%, 72% 100%, 0 100%, 28% 50%);
+      clip-path: polygon(0 0, 65% 0, 100% 50%, 65% 100%, 0 100%, 35% 50%);
       will-change: transform;
       z-index: 2;
     }
 
-    /* Starting positions: off screen to the left */
-    #ta1 { left: 0%;  transform: translateX(-130%); }
-    #ta2 { left: 26%; transform: translateX(-180%); }
-    #ta3 { left: 52%; transform: translateX(-230%); }
+    /* Resting (on-screen) positions — 3% gaps between arrows */
+    #ta1 { left: 0%;  }
+    #ta2 { left: 22%; }   /* 19% + 3% gap */
+    #ta3 { left: 44%; }   /* 22% + 19% + 3% gap */
 
-    /* Arrows slide IN */
-    #ta1.arrow-in { transform: translateX(0); transition: transform 0.42s cubic-bezier(0.77, 0, 0.175, 1); }
-    #ta2.arrow-in { transform: translateX(0); transition: transform 0.42s cubic-bezier(0.77, 0, 0.175, 1) 0.10s; }
-    #ta3.arrow-in { transform: translateX(0); transition: transform 0.42s cubic-bezier(0.77, 0, 0.175, 1) 0.20s; }
+    /* All start off-screen to the left */
+    #ta1 { transform: translateX(-520%); }
+    #ta2 { transform: translateX(-420%); }
+    #ta3 { transform: translateX(-320%); }
 
-    /* Arrows sweep OUT (to the right) */
-    #ta1.arrow-out { transform: translateX(140vw); transition: transform 0.52s cubic-bezier(0.77, 0, 0.175, 1); }
-    #ta2.arrow-out { transform: translateX(160vw); transition: transform 0.52s cubic-bezier(0.77, 0, 0.175, 1) 0.06s; }
-    #ta3.arrow-out { transform: translateX(180vw); transition: transform 0.52s cubic-bezier(0.77, 0, 0.175, 1) 0.12s; }
+    /* Arrows slide IN to their resting positions */
+    #ta1.arrow-in { transform: translateX(0); transition: transform 0.40s cubic-bezier(0.77, 0, 0.175, 1) 0.00s; }
+    #ta2.arrow-in { transform: translateX(0); transition: transform 0.40s cubic-bezier(0.77, 0, 0.175, 1) 0.10s; }
+    #ta3.arrow-in { transform: translateX(0); transition: transform 0.40s cubic-bezier(0.77, 0, 0.175, 1) 0.20s; }
 
-    /* ── MODULE NAME (bottom-right) ── */
+    /* Arrows sweep OUT to the right */
+    #ta1.arrow-out { transform: translateX(520%); transition: transform 0.48s cubic-bezier(0.77, 0, 0.175, 1) 0.00s; }
+    #ta2.arrow-out { transform: translateX(420%); transition: transform 0.48s cubic-bezier(0.77, 0, 0.175, 1) 0.06s; }
+    #ta3.arrow-out { transform: translateX(320%); transition: transform 0.48s cubic-bezier(0.77, 0, 0.175, 1) 0.12s; }
+
+    /* ── MODULE NAME ──
+       Sits in the clear right zone (arrows end ~63% from left).
+       Positioned bottom-right, well away from any arrow.
+    ── */
     #transName {
       position: absolute;
       bottom: 7vh;
-      right: 5vw;
+      right: 3vw;           /* right edge of screen */
+      width: 32vw;          /* max width = clear zone width */
       font-family: var(--font-serif);
-      font-size: clamp(22px, 4.5vw, 58px);
+      font-size: clamp(20px, 3.8vw, 52px);
       font-weight: 700;
-      color: var(--accent);
+      color: var(--trans-name-col);   /* black in light, white in dark */
       letter-spacing: -0.02em;
       line-height: 1.1;
       text-align: right;
@@ -501,10 +516,7 @@
       opacity: 0;
       transform: translateY(16px);
       transition: opacity 0.35s ease, transform 0.35s ease;
-      /* ensure readable on both light/dark arrows */
-      text-shadow:
-        0 0 20px color-mix(in srgb, var(--bg) 60%, transparent),
-        0 2px 8px color-mix(in srgb, var(--bg) 80%, transparent);
+      text-shadow: none;    /* no shadow — text is in clear open space */
       pointer-events: none;
     }
     #transName.name-visible {
@@ -520,19 +532,21 @@
     /* Tiny label above name */
     #transLabel {
       position: absolute;
-      bottom: calc(7vh + clamp(28px, 5vw, 66px) + 10px);
-      right: 5vw;
+      bottom: calc(7vh + clamp(26px, 4vw, 58px) + 12px);
+      right: 3vw;
+      width: 32vw;
+      text-align: right;
       font-family: var(--font-mono);
       font-size: 9px;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: var(--text-faint);
+      color: var(--trans-name-col);
       z-index: 5;
       opacity: 0;
       transition: opacity 0.3s ease 0.1s;
       pointer-events: none;
     }
-    #transLabel.label-visible { opacity: 0.7; }
+    #transLabel.label-visible { opacity: 0.45; }
 
     /* ── GLITCH BARS ── */
     #glitchBars {
@@ -582,7 +596,8 @@
       .footer-inner { flex-direction: column; align-items: flex-start; gap: 12px; }
       .nav-btn span { display: none; }
       .bg-right { display: none; }
-      #transName { font-size: clamp(18px, 7vw, 36px); bottom: 5vh; right: 4vw; }
+      #transName  { font-size: clamp(16px, 7vw, 32px); bottom: 5vh; right: 2vw; width: 38vw; }
+      #transLabel { right: 2vw; width: 38vw; }
     }
   </style>
 </head>
