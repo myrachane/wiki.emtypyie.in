@@ -468,7 +468,7 @@
       position: absolute;
       top: -5%;
       height: 110%;
-      width: 19%;           /* narrow so all 3 are clearly distinct */
+      width: 22%;           /* thicker than before */
       background: var(--arrow-fill);
       /* Chevron ">" shape */
       clip-path: polygon(0 0, 65% 0, 100% 50%, 65% 100%, 0 100%, 35% 50%);
@@ -478,8 +478,8 @@
 
     /* Resting (on-screen) positions — 3% gaps between arrows */
     #ta1 { left: 0%;  }
-    #ta2 { left: 22%; }   /* 19% + 3% gap */
-    #ta3 { left: 44%; }   /* 22% + 19% + 3% gap */
+    #ta2 { left: 25%; }   /* 22% + 3% gap */
+    #ta3 { left: 50%; }   /* 25% + 22% + 3% gap → ends at 72% */
 
     /* All start off-screen to the left */
     #ta1 { transform: translateX(-520%); }
@@ -504,7 +504,7 @@
       position: absolute;
       bottom: 7vh;
       right: 3vw;           /* right edge of screen */
-      width: 32vw;          /* max width = clear zone width */
+      width: 25vw;          /* arrows now end ~72%, so this sits in clear 72-97% zone */
       font-family: var(--font-serif);
       font-size: clamp(20px, 3.8vw, 52px);
       font-weight: 700;
@@ -534,7 +534,7 @@
       position: absolute;
       bottom: calc(7vh + clamp(26px, 4vw, 58px) + 12px);
       right: 3vw;
-      width: 32vw;
+      width: 25vw;
       text-align: right;
       font-family: var(--font-mono);
       font-size: 9px;
@@ -803,7 +803,7 @@ It captures development as it occurs, including design decisions, implementation
       ctx.clearRect(0, 0, W, H);
 
       // Glitch lives in the arrow zone: left ~65% of screen
-      const zone = W * 0.66;
+      const zone = W * 0.73;
 
       // 1 or 2 chunks per frame
       const numChunks = Math.random() > 0.45 ? 2 : 1;
