@@ -35,10 +35,9 @@
       --nav-h:        52px;
       --toc-w:        200px;
 
-      /* transition arrow color: solid black in light */
       --arrow-fill:      #1C1917;
       --trans-flash:     #ffffff;
-      --trans-name-col:  #1C1917;   /* name text: black on light */
+      --trans-name-col:  #1C1917;
     }
     [data-theme="dark"] {
       --bg:           #0E0D0B;
@@ -61,10 +60,9 @@
       --purple:       #A78BFA;
       --purple-bg:    #1E0F3A;
 
-      /* transition arrow color: solid white in dark */
       --arrow-fill:      #E8E2D6;
       --trans-flash:     #0E0D0B;
-      --trans-name-col:  #E8E2D6;   /* name text: white on dark */
+      --trans-name-col:  #E8E2D6;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -448,7 +446,6 @@
       pointer-events: all;
     }
 
-    /* Flash layer — sits on top of everything at end */
     #transFlash {
       position: absolute;
       inset: 0;
@@ -459,56 +456,43 @@
     }
     #transFlash.on { opacity: 1; }
 
-    /* ── ARROWS ──
-       Each arrow is ~18% wide with ~3% gap between.
-       Together they cover left ~0–62% of screen.
-       The right ~38% is intentionally clear for the name text.
-    ── */
     .trans-arrow {
       position: absolute;
       top: -5%;
       height: 110%;
-      width: 22%;           /* thicker than before */
+      width: 22%;
       background: var(--arrow-fill);
-      /* Chevron ">" shape */
       clip-path: polygon(0 0, 65% 0, 100% 50%, 65% 100%, 0 100%, 35% 50%);
       will-change: transform;
       z-index: 2;
     }
 
-    /* Resting (on-screen) positions — 3% gaps between arrows */
     #ta1 { left: 0%;  }
-    #ta2 { left: 25%; }   /* 22% + 3% gap */
-    #ta3 { left: 50%; }   /* 25% + 22% + 3% gap → ends at 72% */
+    #ta2 { left: 25%; }
+    #ta3 { left: 50%; }
 
-    /* All start off-screen to the left */
     #ta1 { transform: translateX(-520%); }
     #ta2 { transform: translateX(-420%); }
     #ta3 { transform: translateX(-320%); }
 
-    /* Arrows slide IN to their resting positions */
     #ta1.arrow-in { transform: translateX(0); transition: transform 0.40s cubic-bezier(0.77, 0, 0.175, 1) 0.00s; }
     #ta2.arrow-in { transform: translateX(0); transition: transform 0.40s cubic-bezier(0.77, 0, 0.175, 1) 0.10s; }
     #ta3.arrow-in { transform: translateX(0); transition: transform 0.40s cubic-bezier(0.77, 0, 0.175, 1) 0.20s; }
 
-    /* Arrows sweep OUT to the right */
     #ta1.arrow-out { transform: translateX(520%); transition: transform 0.48s cubic-bezier(0.77, 0, 0.175, 1) 0.00s; }
     #ta2.arrow-out { transform: translateX(420%); transition: transform 0.48s cubic-bezier(0.77, 0, 0.175, 1) 0.06s; }
     #ta3.arrow-out { transform: translateX(320%); transition: transform 0.48s cubic-bezier(0.77, 0, 0.175, 1) 0.12s; }
 
-    /* ── MODULE NAME ──
-       Sits in the clear right zone (arrows end ~63% from left).
-       Positioned bottom-right, well away from any arrow.
-    ── */
+    /* ── MODULE NAME ── */
     #transName {
       position: absolute;
       bottom: 7vh;
-      right: 3vw;           /* right edge of screen */
-      width: 25vw;          /* arrows now end ~72%, so this sits in clear 72-97% zone */
+      right: 3vw;
+      width: 25vw;
       font-family: var(--font-serif);
       font-size: clamp(20px, 3.8vw, 52px);
       font-weight: 700;
-      color: var(--trans-name-col);   /* black in light, white in dark */
+      color: var(--trans-name-col);
       letter-spacing: -0.02em;
       line-height: 1.1;
       text-align: right;
@@ -516,23 +500,31 @@
       opacity: 0;
       transform: translateY(16px);
       transition: opacity 0.35s ease, transform 0.35s ease;
-      text-shadow: none;    /* no shadow — text is in clear open space */
       pointer-events: none;
     }
-    #transName.name-visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    #transName.name-out {
-      opacity: 0;
-      transform: translateY(-8px);
-      transition: opacity 0.2s ease, transform 0.2s ease;
-    }
 
-    /* Tiny label above name */
+    /* script label */
+    #transLangTag {
+      position: absolute;
+      bottom: calc(7vh + clamp(26px, 4vw, 64px) + 14px);
+      right: 3vw;
+      width: 25vw;
+      text-align: right;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--trans-name-col);
+      z-index: 5;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      pointer-events: none;
+    }
+    #transLangTag.tag-visible { opacity: 0.4; }
+
     #transLabel {
       position: absolute;
-      bottom: calc(7vh + clamp(26px, 4vw, 58px) + 12px);
+      bottom: calc(7vh + clamp(26px, 4vw, 58px) + 12px + 18px);
       right: 3vw;
       width: 25vw;
       text-align: right;
@@ -557,9 +549,15 @@
       z-index: 6;
       pointer-events: none;
       display: none;
-      mix-blend-mode: difference;
+      /* No blend mode — solid chunks drawn in theme-aware colors */
     }
     #glitchCanvas.active { display: block; }
+
+    /* ── SPA CONTENT WRAPPER ── */
+    #spaContent {
+      position: relative;
+      z-index: 1;
+    }
 
     /* ── RESPONSIVE ─────────────────────── */
     @media (max-width: 1100px) { .toc-sidebar { display: none; } }
@@ -573,33 +571,29 @@
       .footer-inner { flex-direction: column; align-items: flex-start; gap: 12px; }
       .nav-btn span { display: none; }
       .bg-right { display: none; }
-      #transName  { font-size: clamp(16px, 7vw, 32px); bottom: 5vh; right: 2vw; width: 38vw; }
-      #transLabel { right: 2vw; width: 38vw; }
+      #transName    { font-size: clamp(16px, 7vw, 32px); bottom: 5vh; right: 2vw; width: 38vw; }
+      #transLabel   { right: 2vw; width: 38vw; }
+      #transLangTag { right: 2vw; width: 38vw; }
     }
   </style>
 </head>
 <body>
 
-  <!-- RIGHT BG IMAGE -->
   <div class="bg-right"></div>
 
   <!-- ══════════════════════════════════════
        TRANSITION OVERLAY
   ══════════════════════════════════════ -->
   <div id="transOverlay" aria-hidden="true">
-    <!-- Three solid arrows -->
     <div class="trans-arrow" id="ta1"></div>
     <div class="trans-arrow" id="ta2"></div>
     <div class="trans-arrow" id="ta3"></div>
 
-    <!-- Module name & label -->
     <div id="transLabel">loading</div>
+    <div id="transLangTag">hi</div>
     <div id="transName"></div>
 
-    <!-- Chunk glitch canvas -->
     <canvas id="glitchCanvas"></canvas>
-
-    <!-- Flash layer -->
     <div id="transFlash"></div>
   </div>
 
@@ -644,7 +638,7 @@
     </div>
   </nav>
 
-  <div class="page">
+  <div class="page" id="spaContent">
 
     <header class="hero" id="hero">
       <div class="hero-eyebrow">personal engineering wiki</div>
@@ -730,7 +724,7 @@ It captures development as it occurs, including design decisions, implementation
       </div>
     </footer>
 
-  </div>
+  </div><!-- /#spaContent -->
 
   <script>
     /* ── THEME ─────────────────────────────── */
@@ -777,75 +771,129 @@ It captures development as it occurs, including design decisions, implementation
     })();
 
     /* ══════════════════════════════════════════
+       SPA NAVIGATION
+       ─ Fetches the target page, injects it into
+         the DOM under the flash, no full reload.
+    ══════════════════════════════════════════ */
+
+    /**
+     * Inject a pre-fetched HTML string into the document.
+     * Preserves the current theme. Re-executes scripts.
+     */
+    function spaInject(htmlText, href) {
+      const currentTheme = html.getAttribute('data-theme');
+      const parser = new DOMParser();
+      const newDoc  = parser.parseFromString(htmlText, 'text/html');
+
+      // Update browser URL + title (no reload)
+      history.pushState({ spa: true, href }, newDoc.title, href);
+      document.title = newDoc.title;
+
+      // Swap <head> styles (keep our base styles)
+      // We only swap style/link tags, not scripts
+      document.head.querySelectorAll('style, link[rel="stylesheet"]').forEach(el => el.remove());
+      newDoc.head.querySelectorAll('style, link[rel="stylesheet"]').forEach(el => {
+        document.head.appendChild(el.cloneNode(true));
+      });
+
+      // Swap <body> content
+      document.body.innerHTML = newDoc.body.innerHTML;
+
+      // Restore theme on <html> (body swap can reset data attrs)
+      html.setAttribute('data-theme', currentTheme);
+
+      // Re-execute <script> tags (innerHTML assignment doesn't run them)
+      document.body.querySelectorAll('script').forEach(oldScript => {
+        const s = document.createElement('script');
+        [...oldScript.attributes].forEach(a => s.setAttribute(a.name, a.value));
+        s.textContent = oldScript.textContent;
+        oldScript.parentNode.replaceChild(s, oldScript);
+      });
+
+      window.scrollTo(0, 0);
+    }
+
+    /* Handle browser back/forward after SPA nav */
+    window.addEventListener('popstate', async (e) => {
+      if (e.state && e.state.spa) {
+        try {
+          const res  = await fetch(e.state.href, { cache: 'no-cache' });
+          const html = await res.text();
+          spaInject(html, e.state.href);
+        } catch (_) {
+          window.location.reload();
+        }
+      }
+    });
+
+    /* ══════════════════════════════════════════
        TRANSITION SYSTEM
     ══════════════════════════════════════════ */
 
-    const overlay    = document.getElementById('transOverlay');
-    const ta1        = document.getElementById('ta1');
-    const ta2        = document.getElementById('ta2');
-    const ta3        = document.getElementById('ta3');
-    const transName  = document.getElementById('transName');
-    const transLabel = document.getElementById('transLabel');
-    const glitchCanvas  = document.getElementById('glitchCanvas');
-    const transFlash = document.getElementById('transFlash');
+    const overlay     = document.getElementById('transOverlay');
+    const ta1         = document.getElementById('ta1');
+    const ta2         = document.getElementById('ta2');
+    const ta3         = document.getElementById('ta3');
+    const transName   = document.getElementById('transName');
+    const transLabel  = document.getElementById('transLabel');
+    const transLangTag = document.getElementById('transLangTag');
+    const glitchCanvas = document.getElementById('glitchCanvas');
+    const transFlash  = document.getElementById('transFlash');
 
-    let glitchRAF = null;
+    let glitchRAF    = null;
     let glitchActive = false;
+    let nameSwapTimer = null;   // interval for Hindi/EN toggle
 
     /* — Chunk glitch (canvas) — */
+    function glitchColor() {
+      // Contrast against the arrow fill:
+      // light theme → arrows are near-black → use white chunks
+      // dark theme  → arrows are near-white → use black chunks
+      const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+      return dark ? ['#000000', '#111111', '#0E0D0B'] : ['#ffffff', '#f0ece4', '#fffef8'];
+    }
+
     function spawnGlitchChunks() {
       if (!glitchActive) return;
-
       const ctx = glitchCanvas.getContext('2d');
       const W   = glitchCanvas.width;
       const H   = glitchCanvas.height;
 
       ctx.clearRect(0, 0, W, H);
 
-      // Glitch lives in the arrow zone: left ~65% of screen
-      const zone = W * 0.73;
+      const colors = glitchColor();
+      const zone   = W * 0.73;
 
-      // 1 or 2 chunks per frame
       const numChunks = Math.random() > 0.45 ? 2 : 1;
-
       for (let i = 0; i < numChunks; i++) {
-        // Chunk dimensions — beefy blocks, not thin bars
-        const cH  = Math.random() * 60 + 12;          // 12–72px tall
-        const cW  = Math.random() * 200 + 40;          // 40–240px wide
-        const x   = Math.random() * Math.max(zone - cW, 10);
-        const y   = Math.random() * (H - cH);
-
-        // strictly black or white
-        ctx.fillStyle = Math.random() > 0.5 ? '#ffffff' : '#000000';
+        const cH = Math.random() * 60 + 12;
+        const cW = Math.random() * 200 + 40;
+        const x  = Math.random() * Math.max(zone - cW, 10);
+        const y  = Math.random() * (H - cH);
+        ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
         ctx.fillRect(x, y, cW, cH);
-
-        // ~50% chance: a thin contrasting hairline inside the chunk
-        // (gives that "signal corruption inside a block" feel)
         if (Math.random() > 0.5) {
           const lineY = y + Math.random() * (cH - 2);
           const lineW = cW * (0.3 + Math.random() * 0.7);
-          ctx.fillStyle = ctx.fillStyle === '#ffffff' ? '#000000' : '#ffffff';
+          // contrasting hairline inside chunk
+          ctx.fillStyle = Math.random() > 0.5 ? '#D97706' : (colors[0] === '#ffffff' ? '#1C1917' : '#E8E2D6');
           ctx.fillRect(x, lineY, lineW, Math.random() > 0.5 ? 2 : 1);
         }
       }
-
-      // ~20% chance: a second stray tiny chunk far from the first (adds chaos)
       if (Math.random() > 0.8) {
         const sH = Math.random() * 16 + 4;
         const sW = Math.random() * 80 + 15;
         const sx = Math.random() * Math.max(zone - sW, 10);
         const sy = Math.random() * (H - sH);
-        ctx.fillStyle = Math.random() > 0.5 ? '#ffffff' : '#000000';
+        ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
         ctx.fillRect(sx, sy, sW, sH);
       }
 
-      // Jitter the timing so it never feels rhythmic: 45–110ms
       glitchRAF = setTimeout(spawnGlitchChunks, Math.floor(Math.random() * 65) + 45);
     }
 
     function startGlitch() {
       glitchActive = true;
-      // Size canvas to viewport
       glitchCanvas.width  = window.innerWidth;
       glitchCanvas.height = window.innerHeight;
       glitchCanvas.classList.add('active');
@@ -856,27 +904,86 @@ It captures development as it occurs, including design decisions, implementation
       glitchActive = false;
       clearTimeout(glitchRAF);
       glitchCanvas.classList.remove('active');
-      const ctx = glitchCanvas.getContext('2d');
-      ctx.clearRect(0, 0, glitchCanvas.width, glitchCanvas.height);
+      if (glitchCanvas.getContext) {
+        glitchCanvas.getContext('2d').clearRect(0, 0, glitchCanvas.width, glitchCanvas.height);
+      }
     }
 
-    /* — Main transition orchestrator — */
-    function playTransition(name, href) {
-      // Activate overlay
+    /* ── Hindi / English name swap (inline styles — no CSS class conflicts) ── */
+    function nameShow() {
+      transName.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+      transName.style.opacity    = '1';
+      transName.style.transform  = 'translateY(0)';
+    }
+
+    function nameHide(dy = '-8px') {
+      transName.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+      transName.style.opacity    = '0';
+      transName.style.transform  = `translateY(${dy})`;
+    }
+
+    function startNameSwap(nameEn, nameHi) {
+      if (!nameHi) return;   // no Hindi — nothing to swap
+      let showHindi = false;
+
+      nameSwapTimer = setInterval(() => {
+        showHindi = !showHindi;
+        const next = showHindi ? nameHi : nameEn;
+
+        // 1. fade out
+        transName.style.transition = 'opacity 0.15s ease, transform 0.15s ease';
+        transName.style.opacity    = '0';
+        transName.style.transform  = 'translateY(5px)';
+
+        // 2. swap text + fade back in
+        setTimeout(() => {
+          transName.textContent = next;
+          if (transLangTag) transLangTag.textContent = showHindi ? 'हि' : 'en';
+          transName.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+          transName.style.opacity    = '1';
+          transName.style.transform  = 'translateY(0)';
+        }, 170);
+
+      }, 700);
+    }
+
+    function stopNameSwap() {
+      if (nameSwapTimer) {
+        clearInterval(nameSwapTimer);
+        nameSwapTimer = null;
+      }
+    }
+
+    /* ── Main transition orchestrator ───────── */
+    function playTransition(nameEn, nameHi, href) {
+      // ── Start pre-fetching the target page immediately ──
+      const fetchPromise = fetch(href, { cache: 'no-cache' })
+        .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.text(); })
+        .catch(() => null);
+
       overlay.classList.add('active');
 
-      // Set text
-      transName.textContent  = name;
-      transLabel.textContent = '// loading module';
+      // Set initial text + inline reset (clear any leftover styles from previous run)
+      transName.textContent    = nameEn;
+      transName.style.opacity  = '0';
+      transName.style.transform = 'translateY(16px)';
+      transName.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
 
-      // Reset states
+      transLabel.textContent   = '// loading module';
+      if (transLangTag) transLangTag.textContent = 'en';
+
+      // Reset arrow classes
       ta1.className = 'trans-arrow';
       ta2.className = 'trans-arrow';
       ta3.className = 'trans-arrow';
-      transName.className  = '';
-      transLabel.className = '';
       transFlash.classList.remove('on');
+
+      // Reset label opacities
+      transLabel.style.opacity    = '0';
+      if (transLangTag) transLangTag.style.opacity = '0';
+
       stopGlitch();
+      stopNameSwap();
 
       // — Play audio —
       try {
@@ -885,33 +992,38 @@ It captures development as it occurs, including design decisions, implementation
         audio.play().catch(() => {});
       } catch (e) {}
 
-      // ── TIMELINE ──────────────────────────
-      // t=0ms     : Arrows start sliding in from left
+      // ── TIMELINE ──────────────────────────────────────────────
+      // t=0ms    : Arrows slide in from left
       requestAnimationFrame(() => {
         ta1.classList.add('arrow-in');
         ta2.classList.add('arrow-in');
         ta3.classList.add('arrow-in');
       });
 
-      // t=550ms   : Module name fades in bottom-right
+      // t=550ms  : Module name fades in (inline style) + Hindi swap starts
       setTimeout(() => {
-        transName.classList.add('name-visible');
-        transLabel.classList.add('label-visible');
+        nameShow();
+        transLabel.style.transition = 'opacity 0.3s ease 0.1s';
+        transLabel.style.opacity    = '0.45';
+        if (transLangTag) {
+          transLangTag.style.transition = 'opacity 0.25s ease';
+          transLangTag.style.opacity    = '0.4';
+        }
+        startNameSwap(nameEn, nameHi);
       }, 550);
 
-      // t=950ms   : Glitch starts
-      setTimeout(() => {
-        startGlitch();
-      }, 950);
+      // t=950ms  : Glitch starts
+      setTimeout(() => { startGlitch(); }, 950);
 
-      // t=2400ms  : Name fades out, glitch ramps toward exit
-      //             Name starts fading out
+      // t=2400ms : Name fades out, swap stops
       setTimeout(() => {
-        transName.classList.add('name-out');
-        transLabel.classList.remove('label-visible');
+        stopNameSwap();
+        nameHide('-8px');
+        transLabel.style.opacity    = '0';
+        if (transLangTag) transLangTag.style.opacity = '0';
       }, 2400);
 
-      // t=2600ms  : Arrows sweep out to the right
+      // t=2600ms : Arrows sweep out to the right
       setTimeout(() => {
         stopGlitch();
         ta1.classList.remove('arrow-in');
@@ -922,14 +1034,26 @@ It captures development as it occurs, including design decisions, implementation
         ta3.classList.add('arrow-out');
       }, 2600);
 
-      // t=3150ms  : White/black flash
+      // t=3150ms : Flash appears — inject page underneath it
       setTimeout(() => {
         transFlash.classList.add('on');
       }, 3150);
 
-      // t=3800ms  : Navigate
+      // t=3500ms : SPA inject (flash is covering everything)
+      setTimeout(async () => {
+        const htmlText = await fetchPromise;
+        if (htmlText) {
+          spaInject(htmlText, href);
+        } else {
+          window.location.href = href;
+        }
+      }, 3500);
+
+      // t=3800ms : Safety fallback
       setTimeout(() => {
-        window.location.href = href;
+        if (document.getElementById('transOverlay')) {
+          window.location.href = href;
+        }
       }, 3800);
     }
 
@@ -943,11 +1067,13 @@ It captures development as it occurs, including design decisions, implementation
       published: 'badge-published',
     };
 
-    function buildCard({ id, name, desc, status, updated, lang }, basePath, extraClass) {
+    function buildCard({ id, name, nameHi, desc, status, updated, lang }, basePath, extraClass) {
       const a = document.createElement('a');
       a.className      = 'project-card' + (extraClass ? ' ' + extraClass : '');
       a.href           = `/${basePath}/${id}`;
       a.dataset.status = (status || 'paused').toLowerCase();
+      // Store nameHi on the element so the click handler can use it
+      a.dataset.nameHi = nameHi || '';
       a.tabIndex       = 0;
 
       const cls = STATUS_MAP[a.dataset.status] || 'badge-paused';
@@ -965,13 +1091,13 @@ It captures development as it occurs, including design decisions, implementation
       // ── Intercept click → trigger transition ──
       a.addEventListener('click', e => {
         e.preventDefault();
-        playTransition(name || id, a.href);
+        playTransition(name || id, a.dataset.nameHi, a.href);
       });
 
       a.addEventListener('keydown', e => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          playTransition(name || id, a.href);
+          playTransition(name || id, a.dataset.nameHi, a.href);
         }
       });
 
