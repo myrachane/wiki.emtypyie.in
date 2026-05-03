@@ -1,1 +1,1886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Emtypyie</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323:wght@400&family=Special+Elite&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+:root{
+  --bg:#060608;
+  --bg2:#0d0d10;
+  --green:#00ff41;
+  --amber:#ffb800;
+  --red:#ff3131;
+  --white:#e8e6d8;
+  --dim:#888;
+  --border:#1a1a20;
+  --card:#0f0f14;
+  --pixel:'Press Start 2P',monospace;
+  --terminal:'VT323',monospace;
+  --type:'Special Elite',cursive;
+  --mono:'Space Mono',monospace;
+  --scanline:rgba(0,0,0,0.15);
+  --glow:0 0 10px rgba(0,255,65,0.4),0 0 30px rgba(0,255,65,0.15);
+  --glow-amber:0 0 10px rgba(255,184,0,0.5),0 0 30px rgba(255,184,0,0.2);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
 
+body{
+  background:var(--bg);
+  color:var(--white);
+  font-family:var(--terminal);
+  font-size:20px;
+  overflow-x:hidden;
+  
+}
+
+/* ═══════════════════════════════════════ CUSTOM CURSOR */
+
+
+/* ═══════════════════════════════════════ SCANLINE OVERLAY */
+body::before{
+  content:'';position:fixed;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,var(--scanline) 2px,var(--scanline) 4px);
+  pointer-events:none;z-index:9998;animation:scanmove 8s linear infinite;
+}
+body::after{
+  content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,0.4) 100%);
+  pointer-events:none;z-index:9997;
+}
+@keyframes scanmove{0%{background-position:0 0;}100%{background-position:0 100px;}}
+
+/* ═══════════════════════════════════════ NOISE TEXTURE */
+.noise{
+  position:fixed;inset:0;opacity:.03;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:9996;
+}
+
+/* ═══════════════════════════════════════ SCROLLBAR */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:#000;}
+::-webkit-scrollbar-thumb{background:var(--green);box-shadow:var(--glow);}
+
+/* ═══════════════════════════════════════ GLITCH ANIMATION */
+@keyframes glitch{
+  0%,93%,100%{text-shadow:none;transform:none;}
+  94%{text-shadow:-2px 0 var(--red);transform:translateX(-2px);}
+  96%{text-shadow:2px 0 var(--green);transform:translateX(2px);}
+  98%{text-shadow:-1px 0 var(--amber);transform:skewX(-2deg);}
+}
+@keyframes blink{0%,49%{opacity:1;}50%,100%{opacity:0;}}
+@keyframes fadeup{from{opacity:0;transform:translateY(40px);}to{opacity:1;transform:translateY(0);}}
+@keyframes glow-pulse{0%,100%{text-shadow:var(--glow);}50%{text-shadow:0 0 20px rgba(0,255,65,0.8),0 0 60px rgba(0,255,65,0.4);}}
+
+/* ═══════════════════════════════════════ MUSIC PLAYER */
+#music-player{
+  position:fixed;bottom:24px;right:24px;z-index:9990;
+  display:flex;align-items:center;gap:8px;
+  background:rgba(0,0,0,0.85);
+  border:1px solid var(--green);
+  padding:10px 14px;
+  font-family:var(--pixel);font-size:7px;
+  color:var(--green);
+  box-shadow:var(--glow);
+  cursor:pointer;
+  backdrop-filter:blur(8px);
+  transition:box-shadow .3s;
+}
+#music-player:hover{box-shadow:0 0 20px rgba(0,255,65,0.6),0 0 50px rgba(0,255,65,0.2);}
+#music-player .bars{display:flex;gap:2px;align-items:flex-end;height:14px;}
+#music-player .bar{width:3px;background:var(--green);animation:bar-anim 0.5s ease-in-out infinite alternate;}
+#music-player .bar:nth-child(2){animation-delay:.1s;height:8px;}
+#music-player .bar:nth-child(3){animation-delay:.2s;height:12px;}
+#music-player .bar:nth-child(4){animation-delay:.3s;height:6px;}
+#music-player .bar:nth-child(5){animation-delay:.4s;height:10px;}
+@keyframes bar-anim{from{transform:scaleY(0.3);}to{transform:scaleY(1);}}
+#music-player.paused .bar{animation:none;transform:scaleY(0.3);}
+#music-player .bar{height:10px;}
+
+/* ═══════════════════════════════════════ NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:9000;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 40px;
+  background:linear-gradient(180deg,rgba(6,6,8,0.95) 0%,transparent 100%);
+  border-bottom:1px solid rgba(0,255,65,0.1);
+  transition:all .3s;
+}
+nav.scrolled{background:rgba(6,6,8,0.97);border-bottom-color:rgba(0,255,65,0.3);}
+.nav-logo{
+  font-family:var(--pixel);font-size:12px;
+  color:var(--green);text-decoration:none;
+  text-shadow:var(--glow);letter-spacing:2px;
+  animation:glow-pulse 3s ease-in-out infinite;
+}
+.nav-links{display:flex;gap:24px;list-style:none;}
+ 
+.nav-links a{
+  font-family:var(--pixel);font-size:7px;
+  color:var(--dim);text-decoration:none;
+  letter-spacing:1px;
+  transition:color .2s,text-shadow .2s;
+}
+.nav-links a:hover{color:var(--green);text-shadow:var(--glow);}
+.nav-support{
+  font-family:var(--pixel);font-size:7px;
+  color:var(--bg);background:var(--green);
+  border:none;padding:8px 14px;cursor:pointer;
+  letter-spacing:1px;
+  box-shadow:4px 4px 0 rgba(0,255,65,0.3);
+  transition:all .2s;
+}
+.nav-support:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 rgba(0,255,65,0.4);}
+.hamburger{display:none;flex-direction:column;gap:4px;cursor:pointer;background:none;border:none;padding:4px;}
+.hamburger span{width:22px;height:2px;background:var(--green);display:block;transition:all .3s;}
+
+/* ═══════════════════════════════════════ HERO SECTION */
+#hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+  position:relative;overflow:hidden;
+  padding:80px 40px 40px;
+}
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(0,255,65,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,255,65,0.03) 1px,transparent 1px);
+  background-size:60px 60px;
+  animation:grid-scroll 20s linear infinite;
+}
+@keyframes grid-scroll{from{transform:translateY(0);}to{transform:translateY(60px);}}
+.hero-scanlines{
+  position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,255,65,0.01) 3px,rgba(0,255,65,0.01) 4px);
+  pointer-events:none;
+}
+.hero-content{
+  position:relative;z-index:2;text-align:center;
+  max-width:900px;
+}
+.hero-pre{
+  font-family:var(--pixel);font-size:9px;
+  color:var(--green);letter-spacing:4px;
+  margin-bottom:20px;
+  animation:fadeup .8s ease both;
+}
+.hero-pre span{animation:blink 1s step-end infinite;}
+.hero-name{
+  font-family:var(--pixel);
+  font-size:clamp(36px,8vw,90px);
+  color:var(--white);
+  letter-spacing:8px;line-height:1.2;
+  animation:glitch 6s ease-in-out infinite,fadeup .8s .2s ease both;
+  text-shadow:0 0 40px rgba(255,255,255,0.1);
+}
+.hero-tagline{
+  font-family:var(--terminal);font-size:clamp(24px,4vw,38px);
+  color:var(--amber);margin:20px 0;
+  letter-spacing:2px;
+  animation:fadeup .8s .4s ease both;opacity:0;
+  animation-fill-mode:both;
+}
+.hero-desc{
+  font-family:var(--mono);font-size:13px;
+  color:var(--dim);max-width:600px;margin:0 auto 40px;
+  line-height:1.8;
+  animation:fadeup .8s .6s ease both;opacity:0;
+  animation-fill-mode:both;
+}
+.hero-cta{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;
+  animation:fadeup .8s .8s ease both;opacity:0;animation-fill-mode:both;}
+.btn-primary{
+  font-family:var(--pixel);font-size:8px;
+  color:var(--bg);background:var(--green);
+  border:none;padding:14px 24px;cursor:pointer;
+  text-decoration:none;display:inline-block;
+  box-shadow:4px 4px 0 rgba(0,255,65,0.5);
+  transition:all .2s;letter-spacing:1px;
+}
+.btn-primary:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 rgba(0,255,65,0.6);}
+.btn-outline{
+  font-family:var(--pixel);font-size:8px;
+  color:var(--green);background:transparent;
+  border:2px solid var(--green);padding:12px 22px;cursor:pointer;
+  text-decoration:none;display:inline-block;
+  transition:all .2s;letter-spacing:1px;
+}
+.btn-outline:hover{background:rgba(0,255,65,0.1);box-shadow:var(--glow);}
+.scroll-indicator{
+  position:absolute;bottom:30px;left:50%;transform:translateX(-50%);
+  font-family:var(--pixel);font-size:7px;color:var(--dim);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  animation:fadeup 1s 1.2s ease both;opacity:0;animation-fill-mode:both;
+}
+.scroll-arrow{animation:bounce 1.5s ease-in-out infinite;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(8px);}}
+.hero-stats{
+  display:flex;gap:40px;justify-content:center;margin-top:40px;
+  animation:fadeup .8s 1s ease both;opacity:0;animation-fill-mode:both;
+}
+.stat{text-align:center;}
+.stat-num{font-family:var(--pixel);font-size:18px;color:var(--green);text-shadow:var(--glow);}
+.stat-label{font-family:var(--terminal);font-size:16px;color:var(--dim);margin-top:4px;}
+
+/* ═══════════════════════════════════════ PARALLAX QUOTE */
+#quote{
+  min-height:80vh;display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;padding:80px 40px;
+}
+.quote-bg{
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,#0a0008,#000d06);
+}
+.quote-grid{
+  position:absolute;inset:0;
+  background-image:radial-gradient(circle at 1px 1px,rgba(255,184,0,0.08) 1px,transparent 0);
+  background-size:40px 40px;
+  transform:perspective(500px) rotateX(30deg) scale(1.5);
+  transform-origin:center bottom;
+}
+.quote-content{position:relative;z-index:2;text-align:center;max-width:900px;}
+.quote-mark{
+  font-family:var(--pixel);font-size:60px;color:var(--amber);
+  line-height:0.5;opacity:0.6;
+}
+.quote-text{
+  font-family:var(--type);font-size:clamp(28px,5vw,56px);
+  color:var(--white);line-height:1.4;
+  letter-spacing:2px;margin:20px 0;
+  text-shadow:0 0 30px rgba(255,255,255,0.1);
+}
+.quote-author{
+  font-family:var(--pixel);font-size:8px;
+  color:var(--amber);letter-spacing:3px;
+  margin-top:20px;text-shadow:var(--glow-amber);
+}
+/* Parallax particles */
+.particle{
+  position:absolute;width:2px;height:2px;
+  background:var(--amber);border-radius:50%;
+  animation:float-particle linear infinite;
+  opacity:0.6;
+}
+@keyframes float-particle{from{transform:translateY(100vh) translateX(var(--tx));opacity:0;}
+  10%{opacity:0.6;}90%{opacity:0.6;}to{transform:translateY(-100px) translateX(var(--tx2));opacity:0;}}
+
+
+/* ═══════════════════════════════════════ PROJECTS */
+#projects-section{padding:80px 40px;max-width:1200px;margin:0 auto;}
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:24px;}
+.project-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  padding:0;overflow:hidden;
+  position:relative;
+  transition:all .3s;
+  cursor:pointer;
+}
+.project-card::before{
+  content:'';position:absolute;inset:0;
+  border:2px solid var(--green);opacity:0;
+  transition:opacity .3s;pointer-events:none;
+}
+.project-card:hover{transform:translateY(-4px);box-shadow:0 0 30px rgba(0,255,65,0.1);}
+.project-card:hover::before{opacity:1;}
+.project-cover{
+  width:100%;height:180px;
+  background:linear-gradient(135deg,#0d1a0d,#001a0d);
+  position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;
+}
+.project-cover img{width:100%;height:100%;object-fit:cover;}
+.project-cover-placeholder{
+  font-family:var(--pixel);font-size:10px;color:rgba(0,255,65,0.3);
+  text-align:center;letter-spacing:2px;
+}
+.project-cover-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to bottom,transparent 50%,var(--card) 100%);
+}
+.project-body{padding:20px;}
+.project-number{
+  font-family:var(--pixel);font-size:8px;
+  color:var(--green);opacity:0.5;margin-bottom:8px;
+}
+.project-name{
+  font-family:var(--pixel);font-size:13px;
+  color:var(--white);letter-spacing:2px;margin-bottom:8px;
+  line-height:1.5;
+}
+.project-role{
+  font-family:var(--terminal);font-size:18px;
+  color:var(--amber);margin-bottom:12px;
+}
+.project-desc{
+  font-family:var(--mono);font-size:11px;
+  color:var(--dim);line-height:1.7;margin-bottom:16px;
+}
+.project-links{display:flex;gap:12px;flex-wrap:wrap;}
+.project-link{
+  font-family:var(--pixel);font-size:7px;
+  color:var(--green);text-decoration:none;
+  border:1px solid rgba(0,255,65,0.3);
+  padding:6px 10px;transition:all .2s;
+}
+.project-link:hover{background:rgba(0,255,65,0.1);border-color:var(--green);}
+.view-more-wrap{text-align:center;margin-top:40px;}
+
+/* ═══════════════════════════════════════ SKILLS */
+#skills-section{padding:80px 40px;max-width:1200px;margin:0 auto;}
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;}
+.skill-category{
+  background:var(--card);border:1px solid var(--border);padding:24px;
+  position:relative;overflow:hidden;
+}
+.skill-category::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--green),transparent);
+}
+.skill-cat-title{
+  font-family:var(--pixel);font-size:9px;color:var(--green);
+  letter-spacing:2px;margin-bottom:20px;text-shadow:var(--glow);
+}
+.skill-item{margin-bottom:14px;}
+.skill-label{
+  font-family:var(--terminal);font-size:18px;color:var(--white);
+  display:flex;justify-content:space-between;margin-bottom:4px;
+}
+.skill-pct{color:var(--green);}
+.skill-bar{height:4px;background:rgba(255,255,255,0.05);position:relative;overflow:hidden;}
+.skill-fill{
+  height:100%;background:var(--green);
+  box-shadow:var(--glow);
+  width:0;transition:width 1.5s cubic-bezier(0.4,0,0.2,1);
+}
+.skill-fill.animated{width:var(--pct);}
+
+/* ═══════════════════════════════════════ BLOG */
+#blog-section{padding:80px 40px;max-width:1200px;margin:0 auto;}
+.blog-layout{display:grid;grid-template-columns:2fr 1fr;gap:40px;}
+.blog-list{display:flex;flex-direction:column;gap:20px;}
+.blog-card{
+  background:var(--card);border:1px solid var(--border);
+  padding:24px;cursor:pointer;position:relative;overflow:hidden;
+  transition:all .3s;
+}
+.blog-card:hover{border-color:var(--green);transform:translateX(4px);}
+.blog-card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:2px;
+  background:var(--green);transform:scaleY(0);transition:transform .3s;
+}
+.blog-card:hover::before{transform:scaleY(1);}
+.blog-date{font-family:var(--pixel);font-size:7px;color:var(--dim);margin-bottom:8px;}
+.blog-title{font-family:var(--pixel);font-size:11px;color:var(--white);letter-spacing:1px;margin-bottom:10px;line-height:1.6;}
+.blog-excerpt{font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.7;}
+.blog-tag{
+  display:inline-block;font-family:var(--pixel);font-size:6px;
+  color:var(--amber);border:1px solid rgba(255,184,0,0.3);
+  padding:3px 7px;margin-top:10px;
+}
+.ads-sidebar{display:flex;flex-direction:column;gap:20px;}
+.ads-box{
+  background:var(--card);border:1px solid var(--border);
+  padding:16px;min-height:250px;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:8px;
+}
+.ads-label{font-family:var(--pixel);font-size:6px;color:var(--dim);letter-spacing:2px;}
+
+/* ═══════════════════════════════════════ REVIEWS */
+#reviews-section{padding:80px 40px;max-width:1200px;margin:0 auto;}
+.reviews-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;}
+.review-card{
+  background:var(--card);border:1px solid var(--border);
+  padding:24px;position:relative;
+}
+.review-card::before{
+  content:'❝';font-size:40px;color:var(--green);opacity:0.2;
+  position:absolute;top:10px;right:16px;line-height:1;
+}
+.review-stars{color:var(--amber);font-size:16px;margin-bottom:12px;}
+.review-text{font-family:var(--mono);font-size:12px;color:var(--white);line-height:1.7;margin-bottom:16px;}
+.review-author{display:flex;align-items:center;gap:12px;}
+.review-avatar{
+  width:36px;height:36px;background:rgba(0,255,65,0.1);
+  border:1px solid var(--green);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--pixel);font-size:10px;color:var(--green);
+}
+.review-name{font-family:var(--pixel);font-size:8px;color:var(--white);}
+.review-handle{font-family:var(--terminal);font-size:15px;color:var(--dim);}
+
+/* ═══════════════════════════════════════ EXPERIENCE */
+#experience-section{padding:80px 40px;max-width:1200px;margin:0 auto;}
+.timeline{position:relative;padding-left:30px;}
+.timeline::before{
+  content:'';position:absolute;left:6px;top:0;bottom:0;width:1px;
+  background:linear-gradient(to bottom,var(--green),transparent);
+}
+.timeline-item{margin-bottom:40px;position:relative;}
+.timeline-dot{
+  position:absolute;left:-28px;top:4px;
+  width:13px;height:13px;background:var(--bg);
+  border:2px solid var(--green);
+  box-shadow:var(--glow);
+  animation:glow-pulse 3s ease-in-out infinite;
+}
+.exp-period{font-family:var(--pixel);font-size:8px;color:var(--green);margin-bottom:8px;}
+.exp-role{font-family:var(--pixel);font-size:13px;color:var(--white);margin-bottom:4px;letter-spacing:1px;}
+.exp-company{font-family:var(--terminal);font-size:20px;color:var(--amber);margin-bottom:8px;}
+.exp-desc{font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.7;max-width:700px;}
+
+/* ═══════════════════════════════════════ CONTACT */
+#contact-section{padding:80px 40px;max-width:1200px;margin:0 auto;}
+.contact-layout{display:grid;grid-template-columns:1fr 1fr;gap:60px;}
+.contact-info{display:flex;flex-direction:column;gap:24px;}
+.contact-item{display:flex;align-items:flex-start;gap:16px;}
+.contact-icon{
+  width:40px;height:40px;background:rgba(0,255,65,0.1);
+  border:1px solid var(--green);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--green);font-size:14px;flex-shrink:0;
+}
+.contact-label{font-family:var(--pixel);font-size:7px;color:var(--dim);margin-bottom:4px;}
+.contact-value{font-family:var(--terminal);font-size:20px;color:var(--white);}
+.contact-form{display:flex;flex-direction:column;gap:16px;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-label{font-family:var(--pixel);font-size:7px;color:var(--green);letter-spacing:2px;}
+.form-input,.form-textarea{
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--border);
+  color:var(--white);font-family:var(--terminal);font-size:18px;
+  padding:12px 16px;outline:none;
+  transition:border-color .2s;resize:none;
+}
+.form-input:focus,.form-textarea:focus{border-color:var(--green);box-shadow:var(--glow);}
+.form-textarea{height:120px;}
+.submit-btn{
+  font-family:var(--pixel);font-size:8px;
+  color:var(--bg);background:var(--green);
+  border:none;padding:14px;cursor:pointer;
+  letter-spacing:2px;
+  box-shadow:4px 4px 0 rgba(0,255,65,0.4);
+  transition:all .2s;
+}
+.submit-btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 rgba(0,255,65,0.5);}
+#form-msg{font-family:var(--terminal);font-size:18px;display:none;}
+#form-msg.ok{color:var(--green);}
+#form-msg.err{color:var(--red);}
+
+/* ═══════════════════════════════════════ FOOTER */
+#footer{
+  min-height:100vh;
+  background:#000;
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;
+}
+.footer-top{
+  padding:60px 40px 40px;
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;
+  max-width:1200px;margin:0 auto;width:100%;
+}
+.footer-brand{display:flex;flex-direction:column;gap:16px;}
+.footer-logo{
+  font-family:var(--pixel);font-size:14px;color:var(--green);
+  text-shadow:var(--glow);letter-spacing:3px;
+}
+.footer-desc{font-family:var(--terminal);font-size:17px;color:var(--dim);line-height:1.7;max-width:280px;}
+.footer-social{display:flex;gap:12px;margin-top:8px;}
+.social-link{
+  width:34px;height:34px;background:rgba(0,255,65,0.05);
+  border:1px solid rgba(0,255,65,0.2);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--dim);font-size:13px;text-decoration:none;
+  transition:all .2s;
+}
+.social-link:hover{border-color:var(--green);color:var(--green);box-shadow:var(--glow);}
+.footer-col-title{font-family:var(--pixel);font-size:8px;color:var(--white);letter-spacing:2px;margin-bottom:16px;}
+.footer-links{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.footer-links a{font-family:var(--terminal);font-size:17px;color:var(--dim);text-decoration:none;transition:color .2s;}
+.footer-links a:hover{color:var(--green);}
+.footer-divider{border:none;border-top:1px solid var(--border);margin:0 40px;}
+.footer-bottom-text{
+  text-align:center;padding:16px;
+  font-family:var(--pixel);font-size:7px;color:var(--dim);
+}
+/* THE BIG FOOTER TEXT */
+.footer-big{
+  flex:1;display:flex;align-items:flex-end;justify-content:center;
+  padding:0;overflow:hidden;position:relative;
+}
+.footer-big-text{
+  font-family:var(--pixel);
+  font-size:clamp(80px,15vw,180px);
+  color:transparent;
+  -webkit-text-stroke:1px rgba(0,255,65,0.15);
+  letter-spacing:-4px;
+  line-height:0.85;
+  user-select:none;
+  white-space:nowrap;
+  position:relative;
+  bottom:-10px;
+  transition:all .3s;
+}
+.footer-big:hover .footer-big-text{
+  -webkit-text-stroke:1px rgba(0,255,65,0.5);
+  text-shadow:0 0 80px rgba(0,255,65,0.1);
+}
+.footer-copy{
+  text-align:center;
+  font-family:var(--pixel);font-size:7px;color:rgba(255,255,255,0.1);
+  padding:16px 40px 24px;letter-spacing:2px;
+}
+
+/* ═══════════════════════════════════════ SUPPORT POPUP */
+#support-popup{
+  position:fixed;inset:0;z-index:99990;
+  display:none;align-items:center;justify-content:center;
+  background:rgba(0,0,0,0.92);backdrop-filter:blur(4px);
+}
+#support-popup.active{display:flex;}
+.support-box{
+  background:var(--bg2);border:1px solid var(--green);
+  box-shadow:0 0 60px rgba(0,255,65,0.2);
+  width:90%;max-width:500px;padding:36px;
+  position:relative;overflow-y:auto;max-height:90vh;
+  animation:fadeup .3s ease both;
+}
+.support-close{
+  position:absolute;top:14px;right:14px;
+  background:none;border:none;color:var(--dim);cursor:pointer;
+  transition:color .2s;font-family:var(--pixel);font-size:9px;padding:4px 8px;
+}
+.support-close:hover{color:var(--red);}
+.support-title{font-family:var(--pixel);font-size:13px;color:var(--green);margin-bottom:6px;text-shadow:var(--glow);}
+.support-sub{font-family:var(--terminal);font-size:18px;color:var(--dim);margin-bottom:24px;}
+.amount-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
+.amount-btn{
+  background:rgba(0,255,65,0.04);border:1px solid rgba(0,255,65,0.2);
+  color:var(--white);font-family:var(--pixel);font-size:9px;
+  padding:12px 6px;cursor:pointer;transition:all .2s;
+}
+.amount-btn:hover,.amount-btn.selected{
+  background:rgba(0,255,65,0.15);border-color:var(--green);
+  color:var(--green);text-shadow:var(--glow);
+}
+.custom-amount{width:100%;margin-bottom:16px;}
+.show-qr-btn{
+  width:100%;font-family:var(--pixel);font-size:8px;
+  color:var(--bg);background:var(--green);border:none;
+  padding:14px;cursor:pointer;letter-spacing:2px;
+  box-shadow:4px 4px 0 rgba(0,255,65,0.4);transition:all .2s;
+}
+.show-qr-btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 rgba(0,255,65,0.5);}
+.show-qr-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
+/* QR section */
+.qr-section{
+  display:none;flex-direction:column;align-items:center;
+  margin-top:20px;padding-top:20px;
+  border-top:1px solid var(--border);
+}
+.qr-section.visible{display:flex;animation:fadeup .4s ease both;}
+.qr-amount-label{
+  font-family:var(--pixel);font-size:11px;color:var(--amber);
+  margin-bottom:16px;text-shadow:var(--glow-amber);letter-spacing:2px;
+}
+.qr-wrap{
+  position:relative;padding:12px;background:#fff;
+  box-shadow:0 0 30px rgba(0,255,65,0.3);margin-bottom:16px;
+  animation:qr-glow 2s ease-in-out infinite;
+}
+.qr-wrap img{display:block;width:200px;height:200px;}
+.qr-corner{position:absolute;width:18px;height:18px;border-color:var(--green);border-style:solid;}
+.qr-corner.tl{top:-3px;left:-3px;border-width:3px 0 0 3px;}
+.qr-corner.tr{top:-3px;right:-3px;border-width:3px 3px 0 0;}
+.qr-corner.bl{bottom:-3px;left:-3px;border-width:0 0 3px 3px;}
+.qr-corner.br{bottom:-3px;right:-3px;border-width:0 3px 3px 0;}
+.qr-scan-line{
+  position:absolute;left:12px;right:12px;height:2px;
+  background:linear-gradient(90deg,transparent,var(--green),transparent);
+  animation:qr-scan 2s ease-in-out infinite;top:12px;
+}
+@keyframes qr-scan{0%{top:12px;opacity:0;}10%{opacity:1;}90%{opacity:1;}100%{top:calc(100% - 12px);opacity:0;}}
+@keyframes qr-glow{0%,100%{box-shadow:0 0 20px rgba(0,255,65,0.2);}50%{box-shadow:0 0 40px rgba(0,255,65,0.5);}}
+.qr-upi-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.qr-upi-id{
+  font-family:var(--mono);font-size:11px;color:var(--white);
+  background:rgba(255,255,255,0.05);border:1px solid var(--border);
+  padding:8px 14px;cursor:pointer;transition:border-color .2s;
+}
+.qr-upi-id:hover{border-color:var(--green);}
+.qr-copy-btn{
+  font-family:var(--pixel);font-size:7px;color:var(--green);
+  background:rgba(0,255,65,0.1);border:1px solid rgba(0,255,65,0.3);
+  padding:8px 10px;cursor:pointer;white-space:nowrap;transition:all .2s;
+}
+.qr-copy-btn:hover{background:rgba(0,255,65,0.2);}
+.qr-open-btn{
+  width:100%;font-family:var(--pixel);font-size:8px;
+  color:var(--bg);background:var(--amber);border:none;
+  padding:13px;cursor:pointer;letter-spacing:1px;margin-top:4px;
+  box-shadow:4px 4px 0 rgba(255,184,0,0.4);transition:all .2s;
+}
+.qr-open-btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 rgba(255,184,0,0.5);}
+.qr-steps{display:flex;gap:16px;margin-top:16px;width:100%;justify-content:center;}
+.qr-step{text-align:center;flex:1;}
+.qr-step-num{font-family:var(--pixel);font-size:9px;color:var(--green);margin-bottom:4px;}
+.qr-step-txt{font-family:var(--terminal);font-size:14px;color:var(--dim);}
+.support-note{font-family:var(--mono);font-size:10px;color:var(--dim);margin-top:12px;text-align:center;}
+
+/* ═══════════════════════════════════════ ADMIN PANEL */
+#admin-overlay{
+  position:fixed;inset:0;z-index:999999;
+  background:var(--bg);display:none;overflow-y:auto;
+}
+#admin-overlay.active{display:block;}
+#admin-login{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:24px;padding:40px;
+}
+.admin-logo{font-family:var(--pixel);font-size:14px;color:var(--green);text-shadow:var(--glow);letter-spacing:4px;}
+.admin-sub{font-family:var(--terminal);font-size:20px;color:var(--dim);}
+.admin-form{display:flex;flex-direction:column;gap:12px;width:100%;max-width:360px;}
+.admin-input{
+  background:rgba(0,255,65,0.04);border:1px solid rgba(0,255,65,0.3);
+  color:var(--white);font-family:var(--terminal);font-size:22px;
+  padding:14px 16px;outline:none;
+}
+.admin-input:focus{border-color:var(--green);}
+.admin-btn{
+  font-family:var(--pixel);font-size:8px;
+  color:var(--bg);background:var(--green);border:none;
+  padding:14px;cursor:pointer;letter-spacing:2px;
+  box-shadow:4px 4px 0 rgba(0,255,65,0.4);transition:all .2s;
+}
+.admin-btn:hover{transform:translate(-2px,-2px);}
+.admin-err{font-family:var(--terminal);font-size:17px;color:var(--red);display:none;}
+/* Dashboard */
+#admin-dashboard{display:none;padding:0;}
+.admin-nav{
+  background:#000;border-bottom:1px solid rgba(0,255,65,0.2);
+  padding:16px 24px;display:flex;align-items:center;gap:20px;
+  position:sticky;top:0;z-index:100;flex-wrap:wrap;
+}
+.admin-nav-logo{font-family:var(--pixel);font-size:10px;color:var(--green);}
+.admin-nav-tabs{display:flex;gap:4px;flex-wrap:wrap;}
+.admin-tab{
+  font-family:var(--pixel);font-size:7px;color:var(--dim);
+  background:none;border:1px solid transparent;
+  padding:8px 12px;cursor:pointer;transition:all .2s;
+}
+.admin-tab:hover,.admin-tab.active{color:var(--green);border-color:rgba(0,255,65,0.3);}
+.admin-logout{margin-left:auto;font-family:var(--pixel);font-size:7px;color:var(--red);background:none;border:1px solid rgba(255,49,49,0.3);padding:8px 12px;cursor:pointer;}
+.admin-content{padding:32px;max-width:1100px;margin:0 auto;}
+.admin-section{display:none;}
+.admin-section.active{display:block;}
+.admin-title{font-family:var(--pixel);font-size:14px;color:var(--white);margin-bottom:24px;letter-spacing:2px;}
+.admin-card{background:var(--card);border:1px solid var(--border);padding:24px;margin-bottom:20px;}
+.admin-label{font-family:var(--pixel);font-size:7px;color:var(--green);letter-spacing:2px;display:block;margin-bottom:6px;}
+.admin-field{
+  width:100%;background:rgba(255,255,255,0.03);border:1px solid var(--border);
+  color:var(--white);font-family:var(--terminal);font-size:18px;
+  padding:10px 14px;outline:none;margin-bottom:14px;
+}
+.admin-field:focus{border-color:var(--green);}
+.admin-field-ta{height:100px;resize:vertical;}
+.admin-save{
+  font-family:var(--pixel);font-size:7px;color:var(--bg);
+  background:var(--green);border:none;padding:10px 18px;
+  cursor:pointer;letter-spacing:2px;transition:all .2s;
+}
+.admin-save:hover{opacity:0.85;}
+.admin-delete{
+  font-family:var(--pixel);font-size:7px;color:var(--red);
+  background:rgba(255,49,49,0.1);border:1px solid rgba(255,49,49,0.3);
+  padding:10px 18px;cursor:pointer;transition:all .2s;margin-left:8px;
+}
+.admin-list{display:flex;flex-direction:column;gap:12px;margin-bottom:20px;}
+.admin-list-item{
+  background:rgba(255,255,255,0.02);border:1px solid var(--border);
+  padding:16px;display:flex;justify-content:space-between;align-items:center;
+  gap:12px;
+}
+.admin-item-label{font-family:var(--terminal);font-size:18px;color:var(--white);}
+.admin-add-btn{
+  font-family:var(--pixel);font-size:7px;color:var(--bg);
+  background:var(--amber);border:none;padding:10px 16px;
+  cursor:pointer;letter-spacing:1px;margin-bottom:16px;transition:all .2s;
+}
+.admin-add-btn:hover{opacity:0.85;}
+.admin-form-block{
+  background:var(--card);border:1px solid rgba(0,255,65,0.2);
+  padding:20px;margin-bottom:20px;display:none;
+}
+.admin-form-block.open{display:block;}
+.img-upload-area{
+  border:2px dashed rgba(0,255,65,0.2);padding:30px;text-align:center;
+  cursor:pointer;transition:border-color .2s;margin-bottom:14px;
+}
+.img-upload-area:hover{border-color:var(--green);}
+.img-upload-label{font-family:var(--terminal);font-size:17px;color:var(--dim);}
+.admin-msg{font-family:var(--terminal);font-size:17px;margin:8px 0;display:none;}
+.admin-msg.ok{color:var(--green);}
+.admin-msg.err{color:var(--red);}
+
+/* ═══════════════════════════════════════ RESPONSIVE */
+@media(max-width:900px){
+  nav{padding:14px 20px;}
+  .nav-links{display:none;flex-direction:column;position:fixed;
+    top:60px;right:0;left:0;background:rgba(6,6,8,0.98);
+    padding:20px;gap:16px;border-bottom:1px solid rgba(0,255,65,0.2);}
+  .nav-links.open{display:flex;}
+  .hamburger{display:flex;}
+  section,#projects-section,#skills-section,#blog-section,#reviews-section,#experience-section,#contact-section{padding:60px 20px;}
+  .contact-layout{grid-template-columns:1fr;}
+  .blog-layout{grid-template-columns:1fr;}
+  .footer-top{grid-template-columns:1fr 1fr;gap:30px;}
+  .footer-big-text{font-size:clamp(50px,18vw,120px);}
+  .hero-stats{gap:20px;}
+  .projects-grid{grid-template-columns:1fr;}
+  .admin-content{padding:16px;}
+  .footer-divider,.footer-top{padding-left:20px;padding-right:20px;}
+}
+@media(max-width:480px){
+  .footer-top{grid-template-columns:1fr;}
+  .footer-big-text{font-size:clamp(36px,20vw,80px);}
+  .hero-name{letter-spacing:2px;}
+  .amount-grid{grid-template-columns:repeat(2,1fr);}
+}
+
+/* ═══════════════════════════════════════ SCROLL ANIMATIONS */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-left{opacity:0;transform:translateX(-30px);transition:opacity .7s ease,transform .7s ease;}
+.reveal-left.visible{opacity:1;transform:translateX(0);}
+.reveal-right{opacity:0;transform:translateX(30px);transition:opacity .7s ease,transform .7s ease;}
+.reveal-right.visible{opacity:1;transform:translateX(0);}
+
+/* loading screen */
+#loader{
+  position:fixed;inset:0;background:#000;z-index:999998;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:16px;
+  transition:opacity .5s,visibility .5s;
+}
+#loader.done{opacity:0;visibility:hidden;}
+.loader-text{font-family:var(--pixel);font-size:10px;color:var(--green);text-shadow:var(--glow);letter-spacing:4px;}
+.loader-bar{width:200px;height:3px;background:rgba(0,255,65,0.1);overflow:hidden;}
+.loader-fill{height:100%;background:var(--green);box-shadow:var(--glow);animation:load-fill 1.8s ease-in-out forwards;}
+@keyframes load-fill{from{width:0;}to{width:100%;}}
+.loader-sub{font-family:var(--terminal);font-size:17px;color:var(--dim);letter-spacing:2px;}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-text">EMTYPYIE</div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+  <div class="loader-sub">INITIALIZING...</div>
+</div>
+
+<!-- NOISE OVERLAY -->
+<div class="noise"></div>
+
+<!-- CUSTOM CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-dot" id="cursor-dot"></div>
+
+<!-- MUSIC PLAYER -->
+<div id="music-player" onclick="toggleMusic()" title="Toggle Background Music">
+  <span style="font-size:7px">♪</span>
+  <div class="bars">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+  </div>
+  <span id="music-label">BGM</span>
+</div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">EMTYPYIE</a>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="#projects-section">PROJECTS</a></li>
+    <li><a href="#skills-section">SKILLS</a></li>
+    <li><a href="#blog-section">BLOG</a></li>
+    <li><a href="#reviews-section">REVIEWS</a></li>
+    <li><a href="#experience-section">EXPERIENCE</a></li>
+    <li><a href="#contact-section">CONTACT</a></li>
+  </ul>
+  <button class="nav-support" onclick="openSupport()">SUPPORT ME ♥</button>
+</nav>
+
+<!-- ════════════════════════════════ HERO -->
+<div id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-scanlines"></div>
+  <div class="hero-content">
+    <div class="hero-pre">> HELLO, WORLD<span>_</span></div>
+    <h1 class="hero-name">EMTYPYIE</h1>
+    <p class="hero-tagline">Creative Designer & AI Developer</p>
+    <p class="hero-desc">Building futures at the intersection of design and artificial intelligence. Founder of Visrodeck Technology. Crafting digital experiences that leave a mark.</p>
+    <div class="hero-cta">
+      <a href="#projects-section" class="btn-primary">VIEW WORK</a>
+      <button class="btn-outline" onclick="openSupport()">SUPPORT ME</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num" id="stat-projects">3+</div>
+        <div class="stat-label">PROJECTS</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">1</div>
+        <div class="stat-label">STARTUP</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">IDEAS</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <span>SCROLL</span>
+    <div class="scroll-arrow">▼</div>
+  </div>
+</div>
+
+
+
+<!-- ════════════════════════════════ ABOUT -->
+<section id="about-section" style="padding:80px 40px;max-width:1200px;margin:0 auto;">
+
+  <div class="section-header reveal">
+    <div class="section-tag">> WHO AM I</div>
+    <h2 class="section-title">ABOUT</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="reveal" style="max-width:800px;margin:0 auto; font-family:var(--mono);font-size:13px;color:var(--dim);line-height:1.8;">
+    
+    Alright, I am Emty and yea i just build things no one care about, whatever it dosent matter to me as long as I am making some 'Kool' stuff.
+    
+  </div>
+
+</section>
+
+  
+<!-- ════════════════════════════════ QUOTE -->
+<div id="quote">
+  <div class="quote-bg"></div>
+  <div class="quote-grid" id="quote-grid"></div>
+  <div class="quote-content reveal">
+    <div class="quote-mark">"</div>
+    <blockquote class="quote-text">Culture Shouldn't only exist for those who can afford it</blockquote>
+    <div class="quote-author">— Emty</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════ PROJECTS -->
+<div id="projects-section" style="padding:80px 40px;max-width:1200px;margin:0 auto;">
+  <div class="section-header reveal">
+    <div class="section-tag">> SELECTED WORK</div>
+    <h2 class="section-title">PROJECTS</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="projects-grid" id="projects-grid"></div>
+  <div class="view-more-wrap reveal" style="margin-top:40px;">
+    <button class="btn-outline" id="view-more-btn" onclick="toggleViewMore()">VIEW ALL PROJECTS ↓</button>
+  </div>
+  <div id="extra-projects" style="display:none;margin-top:24px;">
+    <div class="projects-grid" id="extra-projects-grid"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════ SKILLS -->
+<div id="skills-section" style="padding:80px 40px;max-width:1200px;margin:0 auto;">
+  <div class="section-header reveal">
+    <div class="section-tag">> CAPABILITIES</div>
+    <h2 class="section-title">SKILLS</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="skills-grid" id="skills-grid"></div>
+</div>
+
+<!-- ════════════════════════════════ BLOG -->
+<div id="blog-section" style="padding:80px 40px;max-width:1200px;margin:0 auto;">
+  <div class="section-header reveal">
+    <div class="section-tag">> THOUGHTS</div>
+    <h2 class="section-title">BLOG</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="blog-layout">
+    <div class="blog-list" id="blog-list"></div>
+    <div class="ads-sidebar">
+      <div class="ads-box">
+        <div class="ads-label">ADVERTISEMENT</div>
+        <!-- Google AdSense Unit 1 -->
+        <ins class="adsbygoogle" style="display:block;width:100%;min-height:200px"
+          data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+          data-ad-slot="XXXXXXXXXX"
+          data-ad-format="auto"></ins>
+        <div style="font-family:var(--terminal);font-size:15px;color:rgba(255,255,255,0.1);text-align:center;">
+          [AD SPACE — Connect Google AdSense]
+        </div>
+      </div>
+      <div class="ads-box">
+        <div class="ads-label">ADVERTISEMENT</div>
+        <!-- Google AdSense Unit 2 -->
+        <ins class="adsbygoogle" style="display:block;width:100%;min-height:200px"
+          data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+          data-ad-slot="XXXXXXXXXX"
+          data-ad-format="auto"></ins>
+        <div style="font-family:var(--terminal);font-size:15px;color:rgba(255,255,255,0.1);text-align:center;">
+          [AD SPACE — Connect Google AdSense]
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════ REVIEWS -->
+<div id="reviews-section" style="padding:80px 40px;max-width:1200px;margin:0 auto;">
+  <div class="section-header reveal">
+    <div class="section-tag">> TESTIMONIALS</div>
+    <h2 class="section-title">REVIEWS</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="reviews-grid" id="reviews-grid"></div>
+</div>
+
+<!-- ════════════════════════════════ EXPERIENCE -->
+<div id="experience-section" style="padding:80px 40px;max-width:1200px;margin:0 auto;">
+  <div class="section-header reveal">
+    <div class="section-tag">> JOURNEY</div>
+    <h2 class="section-title">EXPERIENCE</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="timeline" id="experience-timeline"></div>
+</div>
+
+<!-- ════════════════════════════════ CONTACT -->
+<div id="contact-section" style="padding:80px 40px;max-width:1200px;margin:0 auto;">
+  <div class="section-header reveal">
+    <div class="section-tag">> GET IN TOUCH</div>
+    <h2 class="section-title">CONTACT</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="contact-layout">
+    <div class="contact-info reveal-left">
+      <div class="contact-item">
+        <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+        <div>
+          <div class="contact-label">EMAIL</div>
+          <div class="contact-value">workforemty@gmail.com</div>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon"><i class="fas fa-globe"></i></div>
+        <div>
+          <div class="contact-label">WEBSITE</div>
+          <div class="contact-value">visrodeck.com</div>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon"><i class="fab fa-github"></i></div>
+        <div>
+          <div class="contact-label">GITHUB</div>
+          <div class="contact-value">github.com/myrachane</div>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+        <div>
+          <div class="contact-label">LOCATION</div>
+          <div class="contact-value">India</div>
+        </div>
+      </div>
+    </div>
+    <div class="contact-form reveal-right">
+      <div class="form-group">
+        <label class="form-label">YOUR NAME</label>
+        <input class="form-input" id="cf-name" placeholder="John Doe"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">EMAIL ADDRESS</label>
+        <input class="form-input" id="cf-email" type="email" placeholder="baddie@example.com"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">MESSAGE</label>
+        <textarea class="form-textarea" id="cf-msg" placeholder="Your message here..."></textarea>
+      </div>
+      <button class="submit-btn" onclick="sendContact()">SEND MESSAGE →</button>
+      <div id="form-msg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════ FOOTER -->
+<footer id="footer">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="footer-logo">EMTYPYIE</div>
+      <p class="footer-desc">Creative Designer & AI Developer. Founder of Visrodeck Technology. Building the future, one pixel at a time.</p>
+      <div class="footer-social">
+        <a href="https://github.com" target="_blank" class="social-link"><i class="fab fa-github"></i></a>
+        <a href="https://twitter.com" target="_blank" class="social-link"><i class="fab fa-twitter"></i></a>
+        <a href="https://linkedin.com" target="_blank" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+        <a href="https://instagram.com" target="_blank" class="social-link"><i class="fab fa-instagram"></i></a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">NAVIGATE</div>
+      <ul class="footer-links">
+        <li><a href="#hero">Home</a></li>
+        <li><a href="#projects-section">Projects</a></li>
+        <li><a href="#skills-section">Skills</a></li>
+        <li><a href="#blog-section">Blog</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">MORE</div>
+      <ul class="footer-links">
+        <li><a href="#reviews-section">Reviews</a></li>
+        <li><a href="#experience-section">Experience</a></li>
+        <li><a href="#contact-section">Contact</a></li>
+        <li><a href="#" onclick="openSupport()">Support Me</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">LINKS</div>
+      <ul class="footer-links">
+        <li><a href="https://visrodeck.com" target="_blank">Visrodeck</a></li>
+        <li><a href="https://relay.visrodeck.com" target="_blank">Relay App</a></li>
+      </ul>
+    </div>
+  </div>
+  <hr class="footer-divider"/>
+  <div class="footer-big">
+    <div class="footer-big-text">EMTYPYIE</div>
+  </div>
+  <div class="footer-copy">© 2025 EMTYPYIE — ALL RIGHTS RESERVED</div>
+</footer>
+
+<!-- ════════════════════════════════ SUPPORT POPUP -->
+<div id="support-popup">
+  <div class="support-box">
+    <button class="support-close" onclick="closeSupport()">✕ CLOSE</button>
+    <div class="support-title">♥ SUPPORT ME</div>
+    <div class="support-sub">Help keep the projects alive. Scan & pay in seconds!</div>
+
+    <!-- Step 1: Pick amount -->
+    <div id="qr-step1">
+      <div class="amount-grid">
+        <button class="amount-btn" onclick="selectAmount(20,this)">₹20</button>
+        <button class="amount-btn" onclick="selectAmount(50,this)">₹50</button>
+        <button class="amount-btn" onclick="selectAmount(100,this)">₹100</button>
+        <button class="amount-btn" onclick="selectAmount(200,this)">₹200</button>
+        <button class="amount-btn" onclick="selectAmount(500,this)">₹500</button>
+        <button class="amount-btn" onclick="selectAmount(1000,this)">₹1000</button>
+      </div>
+      <input class="form-input custom-amount" id="custom-amount" type="number" placeholder="Custom amount (min ₹20)" min="20" oninput="onCustomAmount()"/>
+      <button class="show-qr-btn" id="show-qr-btn" onclick="generateQR()">GENERATE UPI QR ↓</button>
+      <p class="support-note" style="margin-top:10px;">Works with GPay · PhonePe · Paytm · Any UPI App · Minimum ₹20</p>
+    </div>
+
+    <!-- Step 2: QR Code -->
+    <div class="qr-section" id="qr-section">
+      <div class="qr-amount-label" id="qr-amount-label">PAY ₹--</div>
+      <div class="qr-wrap">
+        <img id="qr-img" src="" alt="UPI QR Code"/>
+        <div class="qr-scan-line"></div>
+        <div class="qr-corner tl"></div>
+        <div class="qr-corner tr"></div>
+        <div class="qr-corner bl"></div>
+        <div class="qr-corner br"></div>
+      </div>
+      <div class="qr-upi-row">
+        <div class="qr-upi-id" id="qr-upi-display" onclick="copyUPI()">your-upi@bank</div>
+        <button class="qr-copy-btn" onclick="copyUPI()" id="qr-copy-btn">COPY</button>
+      </div>
+      <button class="qr-open-btn" id="qr-open-btn" onclick="openUPIApp()">📱 OPEN IN UPI APP</button>
+      <div class="qr-steps">
+        <div class="qr-step"><div class="qr-step-num">01</div><div class="qr-step-txt">Open GPay / PhonePe</div></div>
+        <div class="qr-step"><div class="qr-step-num">02</div><div class="qr-step-txt">Scan QR code</div></div>
+        <div class="qr-step"><div class="qr-step-num">03</div><div class="qr-step-txt">Confirm payment</div></div>
+      </div>
+      <p class="support-note">Thank you so much 💚</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════ ADMIN OVERLAY -->
+<div id="admin-overlay">
+  <!-- LOGIN -->
+  <div id="admin-login">
+    <div class="admin-logo">⚙ ADMIN PANEL</div>
+    <div class="admin-sub">EMTYPYIE Dashboard — Restricted Access</div>
+    <div class="admin-form">
+      <input class="admin-input" id="admin-pw" type="password" placeholder="Enter password..." onkeydown="if(event.key==='Enter')adminLogin()"/>
+      <button class="admin-btn" onclick="adminLogin()">ENTER DASHBOARD →</button>
+      <div class="admin-err" id="admin-err">✗ Incorrect password</div>
+    </div>
+  </div>
+  <!-- DASHBOARD -->
+  <div id="admin-dashboard">
+    <div class="admin-nav">
+      <div class="admin-nav-logo">⚙ DASHBOARD</div>
+      <div class="admin-nav-tabs">
+        <button class="admin-tab active" onclick="switchAdminTab('reviews',this)">REVIEWS</button>
+        <button class="admin-tab" onclick="switchAdminTab('gh-info',this)">GITHUB STATUS</button>
+      </div>
+      <button class="admin-logout" onclick="adminLogout()">LOGOUT</button>
+    </div>
+    <div class="admin-content">
+
+      <!-- REVIEWS TAB — only thing managed via admin panel -->
+      <div id="tab-reviews" class="admin-section active">
+        <div class="admin-title">MANAGE REVIEWS</div>
+        <div class="admin-card" style="margin-bottom:20px;padding:16px;border-color:rgba(255,184,0,0.2);">
+          <span style="font-family:var(--terminal);font-size:17px;color:var(--amber);">
+            ⓘ Reviews are managed here. Projects, Blog, Experience & Skills are loaded from your GitHub JSON files.
+          </span>
+        </div>
+        <button class="admin-add-btn" onclick="toggleForm('review-form')">+ ADD REVIEW</button>
+        <div class="admin-form-block" id="review-form">
+          <input class="admin-field" id="rf-name" placeholder="Reviewer Name"/>
+          <input class="admin-field" id="rf-handle" placeholder="Handle / Company / Role"/>
+          <input class="admin-field" id="rf-stars" type="number" min="1" max="5" placeholder="Stars (1-5)"/>
+          <textarea class="admin-field admin-field-ta" id="rf-text" placeholder="Review text"></textarea>
+          <input type="hidden" id="rf-edit-id" value=""/>
+          <button class="admin-save" onclick="saveReview()">SAVE REVIEW</button>
+          <div class="admin-msg" id="rrf-msg"></div>
+        </div>
+        <div class="admin-list" id="admin-reviews-list"></div>
+      </div>
+
+      <!-- GITHUB STATUS TAB -->
+      <div id="tab-gh-info" class="admin-section">
+        <div class="admin-title">GITHUB DATA STATUS</div>
+        <div class="admin-card" id="gh-status-card">
+          <div style="font-family:var(--terminal);font-size:17px;color:var(--dim);margin-bottom:16px;">Checking GitHub connection...</div>
+          <div id="gh-status-list" style="display:flex;flex-direction:column;gap:10px;"></div>
+          <button class="admin-save" style="margin-top:16px;" onclick="checkGHStatus()">↺ REFRESH STATUS</button>
+        </div>
+        <div class="admin-card" style="margin-top:20px;">
+          <div class="admin-label">YOUR GITHUB RAW URL BASE</div>
+          <div id="gh-url-display" style="font-family:var(--mono);font-size:11px;color:var(--green);word-break:break-all;padding:10px;background:rgba(0,255,65,0.04);border:1px solid rgba(0,255,65,0.1);margin-top:6px;"></div>
+          <div style="font-family:var(--terminal);font-size:15px;color:var(--dim);margin-top:10px;">
+            Edit <code style="color:var(--amber)">GH_USER</code>, <code style="color:var(--amber)">GH_REPO</code>, <code style="color:var(--amber)">GH_BRANCH</code> at the top of the &lt;script&gt; tag in index.html to change.
+          </div>
+        </div>
+        <div class="admin-card" style="margin-top:20px;">
+          <div class="admin-label">DATA CACHED THIS SESSION</div>
+          <div id="gh-cache-info" style="font-family:var(--terminal);font-size:16px;color:var(--dim);margin-top:8px;line-height:1.8;"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- BLOG POST MODAL -->
+<div id="blog-modal" style="position:fixed;inset:0;z-index:99995;display:none;align-items:flex-start;justify-content:center;background:rgba(0,0,0,0.95);padding:40px 20px;overflow-y:auto;">
+  <div style="max-width:800px;width:100%;background:var(--bg2);border:1px solid var(--border);padding:40px;position:relative;margin:auto;">
+    <button onclick="closeBlogModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--dim);font-family:var(--pixel);font-size:9px;cursor:pointer;">✕ CLOSE</button>
+    <div id="blog-modal-content"></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+//  ⚙️  GITHUB CONFIG — SET THESE
+// ══════════════════════════════════════════════
+const GH_USER   = 'myrachane';           // ← your GitHub username
+const GH_REPO   = 'Portfolio';     // ← your repo name
+const GH_BRANCH = 'main';               // ← branch (usually main or master)
+
+// Builds the raw GitHub URL for a data file
+function ghUrl(file){
+  return `https://raw.githubusercontent.com/myrachane/portfolio/main/portfolio-data/data/${file}`;
+}
+
+// ── REVIEWS: still stored in localStorage (managed via admin panel) ──
+function loadReviews(){try{return JSON.parse(localStorage.getItem('emty_reviews')||'null');}catch{return null;}}
+function saveReviews(v){localStorage.setItem('emty_reviews',JSON.stringify(v));}
+
+// ── FALLBACK DATA (shown if GitHub fetch fails / offline) ──
+const FALLBACK = {
+  projects:[
+    {id:'1',name:'VISRODECK TECHNOLOGY',role:'Startup Founder & Director',
+     desc:'A technology startup building tools that democratise access to digital infrastructure.',
+     url:'https://visrodeck.com',github:'',cover:''},
+    {id:'2',name:'RELAY',role:'End-to-End Encrypted Messaging',
+     desc:'A privacy-first messaging platform. No metadata. No backdoors. Just messages.',
+     url:'https://relay.visrodeck.com',github:'https://github.com/emtypyie/relay',cover:''}
+  ],
+  blogs:[
+    {id:'1',title:'Why Culture Shouldn\'t Have a Price Tag',tag:'Culture',date:'2025-01-15',
+     excerpt:'Art and creativity have always been gated by wealth. I explore why that\'s a design problem.',
+     content:'Art, music, and creativity have always been gated by wealth.\n\nWhen I said "culture shouldn\'t only exist for those who can afford it," I meant it as both a mission statement and a critique.\n\nThe internet promised to change this — but paywalls and algorithmic gatekeeping rebuilt the same walls in digital form.'}
+  ],
+  experience:[
+    {id:'1',period:'2023 — PRESENT',role:'Founder & Director',company:'Visrodeck Technology',
+     desc:'Founded Visrodeck Technology to build accessible digital tools.'},
+    {id:'2',period:'2022 — 2023',role:'Freelance Creative Designer',company:'Independent',
+     desc:'Worked with startups on digital identity, UI/UX, and AI-integrated workflows.'}
+  ],
+  skills:[
+    {id:'1',cat:'Design',name:'UI/UX Design',pct:92},
+    {id:'2',cat:'Design',name:'Brand Identity',pct:88},
+    {id:'3',cat:'Development',name:'React / Next.js',pct:85},
+    {id:'4',cat:'Development',name:'Node.js',pct:80},
+    {id:'5',cat:'AI & Tools',name:'Prompt Engineering',pct:95},
+    {id:'6',cat:'AI & Tools',name:'LLM Integration',pct:90}
+  ],
+  reviews:[
+    {id:'1',name:'Alex Chen',handle:'@alexdesigns · UX Lead',stars:5,text:'Emty has a rare gift for blending aesthetics with functionality.'},
+    {id:'2',name:'Priya Sharma',handle:'@priya_builds · Indie Dev',stars:5,text:'Relay is genuinely impressive. Privacy-first design done right.'}
+  ]
+};
+
+// ── CACHE: keep fetched data in memory for the session ──
+const DATA = { projects:null, blogs:null, experience:null, skills:null, reviews:null };
+
+// Fetch a JSON file from GitHub, fall back gracefully
+async function fetchGH(file, fallbackKey){
+  try{
+    const res = await fetch(ghUrl(file) + '?t=' + Date.now(), {cache:'no-store'});
+    if(!res.ok) throw new Error(res.status);
+    const json = await res.json();
+    if(!Array.isArray(json)) throw new Error('Not an array');
+    DATA[fallbackKey] = json;
+    return json;
+  }catch(e){
+    console.warn(`[EMTYPYIE] Could not fetch ${file} from GitHub — using fallback data.`, e.message);
+    DATA[fallbackKey] = DATA[fallbackKey] || FALLBACK[fallbackKey];
+    return DATA[fallbackKey];
+  }
+}
+
+// Load everything from GitHub in parallel
+async function initData(){
+  showLoaderMsg('FETCHING DATA...');
+  const [projects, blogs, experience, skills] = await Promise.all([
+    fetchGH('projects.json',   'projects'),
+    fetchGH('blogs.json',      'blogs'),
+    fetchGH('experience.json', 'experience'),
+    fetchGH('skills.json',     'skills'),
+  ]);
+  // Reviews come from localStorage (admin panel)
+  DATA.reviews = loadReviews() || FALLBACK.reviews;
+  return { projects, blogs, experience, skills };
+}
+
+function showLoaderMsg(msg){
+  const el = document.querySelector('#loader .loader-sub');
+  if(el) el.textContent = msg;
+}
+
+// ══════════════════════════════════════════════
+//  RENDER FUNCTIONS
+// ══════════════════════════════════════════════
+function renderProjects(){
+  const all = DATA.projects||[];
+  const main = all.slice(0,3);
+  const extra = all.slice(3);
+  const grid = document.getElementById('projects-grid');
+  const extG = document.getElementById('extra-projects-grid');
+  grid.innerHTML = main.map((p,i)=>projectCard(p,i)).join('');
+  extG.innerHTML = extra.map((p,i)=>projectCard(p,i+3)).join('');
+  document.getElementById('view-more-btn').style.display = extra.length?'inline-block':'none';
+  document.getElementById('stat-projects').textContent = all.length+'+';
+}
+
+function projectCard(p,i){
+  const cover = p.cover
+    ? `<img src="${p.cover}" alt="${p.name}" onerror="this.style.display='none'"/>`
+    : `<div class="project-cover-placeholder">[ COVER ]</div>`;
+  const ghLink = p.github?`<a href="${p.github}" target="_blank" class="project-link"><i class="fab fa-github"></i> GITHUB</a>`:'';
+  return `<div class="project-card reveal">
+    <div class="project-cover">${cover}<div class="project-cover-overlay"></div></div>
+    <div class="project-body">
+      <div class="project-number">// PROJECT ${String(i+1).padStart(2,'0')}</div>
+      <div class="project-name">${p.name}</div>
+      <div class="project-role">» ${p.role}</div>
+      <div class="project-desc">${p.desc}</div>
+      <div class="project-links">
+        ${p.url?`<a href="${p.url}" target="_blank" class="project-link">VISIT ↗</a>`:''}
+        ${ghLink}
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleViewMore(){
+  const ex = document.getElementById('extra-projects');
+  const btn = document.getElementById('view-more-btn');
+  if(ex.style.display==='none'){
+    ex.style.display='block';btn.textContent='SHOW LESS ↑';
+    observeReveal();
+  }else{
+    ex.style.display='none';btn.textContent='VIEW ALL PROJECTS ↓';
+  }
+}
+
+function renderSkills(){
+  const skills = DATA.skills||[];
+  const cats = {};
+  skills.forEach(s=>{if(!cats[s.cat])cats[s.cat]=[];cats[s.cat].push(s);});
+  const grid = document.getElementById('skills-grid');
+  grid.innerHTML = Object.entries(cats).map(([cat,items])=>`
+    <div class="skill-category reveal">
+      <div class="skill-cat-title">${cat}</div>
+      ${items.map(s=>`
+        <div class="skill-item">
+          <div class="skill-label"><span>${s.name}</span><span class="skill-pct">${s.pct}%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="--pct:${s.pct}%"></div></div>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+}
+
+function animateSkills(){
+  document.querySelectorAll('.skill-fill').forEach(el=>{
+    const r = el.getBoundingClientRect();
+    if(r.top<window.innerHeight*.9){el.classList.add('animated');}
+  });
+}
+
+function renderBlogs(){
+  const blogs = DATA.blogs||[];
+  const list = document.getElementById('blog-list');
+  if(!blogs.length){list.innerHTML='<div style="font-family:var(--terminal);color:var(--dim);font-size:18px;">No posts yet.</div>';return;}
+  list.innerHTML = blogs.map(b=>`
+    <div class="blog-card reveal" onclick="openBlog('${b.id}')">
+      <div class="blog-date">${new Date(b.date||Date.now()).toLocaleDateString('en-IN',{year:'numeric',month:'long',day:'numeric'}).toUpperCase()}</div>
+      <div class="blog-title">${b.title}</div>
+      <div class="blog-excerpt">${b.excerpt}</div>
+      <span class="blog-tag">${b.tag||'BLOG'}</span>
+    </div>
+  `).join('');
+}
+
+function openBlog(id){
+  const blogs = DATA.blogs||[];
+  const b = blogs.find(x=>x.id===id);
+  if(!b)return;
+  const md = document.getElementById('blog-modal-content');
+  md.innerHTML = `
+    <div style="font-family:var(--pixel);font-size:8px;color:var(--green);margin-bottom:16px;">${b.tag||'BLOG'}</div>
+    <h2 style="font-family:var(--pixel);font-size:16px;color:var(--white);letter-spacing:2px;margin-bottom:16px;line-height:1.5;">${b.title}</h2>
+    <div style="font-family:var(--pixel);font-size:7px;color:var(--dim);margin-bottom:32px;">${new Date(b.date||Date.now()).toLocaleDateString('en-IN',{year:'numeric',month:'long',day:'numeric'}).toUpperCase()}</div>
+    <div style="font-family:var(--mono);font-size:13px;color:var(--white);line-height:1.9;white-space:pre-wrap;">${b.content}</div>
+  `;
+  document.getElementById('blog-modal').style.display='flex';
+}
+function closeBlogModal(){document.getElementById('blog-modal').style.display='none';}
+
+function renderReviews(){
+  const reviews = DATA.reviews||[];
+  const grid = document.getElementById('reviews-grid');
+  grid.innerHTML = reviews.map(r=>`
+    <div class="review-card reveal">
+      <div class="review-stars">${'★'.repeat(r.stars||5)}</div>
+      <div class="review-text">${r.text}</div>
+      <div class="review-author">
+        <div class="review-avatar">${r.name.charAt(0).toUpperCase()}</div>
+        <div>
+          <div class="review-name">${r.name}</div>
+          <div class="review-handle">${r.handle}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderExperience(){
+  const exp = DATA.experience||[];
+  const tl = document.getElementById('experience-timeline');
+  tl.innerHTML = exp.map(e=>`
+    <div class="timeline-item reveal">
+      <div class="timeline-dot"></div>
+      <div class="exp-period">${e.period}</div>
+      <div class="exp-role">${e.role}</div>
+      <div class="exp-company">${e.company}</div>
+      <div class="exp-desc">${e.desc}</div>
+    </div>
+  `).join('');
+}
+
+// ══════════════════════════════════════════════
+//  MUSIC — MP3 Player (assets/bg.mp3)
+// ══════════════════════════════════════════════
+let bgAudio = null;
+let musicPlaying = false;
+
+function initBgAudio(){
+  if(bgAudio) return;
+  bgAudio = new Audio('assets/bg.mp3');
+  bgAudio.loop = true;
+  bgAudio.volume = 0.4;
+  bgAudio.preload = 'auto';
+  bgAudio.addEventListener('error', ()=>{
+    document.getElementById('music-label').textContent='ERR';
+  });
+}
+
+function fadeVolume(audio, targetVol, duration){
+  const steps = 30;
+  const interval = duration / steps;
+  const delta = (targetVol - audio.volume) / steps;
+  const timer = setInterval(()=>{
+    audio.volume = Math.min(1, Math.max(0, audio.volume + delta));
+    if((delta > 0 && audio.volume >= targetVol)||(delta < 0 && audio.volume <= targetVol)){
+      audio.volume = targetVol;
+      clearInterval(timer);
+      if(targetVol === 0) audio.pause();
+    }
+  }, interval);
+}
+
+function toggleMusic(){
+  initBgAudio();
+  const player = document.getElementById('music-player');
+  const label  = document.getElementById('music-label');
+  if(!musicPlaying){
+    bgAudio.volume = 0;
+    bgAudio.play().then(()=>{
+      fadeVolume(bgAudio, 0.4, 1200);
+      musicPlaying = true;
+      player.classList.remove('paused');
+      label.textContent = 'ON';
+    }).catch(()=>{
+      label.textContent = 'ERR';
+    });
+  } else {
+    fadeVolume(bgAudio, 0, 800);
+    musicPlaying = false;
+    player.classList.add('paused');
+    label.textContent = 'OFF';
+  }
+}
+
+// ══════════════════════════════════════════════
+//  CUSTOM CURSOR
+// ══════════════════════════════════════════════
+document.addEventListener('mousemove',e=>{
+  const c=document.getElementById('cursor');
+  const d=document.getElementById('cursor-dot');
+  if(c){c.style.left=(e.clientX-8)+'px';c.style.top=(e.clientY-8)+'px';}
+  if(d){d.style.left=(e.clientX-2)+'px';d.style.top=(e.clientY-2)+'px';}
+});
+document.addEventListener('mousedown',()=>{const c=document.getElementById('cursor');if(c)c.style.transform='scale(0.7)';});
+document.addEventListener('mouseup',()=>{const c=document.getElementById('cursor');if(c)c.style.transform='scale(1)';});
+
+// ══════════════════════════════════════════════
+//  NAVBAR
+// ══════════════════════════════════════════════
+window.addEventListener('scroll',()=>{
+  const nav=document.getElementById('navbar');
+  nav.classList.toggle('scrolled',window.scrollY>60);
+  animateSkills();
+});
+function toggleMenu(){
+  document.getElementById('nav-links').classList.toggle('open');
+}
+document.querySelectorAll('.nav-links a').forEach(a=>a.addEventListener('click',()=>{
+  document.getElementById('nav-links').classList.remove('open');
+}));
+
+// ══════════════════════════════════════════════
+//  PARALLAX
+// ══════════════════════════════════════════════
+window.addEventListener('scroll',()=>{
+  const scroll=window.scrollY;
+  const qg=document.getElementById('quote-grid');
+  if(qg){qg.style.transform=`perspective(500px) rotateX(30deg) scale(1.5) translateY(${scroll*.1}px)`;}
+});
+
+// ══════════════════════════════════════════════
+//  SCROLL REVEAL
+// ══════════════════════════════════════════════
+function observeReveal(){
+  const els=document.querySelectorAll('.reveal,.reveal-left,.reveal-right');
+  const io=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');}});
+  },{threshold:.1});
+  els.forEach(el=>io.observe(el));
+}
+
+// ══════════════════════════════════════════════
+//  CONTACT FORM
+// ══════════════════════════════════════════════
+const API_BASE = 'https://api.emtypyie.in'; // ← change to your backend URL
+
+async function sendContact(){
+  const name  = document.getElementById('cf-name').value.trim();
+  const email = document.getElementById('cf-email').value.trim();
+  const msg   = document.getElementById('cf-msg').value.trim();
+  const fm    = document.getElementById('form-msg');
+  const btn   = document.querySelector('.submit-btn');
+
+  if(!name||!email||!msg){
+    fm.style.display='block';fm.className='admin-msg err';
+    fm.textContent='> Please fill all fields.';return;
+  }
+
+  btn.textContent='SENDING...';btn.disabled=true;
+
+  try{
+    const res = await fetch(`${API_BASE}/api/contact`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name,email,message:msg})
+    });
+    const data = await res.json();
+    if(res.ok){
+      fm.style.display='block';fm.className='admin-msg ok';
+      fm.textContent='> Message sent! I\'ll get back to you soon.';
+      document.getElementById('cf-name').value='';
+      document.getElementById('cf-email').value='';
+      document.getElementById('cf-msg').value='';
+    }else{
+      throw new Error(data.error||'Failed');
+    }
+  }catch(e){
+    // Fallback to mailto
+    const mailtoLink=`mailto:hello@emtypyie.in?subject=Portfolio Contact: ${encodeURIComponent(name)}&body=${encodeURIComponent(`From: ${name}\nEmail: ${email}\n\n${msg}`)}`;
+    window.location.href=mailtoLink;
+    fm.style.display='block';fm.className='admin-msg ok';fm.textContent='> Opening mail client...';
+  }finally{
+    btn.textContent='SEND MESSAGE →';btn.disabled=false;
+  }
+}
+
+// ══════════════════════════════════════════════
+//  SUPPORT — UPI QR PAYMENT
+// ══════════════════════════════════════════════
+
+// ⚙️  SET YOUR UPI ID HERE
+const MY_UPI_ID   = 'workforemty@oksbi';      // ← replace with your UPI ID
+const MY_NAME     = 'Subhadeep Das';          // ← your name as shown in UPI apps
+
+let selectedAmount = 0;
+
+function openSupport(){
+  document.getElementById('support-popup').classList.add('active');
+}
+
+function closeSupport(){
+  document.getElementById('support-popup').classList.remove('active');
+  // Reset
+  document.querySelectorAll('.amount-btn').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('custom-amount').value = '';
+  selectedAmount = 0;
+  document.getElementById('qr-section').classList.remove('visible');
+  document.getElementById('qr-step1').style.display = 'block';
+}
+
+function selectAmount(amt, btn){
+  selectedAmount = amt;
+  document.querySelectorAll('.amount-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('custom-amount').value = '';
+  // If QR already showing, update it live
+  if(document.getElementById('qr-section').classList.contains('visible')) generateQR();
+}
+
+function onCustomAmount(){
+  const v = parseInt(document.getElementById('custom-amount').value) || 0;
+  selectedAmount = v;
+  document.querySelectorAll('.amount-btn').forEach(b=>b.classList.remove('selected'));
+  if(document.getElementById('qr-section').classList.contains('visible') && v>=20) generateQR();
+}
+
+function generateQR(){
+  if(selectedAmount < 20){
+    // Shake the button
+    const btn = document.getElementById('show-qr-btn');
+    btn.style.transform='translateX(-4px)';
+    setTimeout(()=>btn.style.transform='translateX(4px)',80);
+    setTimeout(()=>btn.style.transform='',160);
+    const note = document.querySelector('.support-note');
+    note.style.color='var(--red)';note.textContent='Minimum amount is ₹20';
+    setTimeout(()=>{note.style.color='';note.textContent='Works with GPay · PhonePe · Paytm · Any UPI App · Minimum ₹20';},2000);
+    return;
+  }
+
+  // Build UPI deep link
+  const upiLink = buildUPILink(selectedAmount);
+
+  // Generate QR via free API (no backend needed)
+  const qrData = encodeURIComponent(upiLink);
+  const qrUrl  = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${qrData}&bgcolor=ffffff&color=000000&margin=0&qzone=1`;
+
+  const img = document.getElementById('qr-img');
+  img.src = qrUrl;
+  img.alt = `UPI QR for ₹${selectedAmount}`;
+
+  document.getElementById('qr-amount-label').textContent = `PAY ₹${selectedAmount}`;
+  document.getElementById('qr-upi-display').textContent  = MY_UPI_ID;
+  document.getElementById('qr-open-btn').setAttribute('data-upi', upiLink);
+
+  // Show QR section
+  document.getElementById('qr-section').classList.add('visible');
+  document.getElementById('qr-section').scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function buildUPILink(amount){
+  // Standard UPI payment URL format
+  const params = new URLSearchParams({
+    pa : MY_UPI_ID,
+    pn : MY_NAME,
+    am : amount.toFixed(2),
+    cu : 'INR',
+    tn : 'Support for Emtypyie'
+  });
+  return `upi://pay?${params.toString()}`;
+}
+
+function openUPIApp(){
+  const link = document.getElementById('qr-open-btn').getAttribute('data-upi');
+  if(!link) return;
+  // Try to open UPI deep link (works on mobile)
+  const a = document.createElement('a');
+  a.href = link;
+  a.click();
+}
+
+function copyUPI(){
+  navigator.clipboard.writeText(MY_UPI_ID).then(()=>{
+    const btn = document.getElementById('qr-copy-btn');
+    const orig = btn.textContent;
+    btn.textContent = 'COPIED ✓';
+    btn.style.color = 'var(--amber)';
+    setTimeout(()=>{btn.textContent=orig;btn.style.color='';}, 2000);
+  }).catch(()=>{
+    // Fallback for older browsers
+    const el = document.getElementById('qr-upi-display');
+    const r  = document.createRange();
+    r.selectNode(el);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(r);
+    document.execCommand('copy');
+  });
+}
+
+document.getElementById('support-popup').addEventListener('click', e=>{
+  if(e.target === document.getElementById('support-popup')) closeSupport();
+});
+
+// ══════════════════════════════════════════════
+//  PARTICLES (Quote section)
+// ══════════════════════════════════════════════
+function spawnParticles(){
+  const q=document.getElementById('quote');
+  for(let i=0;i<20;i++){
+    const p=document.createElement('div');
+    p.className='particle';
+    p.style.cssText=`left:${Math.random()*100}%;width:${Math.random()*3+1}px;height:${Math.random()*3+1}px;
+      --tx:${(Math.random()-.5)*100}px;--tx2:${(Math.random()-.5)*100}px;
+      animation-duration:${Math.random()*10+8}s;animation-delay:${Math.random()*-15}s;`;
+    q.appendChild(p);
+  }
+}
+
+// ══════════════════════════════════════════════
+//  ADMIN PANEL
+// ══════════════════════════════════════════════
+const ADMIN_PW = 'Subhadeep@08';
+
+function checkAdminRoute(){
+  const h=window.location.hostname;
+  const p=window.location.pathname;
+  const hash=window.location.hash;
+  if(h==='dashboard.emtypyie.in'||hash==='#dashboard'||hash.startsWith('#admin')){
+    document.getElementById('admin-overlay').classList.add('active');
+  }
+}
+
+function adminLogin(){
+  const pw=document.getElementById('admin-pw').value;
+  const err=document.getElementById('admin-err');
+  if(pw===ADMIN_PW){
+    document.getElementById('admin-login').style.display='none';
+    document.getElementById('admin-dashboard').style.display='block';
+    renderAdminAll();
+  }else{
+    err.style.display='block';
+    document.getElementById('admin-pw').value='';
+  }
+}
+
+function adminLogout(){
+  document.getElementById('admin-overlay').classList.remove('active');
+  document.getElementById('admin-login').style.display='flex';
+  document.getElementById('admin-dashboard').style.display='none';
+  document.getElementById('admin-pw').value='';
+  window.location.hash='';
+}
+
+function switchAdminTab(tab,btn){
+  document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.admin-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  btn.classList.add('active');
+}
+
+function toggleForm(id){
+  const f=document.getElementById(id);
+  f.classList.toggle('open');
+}
+
+function handleImgUpload(inputId,nameId,dataId){
+  const inp=document.getElementById(inputId);
+  const f=inp.files[0];
+  if(!f)return;
+  document.getElementById(nameId).textContent=f.name;
+  const reader=new FileReader();
+  reader.onload=e=>{document.getElementById(dataId).value=e.target.result;};
+  reader.readAsDataURL(f);
+}
+
+function showMsg(id,txt,ok=true){
+  const el=document.getElementById(id);
+  el.style.display='block';el.className='admin-msg '+(ok?'ok':'err');
+  el.textContent=txt;setTimeout(()=>el.style.display='none',3000);
+}
+
+// ── REVIEWS ADMIN (localStorage) ──
+function renderAdminReviews(){
+  const reviews = loadReviews()||[];
+  const list = document.getElementById('admin-reviews-list');
+  list.innerHTML = reviews.map(r=>`
+    <div class="admin-list-item">
+      <div class="admin-item-label">${r.name} ${'★'.repeat(r.stars||5)}<br><span style="font-size:15px;color:var(--dim)">${r.handle}</span></div>
+      <div style="display:flex;gap:8px;flex-shrink:0;">
+        <button class="admin-save" onclick="editReview('${r.id}')">EDIT</button>
+        <button class="admin-delete" onclick="deleteReview('${r.id}')">DEL</button>
+      </div>
+    </div>
+  `).join('') || '<div style="font-family:var(--terminal);color:var(--dim);">No reviews yet. Add one above!</div>';
+}
+
+function saveReview(){
+  const editId = document.getElementById('rf-edit-id').value;
+  const reviews = loadReviews()||[];
+  const data = {
+    id    : editId||Date.now().toString(),
+    name  : document.getElementById('rf-name').value.trim(),
+    handle: document.getElementById('rf-handle').value.trim(),
+    stars : parseInt(document.getElementById('rf-stars').value)||5,
+    text  : document.getElementById('rf-text').value.trim()
+  };
+  if(!data.name||!data.text){showMsg('rrf-msg','Name and review required',false);return;}
+  if(editId){const i=reviews.findIndex(r=>r.id===editId);if(i>-1)reviews[i]=data;}
+  else{reviews.push(data);}
+  saveReviews(reviews);
+  DATA.reviews = reviews;
+  renderReviews();renderAdminReviews();
+  showMsg('rrf-msg',editId?'Review updated!':'Review added!');
+  ['rf-name','rf-handle','rf-stars','rf-text','rf-edit-id'].forEach(id=>document.getElementById(id).value='');
+}
+
+function editReview(id){
+  const r=(loadReviews()||[]).find(x=>x.id===id);
+  if(!r)return;
+  document.getElementById('rf-name').value=r.name;
+  document.getElementById('rf-handle').value=r.handle;
+  document.getElementById('rf-stars').value=r.stars;
+  document.getElementById('rf-text').value=r.text;
+  document.getElementById('rf-edit-id').value=id;
+  document.getElementById('review-form').classList.add('open');
+  document.getElementById('review-form').scrollIntoView({behavior:'smooth'});
+}
+
+function deleteReview(id){
+  if(!confirm('Delete review?'))return;
+  const updated = (loadReviews()||[]).filter(x=>x.id!==id);
+  saveReviews(updated);
+  DATA.reviews = updated;
+  renderReviews();renderAdminReviews();
+}
+
+function renderAdminAll(){
+  renderAdminReviews();
+}
+
+// ── GITHUB STATUS (admin panel tab) ──
+async function checkGHStatus(){
+  const files = ['projects.json','blogs.json','experience.json','skills.json'];
+  const list  = document.getElementById('gh-status-list');
+  document.getElementById('gh-url-display').textContent = ghUrl('[file].json');
+  list.innerHTML = '<div style="font-family:var(--terminal);font-size:16px;color:var(--dim);">Checking...</div>';
+
+  const results = await Promise.all(files.map(async f => {
+    try{
+      const res = await fetch(ghUrl(f)+'?t='+Date.now(),{cache:'no-store'});
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      const json = await res.json();
+      return {file:f, ok:true, count:Array.isArray(json)?json.length:'?'};
+    }catch(e){
+      return {file:f, ok:false, err:e.message};
+    }
+  }));
+
+  list.innerHTML = results.map(r=>
+    `<div style="display:flex;align-items:center;gap:12px;padding:8px;background:rgba(255,255,255,0.02);border:1px solid var(--border);">
+      <span style="font-family:var(--pixel);font-size:10px;color:${r.ok?'var(--green)':'var(--red)'};">${r.ok?'✓':'✗'}</span>
+      <span style="font-family:var(--mono);font-size:11px;color:var(--white);flex:1;">data/${r.file}</span>
+      <span style="font-family:var(--terminal);font-size:15px;color:${r.ok?'var(--amber)':'var(--red)'};">${r.ok?r.count+' items':r.err}</span>
+    </div>`
+  ).join('');
+
+  // Cache info
+  const ci = document.getElementById('gh-cache-info');
+  if(ci){
+    ci.innerHTML = Object.entries(DATA)
+      .map(([k,v])=>`<span style="color:var(--white);">${k}:</span> <span style="color:${v?'var(--green)':'var(--dim)'};">${v?v.length+' items':'not loaded'}</span>`)
+      .join('<br>');
+  }
+}
+
+// ══════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', async ()=>{
+  spawnParticles();
+  checkAdminRoute();
+
+  // Fetch all data from GitHub in parallel, then render
+  await initData();
+
+  renderProjects();
+  renderSkills();
+  renderBlogs();
+  renderReviews();
+  renderExperience();
+  observeReveal();
+
+  // Dismiss loader
+  setTimeout(()=>{
+    document.getElementById('loader').classList.add('done');
+    showLoaderMsg('READY');
+  }, 600);
+
+  window.addEventListener('hashchange', checkAdminRoute);
+});
+
+window.addEventListener('scroll',()=>{
+  observeReveal();
+  animateSkills();
+});
+</script>
