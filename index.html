@@ -37,10 +37,9 @@
 
       --arrow-fill:      #1C1917;
       --trans-flash:     #ffffff;
-      /* ── TRANSITION COLORS — always vivid on dark overlay ── */
-      --trans-text:      #FF4655;   /* Valorant coral-red — always readable */
-      --trans-name:      #F0EBE0;   /* near-white for module name */
-      --trans-label:     rgba(240,235,224,0.55);
+      --trans-name-col:  #1C1917;
+      /* accent bright for transition (always vivid) */
+      --trans-accent:    #C05B0A;
     }
     [data-theme="dark"] {
       --bg:           #0E0D0B;
@@ -65,9 +64,8 @@
 
       --arrow-fill:      #E8E2D6;
       --trans-flash:     #0E0D0B;
-      --trans-text:      #FF4655;
-      --trans-name:      #F0EBE0;
-      --trans-label:     rgba(240,235,224,0.55);
+      --trans-name-col:  #E8E2D6;
+      --trans-accent:    #F59E0B;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -95,6 +93,7 @@
     }
     [data-theme="dark"] body::before { opacity: 0.12; }
 
+    /* ── RIGHT BG IMAGE ─────────────────── */
     .bg-right {
       position: fixed;
       top: 0; right: 0;
@@ -108,6 +107,7 @@
     }
     [data-theme="dark"] .bg-right { opacity: 0.28; }
 
+    /* ── TOC SIDEBAR ────────────────────── */
     .toc-sidebar {
       position: fixed;
       top: var(--nav-h);
@@ -163,6 +163,7 @@
     .toc-item.active::before { width: 20px; background: var(--accent); }
     .toc-divider { height: 1px; background: var(--border-light); margin: 10px 0; opacity: 0.5; }
 
+    /* NAV */
     nav {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -214,8 +215,10 @@
       color: var(--accent-hover);
     }
 
+    /* PAGE */
     .page { position: relative; z-index: 1; padding-top: var(--nav-h); }
 
+    /* HERO */
     .hero {
       padding: 72px 24px 56px;
       max-width: var(--max-w);
@@ -248,6 +251,7 @@
     .hero-tag { font-family: var(--font-mono); font-size: 12px; color: var(--text-faint); }
     .hero-tag::before { content: '// '; color: var(--accent); opacity: 0.7; }
 
+    /* ABOUT */
     .about {
       padding: 48px 24px;
       max-width: var(--max-w);
@@ -270,6 +274,7 @@
     .about-body p { color: var(--text-muted); font-size: 14.5px; line-height: 1.75; max-width: 580px; }
     .about-body p + p { margin-top: 12px; }
 
+    /* PROJECTS / RESEARCH shared */
     .projects { padding: 48px 24px 72px; max-width: var(--max-w); margin: 0 auto; }
     .research  { padding: 0 24px 72px; max-width: var(--max-w); margin: 0 auto; border-top: 1px solid var(--border-light); padding-top: 48px; }
 
@@ -303,6 +308,7 @@
     }
     .section-desc::before { content: '// '; color: var(--accent); opacity: 0.7; }
 
+    /* FILTERS */
     .filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
     .filter-pill {
       font-family: var(--font-mono);
@@ -321,6 +327,7 @@
     .filter-pill.active { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, transparent); background: var(--accent-dim); }
     .research-filter-pill.active { color: var(--purple); border-color: color-mix(in srgb, var(--purple) 40%, transparent); background: var(--purple-bg); }
 
+    /* GRID */
     .project-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -385,6 +392,7 @@
     .badge-published { color: var(--green);  background: var(--green-bg);  border-color: color-mix(in srgb, var(--green)  25%, transparent); }
     .card-date { font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); }
 
+    /* STATES */
     .grid-state {
       grid-column: 1 / -1;
       display: flex;
@@ -407,6 +415,7 @@
     .loader-purple { border-top-color: var(--purple); }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* FOOTER */
     footer { border-top: 1px solid var(--border); background: var(--surface); }
     .footer-inner {
       max-width: var(--max-w);
@@ -424,9 +433,9 @@
     .footer-link:hover { color: var(--accent); }
     .footer-link svg { width: 13px; height: 13px; }
 
-    /* ══════════════════════════════════════════
-       TRANSITION OVERLAY — VALORANT EDITION v2
-    ══════════════════════════════════════════ */
+    /* ═══════════════════════════════════════
+       TRANSITION OVERLAY
+    ═══════════════════════════════════════ */
     #transOverlay {
       position: fixed;
       inset: 0;
@@ -440,18 +449,30 @@
       pointer-events: all;
     }
 
-    /* ── CINEMATIC DARK BG ── */
+    /* Flash layer */
+    #transFlash {
+      position: absolute;
+      inset: 0;
+      background: var(--trans-flash);
+      opacity: 0;
+      z-index: 10;
+      transition: opacity 0.25s ease-in;
+    }
+    #transFlash.on { opacity: 1; }
+
+    /* ── DARK CINEMATIC BG ── */
     #transBg {
       position: absolute;
       inset: 0;
       background: #07060A;
       opacity: 0;
       z-index: 1;
-      transition: opacity 0.2s ease;
+      pointer-events: none;
+      transition: opacity 0.22s ease;
     }
-    #transBg.bg-on { opacity: 1; }
+    #transBg.bg-on { opacity: 0.95; }
 
-    /* ── HUD PARTICLE CANVAS ── */
+    /* ── PARTICLE / HUD CANVAS ── */
     #particleCanvas {
       position: absolute;
       inset: 0;
@@ -460,11 +481,11 @@
       z-index: 2;
       pointer-events: none;
       opacity: 0;
-      transition: opacity 0.25s ease;
+      transition: opacity 0.3s ease;
     }
     #particleCanvas.p-on { opacity: 1; }
 
-    /* ── CHEVRON ARROWS ── */
+    /* ── ARROWS ─── z-index 3 (in front of particles) ── */
     .trans-arrow {
       position: absolute;
       top: -5%;
@@ -475,148 +496,127 @@
       will-change: transform;
       z-index: 3;
     }
-    #ta1 { left: 0%;  transform: translateX(-520%); }
-    #ta2 { left: 25%; transform: translateX(-420%); }
-    #ta3 { left: 50%; transform: translateX(-320%); }
 
+    /* Resting (on-screen) positions */
+    #ta1 { left: 0%;  }
+    #ta2 { left: 25%; }
+    #ta3 { left: 50%; }
+
+    /* All start off-screen to the left */
+    #ta1 { transform: translateX(-520%); }
+    #ta2 { transform: translateX(-420%); }
+    #ta3 { transform: translateX(-320%); }
+
+    /* Arrows slide IN */
     #ta1.arrow-in { transform: translateX(0); transition: transform 0.38s cubic-bezier(0.77, 0, 0.175, 1) 0.00s; }
     #ta2.arrow-in { transform: translateX(0); transition: transform 0.38s cubic-bezier(0.77, 0, 0.175, 1) 0.08s; }
     #ta3.arrow-in { transform: translateX(0); transition: transform 0.38s cubic-bezier(0.77, 0, 0.175, 1) 0.16s; }
 
+    /* Arrows sweep OUT */
     #ta1.arrow-out { transform: translateX(520%); transition: transform 0.44s cubic-bezier(0.77, 0, 0.175, 1) 0.00s; }
     #ta2.arrow-out { transform: translateX(420%); transition: transform 0.44s cubic-bezier(0.77, 0, 0.175, 1) 0.05s; }
     #ta3.arrow-out { transform: translateX(320%); transition: transform 0.44s cubic-bezier(0.77, 0, 0.175, 1) 0.10s; }
 
-    /* ══════════════════════════════
-       MASSIVE VALORANT TEXT BLOCK
-    ══════════════════════════════ */
+    /* ── EMTYPYIE HERO TEXT ── z-index 4 ── */
     #transHero {
       position: absolute;
       inset: 0;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       z-index: 4;
       pointer-events: none;
-      overflow: hidden; /* crops the giant text at viewport edges — Valorant look */
+      overflow: hidden;
     }
 
     #transHeroText {
+      display: flex;
+      align-items: baseline;
       font-family: 'Arial Black', 'Arial Bold', Impact, var(--font-sans);
-      font-size: clamp(110px, 24vw, 320px); /* MASSIVE — overflows like Valorant */
+      font-size: clamp(44px, 10.5vw, 136px);
       font-weight: 900;
-      letter-spacing: -0.03em;
-      line-height: 0.88;
-      color: #FF4655; /* Valorant coral-red — always vivid */
+      letter-spacing: -0.025em;
+      line-height: 1;
+      color: var(--trans-accent);
       text-transform: uppercase;
       user-select: none;
-      will-change: transform, filter;
-      transform-origin: center center;
-      text-align: center;
-      /* chromatic aberration shadow */
-      text-shadow:
-        4px 0 0 rgba(0, 200, 255, 0.35),
-        -4px 0 0 rgba(255, 50, 100, 0.25);
+      position: relative;
     }
 
-    /* ── FRAME-SNAP SEQUENCE — 6 discrete positions ── */
-    /* Applied by JS via class swap each frame */
-    #transHeroText.frame-0 {
-      transform: scale(0.22) translate(-18%, 12%) rotate(-3deg);
-      filter: blur(12px);
-      opacity: 0.6;
+    /* ── PER-LETTER ANIMATION ── */
+    .th-letter {
+      display: inline-block;
+      clip-path: inset(0 0 100% 0);  /* hidden below clip */
+      will-change: clip-path;
+      transform-origin: bottom center;
     }
-    #transHeroText.frame-1 {
-      transform: scale(2.6) translate(6%, -4%) rotate(0deg);
-      filter: blur(0);
-      opacity: 1;
+    .th-letter.th-in {
+      animation: thIn 0.13s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
-    #transHeroText.frame-2 {
-      transform: scale(0.55) translate(-14%, 8%) rotate(1.5deg);
-      filter: blur(3px);
-      opacity: 1;
+    .th-letter.th-out {
+      animation: thOut 0.16s cubic-bezier(0.55, 0, 1, 0.45) forwards;
     }
-    #transHeroText.frame-3 {
-      transform: scale(1.95) translate(4%, -6%) rotate(-1deg);
-      filter: blur(0);
-      opacity: 1;
+    @keyframes thIn  {
+      from { clip-path: inset(0 0 100% 0); }
+      to   { clip-path: inset(0 0 -2% 0);  }
     }
-    #transHeroText.frame-4 {
-      transform: scale(0.78) translate(-4%, 3%) rotate(0.5deg);
-      filter: blur(1px);
-      opacity: 1;
-    }
-    #transHeroText.frame-5 {
-      transform: scale(1.38) translate(2%, -2%) rotate(0deg);
-      filter: blur(0);
-      opacity: 1;
-    }
-    #transHeroText.frame-hold {
-      transform: scale(1.15) translate(0, 0) rotate(0deg);
-      filter: blur(0);
-      opacity: 1;
-      transition: transform 0.12s ease-out, filter 0.1s ease;
+    @keyframes thOut {
+      from { clip-path: inset(0 0 -2% 0);  }
+      to   { clip-path: inset(110% 0 0 0); }
     }
 
-    /* ── GLITCH SHAKE during hold ── */
-    #transHeroText.txt-glitch {
-      animation: txtShake 0.07s steps(2) infinite;
-    }
-    @keyframes txtShake {
-      0%   { transform: scale(1.15) translate(0,    0);    }
-      20%  { transform: scale(1.15) translate(-6px, 0);    }
-      40%  { transform: scale(1.15) translate(6px,  2px);  }
-      60%  { transform: scale(1.15) translate(-4px, -1px); }
-      80%  { transform: scale(1.15) translate(3px,  0);    }
-      100% { transform: scale(1.15) translate(0,    0);    }
-    }
-
-    /* ── COLLAPSE ── */
-    #transHeroText.frame-collapse {
-      transform: scale(0.05) translate(0, -50%);
-      filter: blur(20px);
-      opacity: 0;
-      transition: transform 0.3s cubic-bezier(0.55, 0, 1, 0.45), filter 0.3s ease, opacity 0.25s ease;
-    }
-
-    /* ── SCAN LINE ── */
+    /* ── SCAN LINE SWEEP ── */
     #transScan {
       position: absolute;
       top: 0; bottom: 0;
-      left: -120px;
-      width: 100px;
+      left: -100px;
+      width: 90px;
       background: linear-gradient(to right,
         transparent,
-        rgba(255, 70, 85, 0.22) 40%,
-        rgba(255, 100, 110, 0.38) 50%,
-        rgba(255, 70, 85, 0.22) 60%,
+        rgba(255,200,80,0.28) 40%,
+        rgba(255,220,120,0.38) 50%,
+        rgba(255,200,80,0.28) 60%,
         transparent
       );
       pointer-events: none;
       z-index: 5;
     }
     #transScan.scan-go {
-      animation: scanSlide 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: scanSlide 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
     @keyframes scanSlide {
-      from { left: -100px; }
-      to   { left: calc(100vw + 100px); }
+      from { left: -90px; }
+      to   { left: calc(100vw + 90px); }
     }
 
-    /* ── MODULE NAME (bottom-right) ── */
+    /* ── TEXT GLITCH SHAKE ── */
+    #transHeroText.txt-glitch {
+      animation: txtShake 0.08s steps(2) infinite;
+    }
+    @keyframes txtShake {
+      0%   { transform: translate(0,    0);    }
+      20%  { transform: translate(-5px, 0);    }
+      40%  { transform: translate(5px,  1px);  }
+      60%  { transform: translate(-3px, -1px); }
+      80%  { transform: translate(2px,  0);    }
+      100% { transform: translate(0,    0);    }
+    }
+
+    /* ── MODULE NAME ── z-index 5 ── */
     #transName {
       position: absolute;
       bottom: 7vh;
       right: 3vw;
-      width: 28vw;
+      width: 25vw;
       font-family: var(--font-serif);
       font-size: clamp(20px, 3.8vw, 52px);
       font-weight: 700;
-      color: var(--trans-name); /* always near-white */
+      color: var(--trans-name-col);
       letter-spacing: -0.02em;
       line-height: 1.1;
       text-align: right;
-      z-index: 6;
+      z-index: 5;
       opacity: 0;
       transform: translateY(16px);
       transition: opacity 0.35s ease, transform 0.35s ease;
@@ -632,49 +632,39 @@
       transition: opacity 0.2s ease, transform 0.2s ease;
     }
 
+    /* Label above name */
     #transLabel {
       position: absolute;
-      bottom: calc(7vh + clamp(26px, 4.2vw, 58px) + 12px);
+      bottom: calc(7vh + clamp(26px, 4vw, 58px) + 12px);
       right: 3vw;
-      width: 28vw;
+      width: 25vw;
       text-align: right;
       font-family: var(--font-mono);
       font-size: 9px;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: var(--trans-label); /* always semi-visible */
-      z-index: 6;
+      color: var(--trans-name-col);
+      z-index: 5;
       opacity: 0;
       transition: opacity 0.3s ease 0.1s;
       pointer-events: none;
     }
-    #transLabel.label-visible { opacity: 1; }
+    #transLabel.label-visible { opacity: 0.45; }
 
-    /* ── CHUNK GLITCH CANVAS ── */
+    /* ── CHUNK GLITCH CANVAS ── z-index 6 ── */
     #glitchCanvas {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
-      z-index: 7;
+      z-index: 6;
       pointer-events: none;
       display: none;
       mix-blend-mode: difference;
     }
     #glitchCanvas.active { display: block; }
 
-    /* ── FLASH LAYER ── */
-    #transFlash {
-      position: absolute;
-      inset: 0;
-      background: var(--trans-flash);
-      opacity: 0;
-      z-index: 10;
-      transition: opacity 0.25s ease-in;
-    }
-    #transFlash.on { opacity: 1; }
-
-    /* ── RESPONSIVE ── */
+    /* ── RESPONSIVE ─────────────────────── */
     @media (max-width: 1100px) { .toc-sidebar { display: none; } }
     @media (max-width: 640px) {
       nav { padding: 0 16px; }
@@ -686,42 +676,61 @@
       .footer-inner { flex-direction: column; align-items: flex-start; gap: 12px; }
       .nav-btn span { display: none; }
       .bg-right { display: none; }
-      #transHeroText { font-size: clamp(72px, 22vw, 160px); }
-      #transName     { font-size: clamp(16px, 7vw, 32px); bottom: 5vh; right: 2vw; width: 42vw; }
-      #transLabel    { right: 2vw; width: 42vw; }
+      #transHeroText { font-size: clamp(32px, 12vw, 72px); }
+      #transName     { font-size: clamp(16px, 7vw, 32px); bottom: 5vh; right: 2vw; width: 38vw; }
+      #transLabel    { right: 2vw; width: 38vw; }
     }
   </style>
 </head>
 <body>
 
+  <!-- RIGHT BG IMAGE -->
   <div class="bg-right"></div>
 
-  <!-- ════════════════════════════════════════
+  <!-- ══════════════════════════════════════
        TRANSITION OVERLAY
-  ════════════════════════════════════════ -->
+  ══════════════════════════════════════ -->
   <div id="transOverlay" aria-hidden="true">
 
+    <!-- 1. Cinematic dark bg (z:1) -->
     <div id="transBg"></div>
+
+    <!-- 2. HUD particle canvas (z:2) -->
     <canvas id="particleCanvas"></canvas>
 
+    <!-- 3. Three chevron arrows (z:3) -->
     <div class="trans-arrow" id="ta1"></div>
     <div class="trans-arrow" id="ta2"></div>
     <div class="trans-arrow" id="ta3"></div>
 
+    <!-- 4. EMTYPYIE hero text (z:4) -->
     <div id="transHero">
-      <!-- Single text node — frame animation transforms the whole block -->
-      <div id="transHeroText">EMTYPYIE</div>
+      <div id="transHeroText">
+        <span class="th-letter">E</span>
+        <span class="th-letter">M</span>
+        <span class="th-letter">T</span>
+        <span class="th-letter">Y</span>
+        <span class="th-letter">P</span>
+        <span class="th-letter">Y</span>
+        <span class="th-letter">I</span>
+        <span class="th-letter">E</span>
+      </div>
+      <!-- Scan line sweep -->
       <div id="transScan"></div>
     </div>
 
-    <div id="transLabel">// loading module</div>
+    <!-- 5. Module name & label (z:5) -->
+    <div id="transLabel">loading</div>
     <div id="transName"></div>
 
+    <!-- 6. Chunk glitch canvas (z:6) -->
     <canvas id="glitchCanvas"></canvas>
+
+    <!-- 10. Flash layer -->
     <div id="transFlash"></div>
   </div>
 
-  <!-- TABLE OF CONTENTS -->
+  <!-- TABLE OF CONTENTS SIDEBAR -->
   <aside class="toc-sidebar" aria-label="Table of contents">
     <div class="toc-title">On this page</div>
     <a class="toc-item active" href="#hero">Overview</a>
@@ -876,11 +885,12 @@ It captures development as it occurs, including design decisions, implementation
     applyTheme(localStorage.getItem('wiki-theme') || 'light');
     toggle.addEventListener('click', () => applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
 
-    /* ── TOC ACTIVE STATE ── */
+    /* ── TOC ACTIVE STATE ──────────────────── */
     (function initTOC() {
       const tocLinks = document.querySelectorAll('.toc-item');
       const sections = ['hero', 'about', 'projects', 'research']
-        .map(id => document.getElementById(id)).filter(Boolean);
+        .map(id => document.getElementById(id))
+        .filter(Boolean);
       const observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
@@ -889,55 +899,65 @@ It captures development as it occurs, including design decisions, implementation
             if (active) active.classList.add('active');
           }
         });
-      }, { rootMargin: `-52px 0px -60% 0px`, threshold: 0 });
+      }, { rootMargin: `-${52}px 0px -60% 0px`, threshold: 0 });
       sections.forEach(s => observer.observe(s));
     })();
 
-    /* ══════════════════════════════════════════════
-       TRANSITION SYSTEM — VALORANT FRAME BLAST v2
-    ══════════════════════════════════════════════ */
+    /* ══════════════════════════════════════════
+       TRANSITION SYSTEM — VALORANT EDITION
+    ══════════════════════════════════════════ */
 
-    const overlay      = document.getElementById('transOverlay');
-    const ta1          = document.getElementById('ta1');
-    const ta2          = document.getElementById('ta2');
-    const ta3          = document.getElementById('ta3');
-    const transName    = document.getElementById('transName');
-    const transLabel   = document.getElementById('transLabel');
-    const glitchCanvas = document.getElementById('glitchCanvas');
-    const transFlash   = document.getElementById('transFlash');
-    const transBg      = document.getElementById('transBg');
-    const particleCvs  = document.getElementById('particleCanvas');
-    const heroText     = document.getElementById('transHeroText');
-    const transScan    = document.getElementById('transScan');
+    const overlay        = document.getElementById('transOverlay');
+    const ta1            = document.getElementById('ta1');
+    const ta2            = document.getElementById('ta2');
+    const ta3            = document.getElementById('ta3');
+    const transName      = document.getElementById('transName');
+    const transLabel     = document.getElementById('transLabel');
+    const glitchCanvas   = document.getElementById('glitchCanvas');
+    const transFlash     = document.getElementById('transFlash');
+
+    /* — NEW: Valorant system elements — */
+    const transBg        = document.getElementById('transBg');
+    const particleCanvas = document.getElementById('particleCanvas');
+    const transHeroText  = document.getElementById('transHeroText');
+    const transScan      = document.getElementById('transScan');
+    const thLetters      = document.querySelectorAll('.th-letter');
 
     let glitchRAF    = null;
     let glitchActive = false;
 
-    /* ── CHUNK GLITCH CANVAS ── */
+    /* ── CHUNK GLITCH (original canvas effect) ── */
     function spawnGlitchChunks() {
       if (!glitchActive) return;
       const ctx = glitchCanvas.getContext('2d');
       const W   = glitchCanvas.width;
       const H   = glitchCanvas.height;
       ctx.clearRect(0, 0, W, H);
+      const zone      = W * 0.73;
       const numChunks = Math.random() > 0.45 ? 2 : 1;
       for (let i = 0; i < numChunks; i++) {
-        const cH = Math.random() * 70 + 14;
-        const cW = Math.random() * 220 + 50;
-        const x  = Math.random() * Math.max(W * 0.85 - cW, 10);
+        const cH = Math.random() * 60 + 12;
+        const cW = Math.random() * 200 + 40;
+        const x  = Math.random() * Math.max(zone - cW, 10);
         const y  = Math.random() * (H - cH);
-        ctx.fillStyle = Math.random() > 0.5 ? '#FF4655' : '#00E0FF';
-        ctx.globalAlpha = Math.random() * 0.6 + 0.2;
+        ctx.fillStyle = Math.random() > 0.5 ? '#ffffff' : '#000000';
         ctx.fillRect(x, y, cW, cH);
         if (Math.random() > 0.5) {
           const lineY = y + Math.random() * (cH - 2);
-          ctx.fillStyle = '#ffffff';
-          ctx.globalAlpha = 0.8;
-          ctx.fillRect(x, lineY, cW * (0.3 + Math.random() * 0.6), 2);
+          const lineW = cW * (0.3 + Math.random() * 0.7);
+          ctx.fillStyle = ctx.fillStyle === '#ffffff' ? '#000000' : '#ffffff';
+          ctx.fillRect(x, lineY, lineW, Math.random() > 0.5 ? 2 : 1);
         }
       }
-      ctx.globalAlpha = 1;
-      glitchRAF = setTimeout(spawnGlitchChunks, Math.floor(Math.random() * 55) + 35);
+      if (Math.random() > 0.8) {
+        const sH = Math.random() * 16 + 4;
+        const sW = Math.random() * 80 + 15;
+        const sx = Math.random() * Math.max(zone - sW, 10);
+        const sy = Math.random() * (H - sH);
+        ctx.fillStyle = Math.random() > 0.5 ? '#ffffff' : '#000000';
+        ctx.fillRect(sx, sy, sW, sH);
+      }
+      glitchRAF = setTimeout(spawnGlitchChunks, Math.floor(Math.random() * 65) + 45);
     }
 
     function startGlitch() {
@@ -952,228 +972,262 @@ It captures development as it occurs, including design decisions, implementation
       glitchActive = false;
       clearTimeout(glitchRAF);
       glitchCanvas.classList.remove('active');
-      glitchCanvas.getContext('2d').clearRect(0, 0, glitchCanvas.width, glitchCanvas.height);
+      const ctx = glitchCanvas.getContext('2d');
+      ctx.clearRect(0, 0, glitchCanvas.width, glitchCanvas.height);
     }
 
-    /* ── HUD PARTICLES ── */
+    /* ── VALORANT HUD PARTICLES ── */
     function drawParticles() {
-      const cvs = particleCvs;
+      const cvs = particleCanvas;
       cvs.width  = window.innerWidth;
       cvs.height = window.innerHeight;
-      const ctx  = cvs.getContext('2d');
-      const W    = cvs.width;
-      const H    = cvs.height;
+      const ctx = cvs.getContext('2d');
+      const W   = cvs.width;
+      const H   = cvs.height;
 
-      const red   = '#FF4655';
-      const redDim = 'rgba(255,70,85,0.35)';
-      const faint  = 'rgba(255,70,85,0.15)';
+      const isDark   = html.getAttribute('data-theme') === 'dark';
+      const accent   = isDark ? '#F59E0B' : '#B45309';
+      const accentDim = isDark ? 'rgba(245,158,11,0.38)' : 'rgba(180,83,9,0.38)';
+      const faint    = isDark ? 'rgba(245,158,11,0.18)' : 'rgba(180,83,9,0.18)';
+      const lineCol  = isDark ? 'rgba(232,226,214,0.06)' : 'rgba(28,25,23,0.06)';
 
       ctx.clearRect(0, 0, W, H);
 
-      /* Valorant diagonal stripes */
+      /* Diagonal decorative lines (like Valorant's background lines) */
       ctx.save();
-      ctx.strokeStyle = 'rgba(255,255,255,0.04)';
-      ctx.lineWidth = 1;
-      const ang = -14 * Math.PI / 180;
-      for (let i = 0; i < 7; i++) {
-        const sx = (W / 6) * i - W * 0.05;
+      ctx.strokeStyle = lineCol;
+      ctx.lineWidth   = 1;
+      const angleDeg = -14;
+      const angleRad = angleDeg * Math.PI / 180;
+      for (let i = 0; i < 6; i++) {
+        const startX = (W / 5) * i - W * 0.05;
         ctx.save();
-        ctx.translate(sx, 0);
-        ctx.rotate(ang);
+        ctx.translate(startX, 0);
+        ctx.rotate(angleRad);
         ctx.beginPath();
-        ctx.moveTo(0, -H * 0.2);
-        ctx.lineTo(0, H * 1.3);
+        ctx.moveTo(0, -H * 0.15);
+        ctx.lineTo(0, H * 1.25);
         ctx.stroke();
         ctx.restore();
       }
       ctx.restore();
 
-      /* Hollow squares */
-      const pts = [
-        [0.05,0.08],[0.88,0.12],[0.12,0.78],[0.75,0.85],[0.22,0.35],
-        [0.68,0.22],[0.48,0.90],[0.90,0.55],[0.03,0.55],[0.35,0.05],
-        [0.60,0.07],[0.82,0.72],[0.17,0.60],[0.55,0.42],[0.92,0.38],
-        [0.38,0.88],[0.70,0.48],[0.08,0.25],[0.45,0.18],[0.28,0.95],
+      /* Scattered hollow squares — Valorant HUD squares */
+      const squareData = [
+        [0.05, 0.08], [0.88, 0.12], [0.12, 0.78], [0.75, 0.85],
+        [0.22, 0.35], [0.68, 0.22], [0.48, 0.90], [0.90, 0.55],
+        [0.03, 0.55], [0.35, 0.05], [0.60, 0.07], [0.82, 0.72],
+        [0.17, 0.60], [0.55, 0.42], [0.92, 0.38], [0.38, 0.88],
+        [0.70, 0.48], [0.08, 0.25], [0.45, 0.18], [0.28, 0.95],
       ];
-      pts.forEach(([fx,fy],i) => {
-        const x  = fx * W + (Math.random() * 30 - 15);
-        const y  = fy * H + (Math.random() * 20 - 10);
-        const sz = Math.random() * 10 + 3;
-        ctx.globalAlpha = Math.random() * 0.6 + 0.12;
-        ctx.strokeStyle = i % 3 === 0 ? red : (i % 3 === 1 ? redDim : faint);
-        ctx.lineWidth = 1;
-        ctx.strokeRect(x, y, sz, sz);
+      squareData.forEach(([fx, fy], i) => {
+        const x    = fx * W + (Math.random() * 30 - 15);
+        const y    = fy * H + (Math.random() * 20 - 10);
+        const size = Math.random() * 9 + 3;
+        ctx.globalAlpha = Math.random() * 0.55 + 0.12;
+        ctx.strokeStyle = i % 3 === 0 ? accent : (i % 3 === 1 ? accentDim : faint);
+        ctx.lineWidth   = 1;
+        ctx.strokeRect(x, y, size, size);
       });
 
-      /* Horizontal ticks */
-      for (let i = 0; i < 22; i++) {
+      /* Short horizontal tick marks */
+      for (let i = 0; i < 20; i++) {
         const x   = Math.random() * W;
         const y   = Math.random() * H;
-        const len = Math.random() * 35 + 8;
+        const len = Math.random() * 30 + 8;
         ctx.globalAlpha = Math.random() * 0.45 + 0.08;
-        ctx.strokeStyle = i % 2 === 0 ? redDim : faint;
-        ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + len, y); ctx.stroke();
+        ctx.strokeStyle = i % 2 === 0 ? accentDim : faint;
+        ctx.lineWidth   = 1;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + len, y);
+        ctx.stroke();
       }
 
-      /* Vertical ticks */
-      for (let i = 0; i < 12; i++) {
+      /* Tiny vertical ticks */
+      for (let i = 0; i < 10; i++) {
         const x   = Math.random() * W;
         const y   = Math.random() * H;
-        const len = Math.random() * 14 + 4;
-        ctx.globalAlpha = Math.random() * 0.28 + 0.06;
+        const len = Math.random() * 12 + 4;
+        ctx.globalAlpha = Math.random() * 0.3 + 0.08;
         ctx.strokeStyle = faint;
-        ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y + len); ctx.stroke();
+        ctx.lineWidth   = 1;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x, y + len);
+        ctx.stroke();
       }
 
-      /* HUD mono labels */
-      ctx.font = '9px "Courier New", monospace';
+      /* Coordinate-style monospace labels — Valorant HUD dressing */
+      ctx.font         = '9px "Courier New", monospace';
       ctx.textBaseline = 'top';
-      ['32N·48.2','127.4','BRTK·2','SP67','032','119.8','JPRN','KLNT',
-       '41·C','2.6B','SNSR·ON','0.0','83M·NW','PING','RTN·04'].forEach((lbl,i) => {
+      const hudLabels = [
+        '32N·48.2', '127.4', 'BRTK·2', 'SP67', '032',
+        '119.8', 'JPRN', 'KLNT', '41·C', '2.6B',
+        'SNSR·ON', '0.0', '83M·NW', 'PING', 'RTN·04',
+      ];
+      hudLabels.forEach((lbl, i) => {
+        const x = Math.random() * (W * 0.9) + W * 0.02;
+        const y = Math.random() * (H * 0.9) + H * 0.02;
         ctx.globalAlpha = Math.random() * 0.38 + 0.08;
-        ctx.fillStyle   = i % 2 === 0 ? redDim : faint;
-        ctx.fillText(lbl, Math.random() * W * 0.9 + W * 0.02, Math.random() * H * 0.9 + H * 0.02);
+        ctx.fillStyle   = i % 2 === 0 ? accentDim : faint;
+        ctx.fillText(lbl, x, y);
       });
 
-      /* Pixel dots */
-      for (let i = 0; i < 28; i++) {
+      /* Small filled pixel dots */
+      for (let i = 0; i < 25; i++) {
+        const x = Math.random() * W;
+        const y = Math.random() * H;
         const s = Math.random() * 3 + 1;
         ctx.globalAlpha = Math.random() * 0.65 + 0.15;
-        ctx.fillStyle   = i % 4 === 0 ? red : (i % 4 === 1 ? redDim : faint);
-        ctx.fillRect(Math.random() * W, Math.random() * H, s, s);
+        ctx.fillStyle   = i % 4 === 0 ? accent : (i % 4 === 1 ? accentDim : faint);
+        ctx.fillRect(x, y, s, s);
       }
+
       ctx.globalAlpha = 1;
     }
 
-    /* ══════════════════════════════════════════
-       FRAME-BLAST SEQUENCE — 6 snapped frames
-       Each frame is a distinct transform state,
-       swapped via JS setTimeout (no CSS tweening)
-    ══════════════════════════════════════════ */
-    const FRAME_INTERVAL = 95; /* ms between each frame snap */
-
-    function clearFrameClasses() {
-      heroText.className = '';
-    }
-
-    function fireFrameBlast(onDone) {
-      const frames = ['frame-0','frame-1','frame-2','frame-3','frame-4','frame-5'];
-      clearFrameClasses();
-
-      frames.forEach((cls, i) => {
-        setTimeout(() => {
-          clearFrameClasses();
-          heroText.classList.add(cls);
-
-          /* On last frame, transition to hold */
-          if (i === frames.length - 1) {
-            setTimeout(() => {
-              clearFrameClasses();
-              heroText.classList.add('frame-hold');
-              if (onDone) onDone();
-            }, FRAME_INTERVAL);
-          }
-        }, i * FRAME_INTERVAL);
+    /* ── LETTER REVEAL / COLLAPSE ── */
+    function resetLetters() {
+      thLetters.forEach(l => {
+        l.classList.remove('th-in', 'th-out');
+        l.style.clipPath = 'inset(0 0 100% 0)';
       });
     }
 
-    function collapseText() {
-      clearFrameClasses();
-      heroText.classList.add('frame-collapse');
+    function revealLetters() {
+      thLetters.forEach((letter, i) => {
+        letter.classList.remove('th-out');
+        /* Force the starting clip-path to be re-applied before animating */
+        letter.style.clipPath = 'inset(0 0 100% 0)';
+        setTimeout(() => {
+          letter.style.clipPath = '';
+          letter.classList.add('th-in');
+        }, i * 62);
+      });
+    }
+
+    function collapseLetters() {
+      thLetters.forEach((letter, i) => {
+        letter.classList.remove('th-in');
+        setTimeout(() => {
+          letter.classList.add('th-out');
+        }, i * 38);
+      });
     }
 
     /* ── SCAN LINE ── */
     function fireScan() {
       transScan.classList.remove('scan-go');
-      void transScan.offsetWidth;
+      void transScan.offsetWidth; /* reflow to restart animation */
       transScan.classList.add('scan-go');
     }
 
-    /* ══════════════════════════════════════
+    /* ══════════════════════════════════
        MAIN TRANSITION ORCHESTRATOR
-       Total duration: ~3800ms
-    ══════════════════════════════════════ */
+    ══════════════════════════════════ */
     function playTransition(name, href) {
+      /* Activate overlay */
       overlay.classList.add('active');
-      transName.textContent = name;
+
+      /* Set text content */
+      transName.textContent  = name;
+      transLabel.textContent = '// loading module';
 
       /* Full reset */
       ta1.className = 'trans-arrow';
       ta2.className = 'trans-arrow';
       ta3.className = 'trans-arrow';
-      transName.className  = '';
-      transLabel.className = '';
+      transName.className      = '';
+      transLabel.className     = '';
       transFlash.classList.remove('on');
       transBg.classList.remove('bg-on');
-      particleCvs.classList.remove('p-on');
+      particleCanvas.classList.remove('p-on');
+      transHeroText.classList.remove('txt-glitch');
       transScan.classList.remove('scan-go');
-      clearFrameClasses();
+      resetLetters();
       stopGlitch();
 
-      /* Audio */
+      /* — Audio — */
       try {
         const audio = new Audio('trans.mp3');
         audio.volume = 0.65;
         audio.play().catch(() => {});
-      } catch(e) {}
+      } catch (e) {}
 
-      /* ── t=0ms: Dark BG + particles + arrows ── */
+      /* ══════════════════════════════
+         TIMELINE
+         ── Total: ~3800ms ──
+      ══════════════════════════════ */
+
+      /* t=0ms ── Dark BG fades in + particles appear */
       requestAnimationFrame(() => {
         transBg.classList.add('bg-on');
         drawParticles();
-        particleCvs.classList.add('p-on');
+        particleCanvas.classList.add('p-on');
+
+        /* Arrows also launch simultaneously */
         ta1.classList.add('arrow-in');
         ta2.classList.add('arrow-in');
         ta3.classList.add('arrow-in');
       });
 
-      /* ── t=200ms: Frame blast starts (6 frames × 95ms = 570ms) ── */
-      setTimeout(() => {
-        fireFrameBlast(() => {
-          /* After frames settle into hold — fire scan + glitch */
-          fireScan();
-          heroText.classList.add('txt-glitch');
-          startGlitch();
-        });
-      }, 200);
+      /* t=180ms ── EMTYPYIE letters start assembling (staggered 62ms each) */
+      /*            8 letters × 62ms = last letter visible at ~674ms          */
+      setTimeout(revealLetters, 180);
 
-      /* ── t=1050ms: Module name fades in ── */
+      /* t=760ms ── Scan line sweeps across assembled text */
+      setTimeout(fireScan, 760);
+
+      /* t=920ms ── Text glitch + chunk glitch canvas starts */
+      setTimeout(() => {
+        transHeroText.classList.add('txt-glitch');
+        startGlitch();
+      }, 920);
+
+      /* t=1150ms ── Module name fades in bottom-right */
       setTimeout(() => {
         transName.classList.add('name-visible');
         transLabel.classList.add('label-visible');
-      }, 1050);
+      }, 1150);
 
-      /* ── t=2100ms: Collapse text + hide name ── */
+      /* t=2100ms ── Letters collapse upward, name fades out, glitch stops */
       setTimeout(() => {
-        heroText.classList.remove('txt-glitch');
-        collapseText();
+        transHeroText.classList.remove('txt-glitch');
+        collapseLetters();
         transName.classList.add('name-out');
         transLabel.classList.remove('label-visible');
         stopGlitch();
       }, 2100);
 
-      /* ── t=2500ms: Arrows sweep out + particles fade ── */
+      /* t=2500ms ── Arrows sweep out to the right, particles & bg fade */
       setTimeout(() => {
         ta1.classList.remove('arrow-in'); ta1.classList.add('arrow-out');
         ta2.classList.remove('arrow-in'); ta2.classList.add('arrow-out');
         ta3.classList.remove('arrow-in'); ta3.classList.add('arrow-out');
-        particleCvs.classList.remove('p-on');
+        particleCanvas.classList.remove('p-on');
         transBg.classList.remove('bg-on');
       }, 2500);
 
-      /* ── t=3100ms: Flash ── */
-      setTimeout(() => { transFlash.classList.add('on'); }, 3100);
+      /* t=3100ms ── Flash */
+      setTimeout(() => {
+        transFlash.classList.add('on');
+      }, 3100);
 
-      /* ── t=3800ms: Navigate ── */
-      setTimeout(() => { window.location.href = href; }, 3800);
+      /* t=3800ms ── Navigate */
+      setTimeout(() => {
+        window.location.href = href;
+      }, 3800);
     }
 
-    /* ── CARD BUILDER ── */
+    /* ── SHARED CARD BUILDER ───────────────── */
     const STATUS_MAP = {
-      active: 'badge-active', paused: 'badge-paused', completed: 'badge-completed',
-      planning: 'badge-planning', draft: 'badge-draft', published: 'badge-published',
+      active:    'badge-active',
+      paused:    'badge-paused',
+      completed: 'badge-completed',
+      planning:  'badge-planning',
+      draft:     'badge-draft',
+      published: 'badge-published',
     };
 
     function buildCard({ id, name, desc, status, updated, lang }, basePath, extraClass) {
@@ -1195,14 +1249,23 @@ It captures development as it occurs, including design decisions, implementation
           <span class="card-date">${updated || '—'}</span>
         </div>`;
 
-      a.addEventListener('click', e => { e.preventDefault(); playTransition(name || id, a.href); });
-      a.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); playTransition(name || id, a.href); }
+      /* Intercept click → trigger transition */
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        playTransition(name || id, a.href);
       });
+
+      a.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          playTransition(name || id, a.href);
+        }
+      });
+
       return a;
     }
 
-    /* ── PROJECTS ── */
+    /* ── PROJECTS ──────────────────────────── */
     const grid      = document.getElementById('projectGrid');
     const countEl   = document.getElementById('projectCount');
     const statusEl  = document.getElementById('fetchStatus');
@@ -1219,25 +1282,37 @@ It captures development as it occurs, including design decisions, implementation
         loadingEl.remove();
 
         if (!projects.length) {
-          grid.innerHTML = `<div class="grid-state"><span class="grid-state-label">no projects yet</span></div>`;
-          countEl.textContent = '0 entries'; return;
+          grid.innerHTML = `<div class="grid-state"><span class="grid-state-label">no projects yet — add entries to devlogs/manifest.json</span></div>`;
+          countEl.textContent = '0 entries';
+          return;
         }
 
-        const order = { active:0, paused:1, completed:2 };
-        projects.sort((a,b) => {
-          const sd = (order[a.status]??9)-(order[b.status]??9);
-          return sd !== 0 ? sd : (b.updated||'').localeCompare(a.updated||'');
+        const order = { active: 0, paused: 1, completed: 2 };
+        projects.sort((a, b) => {
+          const sd = (order[a.status] ?? 9) - (order[b.status] ?? 9);
+          return sd !== 0 ? sd : (b.updated || '').localeCompare(a.updated || '');
         });
 
-        projects.forEach(p => { const c = buildCard(p,'devlogs',''); grid.appendChild(c); allCards.push(c); });
-        countEl.textContent  = `${projects.length} entr${projects.length===1?'y':'ies'}`;
+        projects.forEach(p => {
+          const card = buildCard(p, 'devlogs', '');
+          grid.appendChild(card);
+          allCards.push(card);
+        });
+
+        countEl.textContent  = `${projects.length} entr${projects.length === 1 ? 'y' : 'ies'}`;
         statusEl.className   = 'ok';
         statusEl.textContent = '· live';
         filterRow.style.display = 'flex';
         initFilters();
-      } catch(err) {
-        loadingEl.innerHTML = `<span style="font-size:18px">⚠</span><span class="grid-state-label">failed to load manifest.json</span><span class="grid-state-sub">${err.message}</span>`;
-        countEl.textContent = 'error'; statusEl.className = 'err'; statusEl.textContent = '· unreachable';
+
+      } catch (err) {
+        loadingEl.innerHTML = `
+          <span style="font-size:18px">⚠</span>
+          <span class="grid-state-label">failed to load manifest.json</span>
+          <span class="grid-state-sub">${err.message}</span>`;
+        countEl.textContent  = 'error';
+        statusEl.className   = 'err';
+        statusEl.textContent = '· unreachable';
       }
     }
 
@@ -1253,17 +1328,19 @@ It captures development as it occurs, including design decisions, implementation
             card.dataset.hidden = visible ? 'false' : 'true';
             if (visible) shown++;
           });
-          countEl.textContent = f==='all' ? `${allCards.length} entr${allCards.length===1?'y':'ies'}` : `${shown} ${f}`;
+          countEl.textContent = f === 'all'
+            ? `${allCards.length} entr${allCards.length === 1 ? 'y' : 'ies'}`
+            : `${shown} ${f}`;
         });
       });
     }
 
-    /* ── RESEARCH ── */
-    const rgrid      = document.getElementById('researchGrid');
-    const rCountEl   = document.getElementById('researchCount');
-    const rStatusEl  = document.getElementById('researchStatus');
-    const rFilterRow = document.getElementById('researchFilterRow');
-    const rLoadingEl = document.getElementById('researchLoadingState');
+    /* ── RESEARCH ──────────────────────────── */
+    const rgrid          = document.getElementById('researchGrid');
+    const rCountEl       = document.getElementById('researchCount');
+    const rStatusEl      = document.getElementById('researchStatus');
+    const rFilterRow     = document.getElementById('researchFilterRow');
+    const rLoadingEl     = document.getElementById('researchLoadingState');
     let allResearchCards = [];
 
     async function loadResearch() {
@@ -1275,25 +1352,37 @@ It captures development as it occurs, including design decisions, implementation
         rLoadingEl.remove();
 
         if (!items.length) {
-          rgrid.innerHTML = `<div class="grid-state"><span class="grid-state-label">no entries yet</span></div>`;
-          rCountEl.textContent = '0 entries'; return;
+          rgrid.innerHTML = `<div class="grid-state"><span class="grid-state-label">no entries yet — add entries to research/manifest.json</span></div>`;
+          rCountEl.textContent = '0 entries';
+          return;
         }
 
-        const order = { planning:0, draft:1, published:2 };
-        items.sort((a,b) => {
-          const sd = (order[a.status]??9)-(order[b.status]??9);
-          return sd !== 0 ? sd : (b.updated||'').localeCompare(a.updated||'');
+        const order = { planning: 0, draft: 1, published: 2 };
+        items.sort((a, b) => {
+          const sd = (order[a.status] ?? 9) - (order[b.status] ?? 9);
+          return sd !== 0 ? sd : (b.updated || '').localeCompare(a.updated || '');
         });
 
-        items.forEach(p => { const c = buildCard(p,'research','research-card'); rgrid.appendChild(c); allResearchCards.push(c); });
-        rCountEl.textContent  = `${items.length} entr${items.length===1?'y':'ies'}`;
+        items.forEach(p => {
+          const card = buildCard(p, 'research', 'research-card');
+          rgrid.appendChild(card);
+          allResearchCards.push(card);
+        });
+
+        rCountEl.textContent  = `${items.length} entr${items.length === 1 ? 'y' : 'ies'}`;
         rStatusEl.className   = 'ok';
         rStatusEl.textContent = '· live';
         rFilterRow.style.display = 'flex';
         initResearchFilters();
-      } catch(err) {
-        rLoadingEl.innerHTML = `<span style="font-size:18px">⚠</span><span class="grid-state-label">failed to load research/manifest.json</span><span class="grid-state-sub">${err.message}</span>`;
-        rCountEl.textContent = 'error'; rStatusEl.className = 'err'; rStatusEl.textContent = '· unreachable';
+
+      } catch (err) {
+        rLoadingEl.innerHTML = `
+          <span style="font-size:18px">⚠</span>
+          <span class="grid-state-label">failed to load research/manifest.json</span>
+          <span class="grid-state-sub">${err.message}</span>`;
+        rCountEl.textContent  = 'error';
+        rStatusEl.className   = 'err';
+        rStatusEl.textContent = '· unreachable';
       }
     }
 
@@ -1309,7 +1398,9 @@ It captures development as it occurs, including design decisions, implementation
             card.dataset.hidden = visible ? 'false' : 'true';
             if (visible) shown++;
           });
-          rCountEl.textContent = f==='all' ? `${allResearchCards.length} entr${allResearchCards.length===1?'y':'ies'}` : `${shown} ${f}`;
+          rCountEl.textContent = f === 'all'
+            ? `${allResearchCards.length} entr${allResearchCards.length === 1 ? 'y' : 'ies'}`
+            : `${shown} ${f}`;
         });
       });
     }
