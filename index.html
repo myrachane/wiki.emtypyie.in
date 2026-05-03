@@ -34,6 +34,10 @@
       --max-w:        900px;
       --nav-h:        52px;
       --toc-w:        200px;
+
+      /* transition arrow color: solid black in light */
+      --arrow-fill: #1C1917;
+      --trans-flash: #ffffff;
     }
     [data-theme="dark"] {
       --bg:           #0E0D0B;
@@ -55,6 +59,10 @@
       --slate-bg:     #0F172A;
       --purple:       #A78BFA;
       --purple-bg:    #1E0F3A;
+
+      /* transition arrow color: solid white in dark */
+      --arrow-fill: #E8E2D6;
+      --trans-flash: #0E0D0B;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -111,7 +119,6 @@
       z-index: 10;
       overflow: hidden;
     }
-
     .toc-title {
       font-family: var(--font-mono);
       font-size: 9px;
@@ -124,7 +131,6 @@
       border-bottom: 1px solid var(--border-light);
       pointer-events: all;
     }
-
     .toc-item {
       display: flex;
       align-items: center;
@@ -150,20 +156,9 @@
     }
     .toc-item:hover { color: var(--text-muted); }
     .toc-item:hover::before { width: 20px; background: var(--text-faint); }
-    .toc-item.active {
-      color: var(--accent);
-    }
-    .toc-item.active::before {
-      width: 20px;
-      background: var(--accent);
-    }
-
-    .toc-divider {
-      height: 1px;
-      background: var(--border-light);
-      margin: 10px 0;
-      opacity: 0.5;
-    }
+    .toc-item.active { color: var(--accent); }
+    .toc-item.active::before { width: 20px; background: var(--accent); }
+    .toc-divider { height: 1px; background: var(--border-light); margin: 10px 0; opacity: 0.5; }
 
     /* NAV */
     nav {
@@ -207,8 +202,6 @@
     }
     .nav-btn:hover { color: var(--text); border-color: var(--text-muted); background: var(--surface); }
     .nav-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
-
-    /* Main site button — slightly highlighted */
     .nav-btn-home {
       border-color: color-mix(in srgb, var(--accent) 35%, transparent);
       color: var(--accent);
@@ -280,7 +273,7 @@
 
     /* PROJECTS / RESEARCH shared */
     .projects { padding: 48px 24px 72px; max-width: var(--max-w); margin: 0 auto; }
-    .research  { padding: 0 24px 72px;   max-width: var(--max-w); margin: 0 auto; border-top: 1px solid var(--border-light); padding-top: 48px; }
+    .research  { padding: 0 24px 72px; max-width: var(--max-w); margin: 0 auto; border-top: 1px solid var(--border-light); padding-top: 48px; }
 
     .section-header {
       display: flex;
@@ -299,7 +292,6 @@
     #researchStatus.ok  { color: var(--green); }
     #researchStatus.err { color: #DC2626; }
 
-    /* Section description */
     .section-desc {
       font-size: 13px;
       color: var(--text-faint);
@@ -330,8 +322,6 @@
     }
     .filter-pill:hover { color: var(--text-muted); border-color: var(--text-faint); }
     .filter-pill.active { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, transparent); background: var(--accent-dim); }
-
-    /* Research filters */
     .research-filter-pill.active { color: var(--purple); border-color: color-mix(in srgb, var(--purple) 40%, transparent); background: var(--purple-bg); }
 
     /* GRID */
@@ -368,8 +358,6 @@
     }
     .project-card:hover::after { color: var(--accent); transform: translateX(2px); }
     .project-card[data-hidden="true"] { display: none; }
-
-    /* Research card — slightly different accent on hover arrow */
     .research-card:hover::after { color: var(--purple); }
 
     .card-name { font-family: var(--font-serif); font-size: 17px; color: var(--text); font-weight: 700; line-height: 1.2; padding-right: 24px; }
@@ -399,7 +387,6 @@
     .badge-planning  { color: var(--purple); background: var(--purple-bg); border-color: color-mix(in srgb, var(--purple) 25%, transparent); }
     .badge-draft     { color: var(--slate);  background: var(--slate-bg);  border-color: color-mix(in srgb, var(--slate)  25%, transparent); }
     .badge-published { color: var(--green);  background: var(--green-bg);  border-color: color-mix(in srgb, var(--green)  25%, transparent); }
-
     .card-date { font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); }
 
     /* STATES */
@@ -443,10 +430,148 @@
     .footer-link:hover { color: var(--accent); }
     .footer-link svg { width: 13px; height: 13px; }
 
-    /* ── RESPONSIVE ─────────────────────── */
-    @media (max-width: 1100px) {
-      .toc-sidebar { display: none; }
+    /* ═══════════════════════════════════════
+       TRANSITION OVERLAY
+    ═══════════════════════════════════════ */
+    #transOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      pointer-events: none;
+      overflow: hidden;
+      display: none;
     }
+    #transOverlay.active {
+      display: block;
+      pointer-events: all;
+    }
+
+    /* Flash layer — sits on top of everything at end */
+    #transFlash {
+      position: absolute;
+      inset: 0;
+      background: var(--trans-flash);
+      opacity: 0;
+      z-index: 10;
+      transition: opacity 0.25s ease-in;
+    }
+    #transFlash.on { opacity: 1; }
+
+    /* ── ARROWS ── */
+    .trans-arrow {
+      position: absolute;
+      top: -5%;
+      height: 110%;
+      width: 38%;
+      background: var(--arrow-fill);
+      /* Chevron ">" shape */
+      clip-path: polygon(0 0, 72% 0, 100% 50%, 72% 100%, 0 100%, 28% 50%);
+      will-change: transform;
+      z-index: 2;
+    }
+
+    /* Starting positions: off screen to the left */
+    #ta1 { left: 0%;  transform: translateX(-130%); }
+    #ta2 { left: 26%; transform: translateX(-180%); }
+    #ta3 { left: 52%; transform: translateX(-230%); }
+
+    /* Arrows slide IN */
+    #ta1.arrow-in { transform: translateX(0); transition: transform 0.42s cubic-bezier(0.77, 0, 0.175, 1); }
+    #ta2.arrow-in { transform: translateX(0); transition: transform 0.42s cubic-bezier(0.77, 0, 0.175, 1) 0.10s; }
+    #ta3.arrow-in { transform: translateX(0); transition: transform 0.42s cubic-bezier(0.77, 0, 0.175, 1) 0.20s; }
+
+    /* Arrows sweep OUT (to the right) */
+    #ta1.arrow-out { transform: translateX(140vw); transition: transform 0.52s cubic-bezier(0.77, 0, 0.175, 1); }
+    #ta2.arrow-out { transform: translateX(160vw); transition: transform 0.52s cubic-bezier(0.77, 0, 0.175, 1) 0.06s; }
+    #ta3.arrow-out { transform: translateX(180vw); transition: transform 0.52s cubic-bezier(0.77, 0, 0.175, 1) 0.12s; }
+
+    /* ── MODULE NAME (bottom-right) ── */
+    #transName {
+      position: absolute;
+      bottom: 7vh;
+      right: 5vw;
+      font-family: var(--font-serif);
+      font-size: clamp(22px, 4.5vw, 58px);
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      text-align: right;
+      z-index: 5;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      /* ensure readable on both light/dark arrows */
+      text-shadow:
+        0 0 20px color-mix(in srgb, var(--bg) 60%, transparent),
+        0 2px 8px color-mix(in srgb, var(--bg) 80%, transparent);
+      pointer-events: none;
+    }
+    #transName.name-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    #transName.name-out {
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    /* Tiny label above name */
+    #transLabel {
+      position: absolute;
+      bottom: calc(7vh + clamp(28px, 5vw, 66px) + 10px);
+      right: 5vw;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      z-index: 5;
+      opacity: 0;
+      transition: opacity 0.3s ease 0.1s;
+      pointer-events: none;
+    }
+    #transLabel.label-visible { opacity: 0.7; }
+
+    /* ── GLITCH BARS ── */
+    #glitchBars {
+      position: absolute;
+      inset: 0;
+      z-index: 6;
+      pointer-events: none;
+      display: none;
+      overflow: hidden;
+    }
+    #glitchBars.active { display: block; }
+
+    .gbar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      mix-blend-mode: difference;
+    }
+
+    /* ── SCANLINE overlay during glitch ── */
+    #scanlines {
+      position: absolute;
+      inset: 0;
+      z-index: 7;
+      pointer-events: none;
+      opacity: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 3px,
+        rgba(0,0,0,0.08) 3px,
+        rgba(0,0,0,0.08) 4px
+      );
+      transition: opacity 0.15s;
+    }
+    #scanlines.active { opacity: 1; }
+
+    /* ── RESPONSIVE ─────────────────────── */
+    @media (max-width: 1100px) { .toc-sidebar { display: none; } }
     @media (max-width: 640px) {
       nav { padding: 0 16px; }
       .hero { padding: 48px 16px 40px; }
@@ -457,6 +582,7 @@
       .footer-inner { flex-direction: column; align-items: flex-start; gap: 12px; }
       .nav-btn span { display: none; }
       .bg-right { display: none; }
+      #transName { font-size: clamp(18px, 7vw, 36px); bottom: 5vh; right: 4vw; }
     }
   </style>
 </head>
@@ -465,15 +591,35 @@
   <!-- RIGHT BG IMAGE -->
   <div class="bg-right"></div>
 
+  <!-- ══════════════════════════════════════
+       TRANSITION OVERLAY
+  ══════════════════════════════════════ -->
+  <div id="transOverlay" aria-hidden="true">
+    <!-- Three solid arrows -->
+    <div class="trans-arrow" id="ta1"></div>
+    <div class="trans-arrow" id="ta2"></div>
+    <div class="trans-arrow" id="ta3"></div>
+
+    <!-- Module name & label -->
+    <div id="transLabel">loading</div>
+    <div id="transName"></div>
+
+    <!-- Glitch horizontal bars -->
+    <div id="glitchBars"></div>
+
+    <!-- Scanlines -->
+    <div id="scanlines"></div>
+
+    <!-- Flash layer -->
+    <div id="transFlash"></div>
+  </div>
+
   <!-- TABLE OF CONTENTS SIDEBAR -->
   <aside class="toc-sidebar" aria-label="Table of contents">
     <div class="toc-title">On this page</div>
-
     <a class="toc-item active" href="#hero">Overview</a>
     <a class="toc-item" href="#about">About</a>
-
     <div class="toc-divider"></div>
-
     <a class="toc-item" href="#projects">Projects</a>
     <a class="toc-item" href="#research">Research</a>
   </aside>
@@ -484,7 +630,6 @@
         emtypyie<span class="slash">/</span><span class="wiki-part">wiki</span>
       </a>
       <div class="nav-actions">
-        <!-- Main site link -->
         <a href="https://www.emtypyie.in" target="_blank" rel="noopener" class="nav-btn nav-btn-home">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
@@ -492,7 +637,6 @@
           </svg>
           <span>emtypyie.in</span>
         </a>
-
         <button class="nav-btn" id="themeToggle" aria-label="Toggle theme">
           <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="5"/>
@@ -529,7 +673,6 @@ It captures development as it occurs, including design decisions, implementation
       </div>
     </section>
 
-    <!-- ── PROJECTS ───────────────────────── -->
     <main class="projects" id="projects">
       <div class="section-header">
         <span class="section-title">Projects</span>
@@ -538,14 +681,12 @@ It captures development as it occurs, including design decisions, implementation
           <span id="fetchStatus"></span>
         </span>
       </div>
-
       <div class="filter-row" id="filterRow" style="display:none;">
         <button class="filter-pill active" data-filter="all">All</button>
         <button class="filter-pill" data-filter="active">Active</button>
         <button class="filter-pill" data-filter="paused">Paused</button>
         <button class="filter-pill" data-filter="completed">Completed</button>
       </div>
-
       <div class="project-grid" id="projectGrid">
         <div class="grid-state" id="loadingState">
           <div class="loader"></div>
@@ -554,7 +695,6 @@ It captures development as it occurs, including design decisions, implementation
       </div>
     </main>
 
-    <!-- ── TECHNICAL RESEARCH ─────────────── -->
     <section class="research" id="research">
       <div class="section-header">
         <span class="section-title">Technical Research</span>
@@ -563,18 +703,13 @@ It captures development as it occurs, including design decisions, implementation
           <span id="researchStatus"></span>
         </span>
       </div>
-
-      <div class="section-desc">
-        Technical Research Documentations and Blogs
-      </div>
-
+      <div class="section-desc">Technical Research Documentations and Blogs</div>
       <div class="filter-row" id="researchFilterRow" style="display:none;">
         <button class="filter-pill research-filter-pill active" data-rfilter="all">All</button>
         <button class="filter-pill research-filter-pill" data-rfilter="planning">Planning</button>
         <button class="filter-pill research-filter-pill" data-rfilter="draft">Draft</button>
         <button class="filter-pill research-filter-pill" data-rfilter="published">Published</button>
       </div>
-
       <div class="project-grid" id="researchGrid">
         <div class="grid-state" id="researchLoadingState">
           <div class="loader loader-purple"></div>
@@ -637,8 +772,9 @@ It captures development as it occurs, including design decisions, implementation
     /* ── TOC ACTIVE STATE ──────────────────── */
     (function initTOC() {
       const tocLinks = document.querySelectorAll('.toc-item');
-      const sections = ['hero', 'about', 'projects', 'research'].map(id => document.getElementById(id)).filter(Boolean);
-
+      const sections = ['hero', 'about', 'projects', 'research']
+        .map(id => document.getElementById(id))
+        .filter(Boolean);
       const observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
@@ -648,9 +784,143 @@ It captures development as it occurs, including design decisions, implementation
           }
         });
       }, { rootMargin: `-${52}px 0px -60% 0px`, threshold: 0 });
-
       sections.forEach(s => observer.observe(s));
     })();
+
+    /* ══════════════════════════════════════════
+       TRANSITION SYSTEM
+    ══════════════════════════════════════════ */
+
+    const overlay    = document.getElementById('transOverlay');
+    const ta1        = document.getElementById('ta1');
+    const ta2        = document.getElementById('ta2');
+    const ta3        = document.getElementById('ta3');
+    const transName  = document.getElementById('transName');
+    const transLabel = document.getElementById('transLabel');
+    const glitchBars = document.getElementById('glitchBars');
+    const scanlines  = document.getElementById('scanlines');
+    const transFlash = document.getElementById('transFlash');
+
+    let glitchRAF = null;
+    let glitchActive = false;
+
+    /* — Glitch bars animation — */
+    function spawnGlitchBars() {
+      if (!glitchActive) return;
+      glitchBars.innerHTML = '';
+      const count = Math.floor(Math.random() * 9) + 2;
+      for (let i = 0; i < count; i++) {
+        const bar = document.createElement('div');
+        bar.className = 'gbar';
+        const h = Math.random() * 5 + 1;
+        const top = Math.random() * 100;
+        const isDark = html.getAttribute('data-theme') === 'dark';
+        const colors = isDark
+          ? ['#E8E2D6', '#D97706', '#ffffff', '#4ADE80']
+          : ['#1C1917', '#B45309', '#000000', '#2F6B3E'];
+        const col = colors[Math.floor(Math.random() * colors.length)];
+        const opacity = Math.random() * 0.7 + 0.15;
+        const leftOffset = Math.random() * 40;
+        bar.style.cssText = `
+          top: ${top}%;
+          height: ${h}px;
+          left: ${leftOffset}%;
+          background: ${col};
+          opacity: ${opacity};
+        `;
+        glitchBars.appendChild(bar);
+      }
+      const delay = Math.floor(Math.random() * 60) + 40; // 40-100ms random flicker
+      glitchRAF = setTimeout(spawnGlitchBars, delay);
+    }
+
+    function startGlitch() {
+      glitchActive = true;
+      glitchBars.classList.add('active');
+      scanlines.classList.add('active');
+      spawnGlitchBars();
+    }
+
+    function stopGlitch() {
+      glitchActive = false;
+      clearTimeout(glitchRAF);
+      glitchBars.classList.remove('active');
+      glitchBars.innerHTML = '';
+      scanlines.classList.remove('active');
+    }
+
+    /* — Main transition orchestrator — */
+    function playTransition(name, href) {
+      // Activate overlay
+      overlay.classList.add('active');
+
+      // Set text
+      transName.textContent  = name;
+      transLabel.textContent = '// loading module';
+
+      // Reset states
+      ta1.className = 'trans-arrow';
+      ta2.className = 'trans-arrow';
+      ta3.className = 'trans-arrow';
+      transName.className  = '';
+      transLabel.className = '';
+      transFlash.classList.remove('on');
+      stopGlitch();
+
+      // — Play audio —
+      try {
+        const audio = new Audio('trans.mp3');
+        audio.volume = 0.65;
+        audio.play().catch(() => {});
+      } catch (e) {}
+
+      // ── TIMELINE ──────────────────────────
+      // t=0ms     : Arrows start sliding in from left
+      requestAnimationFrame(() => {
+        ta1.classList.add('arrow-in');
+        ta2.classList.add('arrow-in');
+        ta3.classList.add('arrow-in');
+      });
+
+      // t=550ms   : Module name fades in bottom-right
+      setTimeout(() => {
+        transName.classList.add('name-visible');
+        transLabel.classList.add('label-visible');
+      }, 550);
+
+      // t=950ms   : Glitch starts
+      setTimeout(() => {
+        startGlitch();
+      }, 950);
+
+      // t=2400ms  : Glitch intensifies (faster flicker handled by shorter delays in spawnGlitchBars)
+      //             Name starts fading out
+      setTimeout(() => {
+        transName.classList.add('name-out');
+        transLabel.classList.remove('label-visible');
+      }, 2400);
+
+      // t=2600ms  : Arrows sweep out to the right
+      setTimeout(() => {
+        stopGlitch();
+        ta1.classList.remove('arrow-in');
+        ta2.classList.remove('arrow-in');
+        ta3.classList.remove('arrow-in');
+        ta1.classList.add('arrow-out');
+        ta2.classList.add('arrow-out');
+        ta3.classList.add('arrow-out');
+      }, 2600);
+
+      // t=3150ms  : White/black flash
+      setTimeout(() => {
+        transFlash.classList.add('on');
+      }, 3150);
+
+      // t=3800ms  : Navigate
+      setTimeout(() => {
+        window.location.href = href;
+      }, 3800);
+    }
 
     /* ── SHARED CARD BUILDER ───────────────── */
     const STATUS_MAP = {
@@ -668,8 +938,10 @@ It captures development as it occurs, including design decisions, implementation
       a.href           = `/${basePath}/${id}`;
       a.dataset.status = (status || 'paused').toLowerCase();
       a.tabIndex       = 0;
+
       const cls = STATUS_MAP[a.dataset.status] || 'badge-paused';
       const lbl = a.dataset.status.charAt(0).toUpperCase() + a.dataset.status.slice(1);
+
       a.innerHTML = `
         <div class="card-name">${name || id}</div>
         ${lang ? `<div class="card-lang">${lang}</div>` : ''}
@@ -678,9 +950,20 @@ It captures development as it occurs, including design decisions, implementation
           <span class="badge ${cls}">${lbl}</span>
           <span class="card-date">${updated || '—'}</span>
         </div>`;
-      a.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); location.href = a.href; }
+
+      // ── Intercept click → trigger transition ──
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        playTransition(name || id, a.href);
       });
+
+      a.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          playTransition(name || id, a.href);
+        }
+      });
+
       return a;
     }
 
@@ -698,7 +981,6 @@ It captures development as it occurs, including design decisions, implementation
         if (!res.ok) throw new Error(`HTTP ${res.status} — ${res.statusText}`);
         const data     = await res.json();
         const projects = Array.isArray(data) ? data : (data.projects || []);
-
         loadingEl.remove();
 
         if (!projects.length) {
@@ -769,7 +1051,6 @@ It captures development as it occurs, including design decisions, implementation
         if (!res.ok) throw new Error(`HTTP ${res.status} — ${res.statusText}`);
         const data  = await res.json();
         const items = Array.isArray(data) ? data : (data.entries || []);
-
         rLoadingEl.remove();
 
         if (!items.length) {
