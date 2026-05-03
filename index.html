@@ -548,41 +548,18 @@
     }
     #transLabel.label-visible { opacity: 0.45; }
 
-    /* ── GLITCH BARS ── */
-    #glitchBars {
+    /* ── CHUNK GLITCH CANVAS ── */
+    #glitchCanvas {
       position: absolute;
       inset: 0;
+      width: 100%;
+      height: 100%;
       z-index: 6;
       pointer-events: none;
       display: none;
-      overflow: hidden;
-    }
-    #glitchBars.active { display: block; }
-
-    .gbar {
-      position: absolute;
-      left: 0;
-      right: 0;
       mix-blend-mode: difference;
     }
-
-    /* ── SCANLINE overlay during glitch ── */
-    #scanlines {
-      position: absolute;
-      inset: 0;
-      z-index: 7;
-      pointer-events: none;
-      opacity: 0;
-      background: repeating-linear-gradient(
-        to bottom,
-        transparent 0px,
-        transparent 3px,
-        rgba(0,0,0,0.08) 3px,
-        rgba(0,0,0,0.08) 4px
-      );
-      transition: opacity 0.15s;
-    }
-    #scanlines.active { opacity: 1; }
+    #glitchCanvas.active { display: block; }
 
     /* ── RESPONSIVE ─────────────────────── */
     @media (max-width: 1100px) { .toc-sidebar { display: none; } }
@@ -619,11 +596,8 @@
     <div id="transLabel">loading</div>
     <div id="transName"></div>
 
-    <!-- Glitch horizontal bars -->
-    <div id="glitchBars"></div>
-
-    <!-- Scanlines -->
-    <div id="scanlines"></div>
+    <!-- Chunk glitch canvas -->
+    <canvas id="glitchCanvas"></canvas>
 
     <!-- Flash layer -->
     <div id="transFlash"></div>
@@ -812,56 +786,78 @@ It captures development as it occurs, including design decisions, implementation
     const ta3        = document.getElementById('ta3');
     const transName  = document.getElementById('transName');
     const transLabel = document.getElementById('transLabel');
-    const glitchBars = document.getElementById('glitchBars');
-    const scanlines  = document.getElementById('scanlines');
+    const glitchCanvas  = document.getElementById('glitchCanvas');
     const transFlash = document.getElementById('transFlash');
 
     let glitchRAF = null;
     let glitchActive = false;
 
-    /* — Glitch bars animation — */
-    function spawnGlitchBars() {
+    /* — Chunk glitch (canvas) — */
+    function spawnGlitchChunks() {
       if (!glitchActive) return;
-      glitchBars.innerHTML = '';
-      const count = Math.floor(Math.random() * 9) + 2;
-      for (let i = 0; i < count; i++) {
-        const bar = document.createElement('div');
-        bar.className = 'gbar';
-        const h = Math.random() * 5 + 1;
-        const top = Math.random() * 100;
-        const isDark = html.getAttribute('data-theme') === 'dark';
-        const colors = isDark
-          ? ['#E8E2D6', '#D97706', '#ffffff', '#4ADE80']
-          : ['#1C1917', '#B45309', '#000000', '#2F6B3E'];
-        const col = colors[Math.floor(Math.random() * colors.length)];
-        const opacity = Math.random() * 0.7 + 0.15;
-        const leftOffset = Math.random() * 40;
-        bar.style.cssText = `
-          top: ${top}%;
-          height: ${h}px;
-          left: ${leftOffset}%;
-          background: ${col};
-          opacity: ${opacity};
-        `;
-        glitchBars.appendChild(bar);
+
+      const ctx = glitchCanvas.getContext('2d');
+      const W   = glitchCanvas.width;
+      const H   = glitchCanvas.height;
+
+      ctx.clearRect(0, 0, W, H);
+
+      // Glitch lives in the arrow zone: left ~65% of screen
+      const zone = W * 0.66;
+
+      // 1 or 2 chunks per frame
+      const numChunks = Math.random() > 0.45 ? 2 : 1;
+
+      for (let i = 0; i < numChunks; i++) {
+        // Chunk dimensions — beefy blocks, not thin bars
+        const cH  = Math.random() * 60 + 12;          // 12–72px tall
+        const cW  = Math.random() * 200 + 40;          // 40–240px wide
+        const x   = Math.random() * Math.max(zone - cW, 10);
+        const y   = Math.random() * (H - cH);
+
+        // strictly black or white
+        ctx.fillStyle = Math.random() > 0.5 ? '#ffffff' : '#000000';
+        ctx.fillRect(x, y, cW, cH);
+
+        // ~50% chance: a thin contrasting hairline inside the chunk
+        // (gives that "signal corruption inside a block" feel)
+        if (Math.random() > 0.5) {
+          const lineY = y + Math.random() * (cH - 2);
+          const lineW = cW * (0.3 + Math.random() * 0.7);
+          ctx.fillStyle = ctx.fillStyle === '#ffffff' ? '#000000' : '#ffffff';
+          ctx.fillRect(x, lineY, lineW, Math.random() > 0.5 ? 2 : 1);
+        }
       }
-      const delay = Math.floor(Math.random() * 60) + 40; // 40-100ms random flicker
-      glitchRAF = setTimeout(spawnGlitchBars, delay);
+
+      // ~20% chance: a second stray tiny chunk far from the first (adds chaos)
+      if (Math.random() > 0.8) {
+        const sH = Math.random() * 16 + 4;
+        const sW = Math.random() * 80 + 15;
+        const sx = Math.random() * Math.max(zone - sW, 10);
+        const sy = Math.random() * (H - sH);
+        ctx.fillStyle = Math.random() > 0.5 ? '#ffffff' : '#000000';
+        ctx.fillRect(sx, sy, sW, sH);
+      }
+
+      // Jitter the timing so it never feels rhythmic: 45–110ms
+      glitchRAF = setTimeout(spawnGlitchChunks, Math.floor(Math.random() * 65) + 45);
     }
 
     function startGlitch() {
       glitchActive = true;
-      glitchBars.classList.add('active');
-      scanlines.classList.add('active');
-      spawnGlitchBars();
+      // Size canvas to viewport
+      glitchCanvas.width  = window.innerWidth;
+      glitchCanvas.height = window.innerHeight;
+      glitchCanvas.classList.add('active');
+      spawnGlitchChunks();
     }
 
     function stopGlitch() {
       glitchActive = false;
       clearTimeout(glitchRAF);
-      glitchBars.classList.remove('active');
-      glitchBars.innerHTML = '';
-      scanlines.classList.remove('active');
+      glitchCanvas.classList.remove('active');
+      const ctx = glitchCanvas.getContext('2d');
+      ctx.clearRect(0, 0, glitchCanvas.width, glitchCanvas.height);
     }
 
     /* — Main transition orchestrator — */
@@ -908,7 +904,7 @@ It captures development as it occurs, including design decisions, implementation
         startGlitch();
       }, 950);
 
-      // t=2400ms  : Glitch intensifies (faster flicker handled by shorter delays in spawnGlitchBars)
+      // t=2400ms  : Name fades out, glitch ramps toward exit
       //             Name starts fading out
       setTimeout(() => {
         transName.classList.add('name-out');
