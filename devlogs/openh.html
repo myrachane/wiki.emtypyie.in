@@ -130,17 +130,7 @@
       to   { transform: scale(1);    opacity: 1; }
     }
 
-    .danger-symbol {
-      font-size: 64px;
-      line-height: 1;
-      filter: drop-shadow(0 0 12px rgba(220,38,38,0.5));
-      animation: pulse-danger 2s ease-in-out infinite;
-    }
-    @keyframes pulse-danger {
-      0%,100% { filter: drop-shadow(0 0 8px rgba(220,38,38,0.4)); }
-      50%      { filter: drop-shadow(0 0 20px rgba(220,38,38,0.8)); }
-    }
-
+    
     .danger-title {
       font-family: var(--font-mono);
       font-size: 13px;
@@ -715,13 +705,12 @@
   <!-- ── DANGER POPUP ── -->
   <div id="danger-overlay">
     <div id="danger-box">
-      <div class="danger-symbol">☢️</div>
+      <div class="danger-symbol"></div>
       <div class="danger-title">⚠ Danger ⚠</div>
       <div class="danger-text">
         <!-- EDIT THIS TEXT -->
-        <strong>Adult Content Warning</strong><br><br>
-        This tool is designed for use with content intended for adults only.<br><br>
-        By clicking OK you confirm you are of legal age in your jurisdiction and understand what this extension is for.
+        <strong>At Your Own Risk</strong><br><br>
+        <br><br> 
         <!-- END EDIT -->
       </div>
       <button class="danger-ok" id="danger-ok-btn">OK, I Understand</button>
