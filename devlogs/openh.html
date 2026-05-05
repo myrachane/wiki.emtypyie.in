@@ -98,7 +98,18 @@
     [data-theme="dark"] body::before { opacity: 0.12; }
 
     /* ─── DANGER POPUP OVERLAY ───────────────────────────────── */
-  
+    #danger-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(0,0,0,0.75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+      animation: fadeIn 0.2s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     #danger-box {
       background: var(--bg);
