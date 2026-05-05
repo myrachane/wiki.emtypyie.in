@@ -26,6 +26,15 @@
       "status": "completed",
       "updated": "2026-05-1",
       "lang": "html"
+    },
+    {
+      "id": "openh.html",
+      "name": "OpenNH Download",
+      "nameHi": "ओपनएनएच डाउनलोड",
+      "desc": "A Chrome extension that bulk-downloads nhentai galleries into a ZIP archive with one click. Reads the real CDN image URL directly from the page DOM — handles all i1, i2, i3… subdomains automatically. ",
+      "status": "completed",
+      "updated": "2026-05-5",
+      "lang": "JavaScript"
     }
   ]
 }
