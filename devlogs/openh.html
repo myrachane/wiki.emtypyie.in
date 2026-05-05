@@ -712,7 +712,7 @@
         By clicking OK you confirm you are of legal age in your jurisdiction and understand what this extension is for.
         <!-- END EDIT -->
       </div>
-      <button class="danger-ok" id="danger-ok-btn">OK</button>
+      <button class="danger-ok" onclick="okClicked()">OK</button>
     </div>
   </div>
 
@@ -1107,64 +1107,50 @@ a.download = <span class="tok-str">`${code}.zip`</span>;</code></pre>
   </div>
 
   <script>
-    /* ── MUSIC SETUP (defined first so popup can reference it) ── */
+    /* DEV: remove next line once popup is confirmed working */
+    localStorage.removeItem('wiki_danger_opennh_seen');
+
+    /* ── MUSIC ─────────────────────────────────────────────── */
     const audio       = document.getElementById('bg-audio');
     const musicBar    = document.getElementById('music-bar');
     const musicToggle = document.getElementById('music-toggle');
     let musicPlaying  = false;
 
-    function startMusic() {
-      audio.volume = 0.35;
-      audio.play().then(() => {
-        musicPlaying = true;
-        musicBar.classList.remove('paused');
-        musicToggle.textContent = 'pause';
-      }).catch(() => {
-        /* browser blocked autoplay — player bar stays in play state */
-      });
+    function setMusicState(playing) {
+      musicPlaying = playing;
+      musicBar.classList.toggle('paused', !playing);
+      musicToggle.textContent = playing ? 'pause' : 'play';
     }
 
     musicToggle.addEventListener('click', () => {
       if (musicPlaying) {
         audio.pause();
-        musicPlaying = false;
-        musicBar.classList.add('paused');
-        musicToggle.textContent = 'play';
+        setMusicState(false);
       } else {
-        /* this is a direct user click so play() will always succeed */
-        audio.play().then(() => {
-          musicPlaying = true;
-          musicBar.classList.remove('paused');
-          musicToggle.textContent = 'pause';
-        });
+        audio.play().then(() => setMusicState(true)).catch(() => {});
       }
     });
 
     /* ── DANGER POPUP ──────────────────────────────────────── */
+    /* inline onclick="okClicked()" on the button — no addEventListener needed */
+    const overlay = document.getElementById('danger-overlay');
     const POPUP_KEY = 'wiki_danger_opennh_seen';
-    const overlay   = document.getElementById('danger-overlay');
-    const okBtn     = document.getElementById('danger-ok-btn');
 
-    function dismissDanger() {
-      /* fade out */
+    function okClicked() {
+      /* 1. fade out the overlay */
       overlay.style.transition = 'opacity 0.25s ease';
-      overlay.style.opacity    = '0';
-      setTimeout(() => {
-        overlay.style.display = 'none';
-      }, 260);
+      overlay.style.opacity = '0';
+      setTimeout(() => { overlay.style.display = 'none'; }, 260);
+      /* 2. save to localStorage so popup skips next visit */
       localStorage.setItem(POPUP_KEY, '1');
-      /* OK click is a user gesture — music play() allowed here */
-      startMusic();
+      /* 3. start music — this click IS a user gesture so Chrome allows play() */
+      audio.volume = 0.35;
+      audio.play().then(() => setMusicState(true)).catch(() => {});
     }
 
+    /* show popup only on first visit */
     if (localStorage.getItem(POPUP_KEY)) {
-      /* returning visitor: skip popup immediately */
       overlay.style.display = 'none';
-      /* no autoplay — browser blocks it without user gesture.
-         user can click the play button in the bottom bar. */
-    } else {
-      /* first visit: show popup, wire OK button */
-      okBtn.addEventListener('click', dismissDanger);
     }
 
     /* ── THEME ─────────────────────────────────────────────── */
