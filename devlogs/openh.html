@@ -130,24 +130,14 @@
       to   { transform: scale(1);    opacity: 1; }
     }
 
-    .danger-symbol {
-      font-size: 64px;
-      line-height: 1;
-      filter: drop-shadow(0 0 12px rgba(220,38,38,0.5));
-      animation: pulse-danger 2s ease-in-out infinite;
-    }
-    @keyframes pulse-danger {
-      0%,100% { filter: drop-shadow(0 0 8px rgba(220,38,38,0.4)); }
-      50%      { filter: drop-shadow(0 0 20px rgba(220,38,38,0.8)); }
-    }
-
     .danger-title {
       font-family: var(--font-mono);
-      font-size: 13px;
-      letter-spacing: 0.2em;
+      font-size: 22px;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--red);
       font-weight: 700;
+      text-align: center;
     }
 
     .danger-text {
@@ -715,16 +705,14 @@
   <!-- ── DANGER POPUP ── -->
   <div id="danger-overlay">
     <div id="danger-box">
-      <div class="danger-symbol">☢️</div>
-      <div class="danger-title">⚠ Danger ⚠</div>
+      <div class="danger-title">At ur own risk</div>
       <div class="danger-text">
         <!-- EDIT THIS TEXT -->
-        <strong>Adult Content Warning</strong><br><br>
         This tool is designed for use with content intended for adults only.<br><br>
         By clicking OK you confirm you are of legal age in your jurisdiction and understand what this extension is for.
         <!-- END EDIT -->
       </div>
-      <button class="danger-ok" id="danger-ok-btn">OK, I Understand</button>
+      <button class="danger-ok" id="danger-ok-btn">OK</button>
     </div>
   </div>
 
@@ -1119,50 +1107,21 @@ a.download = <span class="tok-str">`${code}.zip`</span>;</code></pre>
   </div>
 
   <script>
-    /* ── DANGER POPUP ──────────────────────────────────────── */
-    const POPUP_KEY = 'wiki_danger_opennh_seen';
-    const overlay   = document.getElementById('danger-overlay');
-    const okBtn     = document.getElementById('danger-ok-btn');
-
-    function dismissDanger() {
-      overlay.style.opacity = '0';
-      overlay.style.transition = 'opacity 0.3s ease';
-      setTimeout(() => {
-        overlay.style.display = 'none';
-        // Start music after popup dismissed
-        tryAutoplay();
-      }, 300);
-      localStorage.setItem(POPUP_KEY, '1');
-    }
-
-    okBtn.addEventListener('click', dismissDanger);
-
-    if (localStorage.getItem(POPUP_KEY)) {
-      overlay.style.display = 'none';
-      // Already seen — try autoplay immediately
-      window.addEventListener('DOMContentLoaded', tryAutoplay);
-    }
-
-    /* ── MUSIC ─────────────────────────────────────────────── */
+    /* ── MUSIC SETUP (defined first so popup can reference it) ── */
     const audio       = document.getElementById('bg-audio');
     const musicBar    = document.getElementById('music-bar');
     const musicToggle = document.getElementById('music-toggle');
+    let musicPlaying  = false;
 
-    let musicPlaying = false;
-
-    function tryAutoplay() {
+    function startMusic() {
       audio.volume = 0.35;
-      const p = audio.play();
-      if (p !== undefined) {
-        p.then(() => {
-          musicPlaying = true;
-          musicBar.classList.remove('paused');
-          musicToggle.textContent = 'pause';
-        }).catch(() => {
-          // Autoplay blocked — user must click play
-          musicPlaying = false;
-        });
-      }
+      audio.play().then(() => {
+        musicPlaying = true;
+        musicBar.classList.remove('paused');
+        musicToggle.textContent = 'pause';
+      }).catch(() => {
+        /* browser blocked autoplay — player bar stays in play state */
+      });
     }
 
     musicToggle.addEventListener('click', () => {
@@ -1172,12 +1131,41 @@ a.download = <span class="tok-str">`${code}.zip`</span>;</code></pre>
         musicBar.classList.add('paused');
         musicToggle.textContent = 'play';
       } else {
-        audio.play();
-        musicPlaying = true;
-        musicBar.classList.remove('paused');
-        musicToggle.textContent = 'pause';
+        /* this is a direct user click so play() will always succeed */
+        audio.play().then(() => {
+          musicPlaying = true;
+          musicBar.classList.remove('paused');
+          musicToggle.textContent = 'pause';
+        });
       }
     });
+
+    /* ── DANGER POPUP ──────────────────────────────────────── */
+    const POPUP_KEY = 'wiki_danger_opennh_seen';
+    const overlay   = document.getElementById('danger-overlay');
+    const okBtn     = document.getElementById('danger-ok-btn');
+
+    function dismissDanger() {
+      /* fade out */
+      overlay.style.transition = 'opacity 0.25s ease';
+      overlay.style.opacity    = '0';
+      setTimeout(() => {
+        overlay.style.display = 'none';
+      }, 260);
+      localStorage.setItem(POPUP_KEY, '1');
+      /* OK click is a user gesture — music play() allowed here */
+      startMusic();
+    }
+
+    if (localStorage.getItem(POPUP_KEY)) {
+      /* returning visitor: skip popup immediately */
+      overlay.style.display = 'none';
+      /* no autoplay — browser blocks it without user gesture.
+         user can click the play button in the bottom bar. */
+    } else {
+      /* first visit: show popup, wire OK button */
+      okBtn.addEventListener('click', dismissDanger);
+    }
 
     /* ── THEME ─────────────────────────────────────────────── */
     const html       = document.documentElement;
