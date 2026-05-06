@@ -285,6 +285,12 @@
     }
     .section-title { font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); letter-spacing: 0.14em; text-transform: uppercase; }
     .section-meta { font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); display: flex; align-items: center; gap: 10px; }
+    #fetchStatus  { font-size: 10px; }
+    #fetchStatus.ok  { color: var(--green); }
+    #fetchStatus.err { color: #DC2626; }
+    #researchStatus  { font-size: 10px; }
+    #researchStatus.ok  { color: var(--green); }
+    #researchStatus.err { color: #DC2626; }
 
     .section-desc {
       font-size: 13px;
@@ -383,8 +389,8 @@
     .badge-published { color: var(--green);  background: var(--green-bg);  border-color: color-mix(in srgb, var(--green)  25%, transparent); }
     .card-date { font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); }
 
-    /* EMPTY STATE */
-    .grid-empty {
+    /* STATES */
+    .grid-state {
       grid-column: 1 / -1;
       display: flex;
       flex-direction: column;
@@ -394,7 +400,17 @@
       gap: 12px;
       background: var(--bg);
     }
-    .grid-empty-label { font-family: var(--font-mono); font-size: 12px; color: var(--text-faint); }
+    .grid-state-label { font-family: var(--font-mono); font-size: 12px; color: var(--text-faint); }
+    .grid-state-sub   { font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); opacity: 0.7; }
+    .loader {
+      width: 18px; height: 18px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    .loader-purple { border-top-color: var(--purple); }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     /* FOOTER */
     footer { border-top: 1px solid var(--border); background: var(--surface); }
@@ -487,6 +503,7 @@
       pointer-events: none;
     }
 
+    /* script label */
     #transLangTag {
       position: absolute;
       bottom: calc(7vh + clamp(26px, 4vw, 64px) + 14px);
@@ -532,8 +549,15 @@
       z-index: 6;
       pointer-events: none;
       display: none;
+      /* No blend mode — solid chunks drawn in theme-aware colors */
     }
     #glitchCanvas.active { display: block; }
+
+    /* ── SPA CONTENT WRAPPER ── */
+    #spaContent {
+      position: relative;
+      z-index: 1;
+    }
 
     /* ── RESPONSIVE ─────────────────────── */
     @media (max-width: 1100px) { .toc-sidebar { display: none; } }
@@ -557,14 +581,18 @@
 
   <div class="bg-right"></div>
 
-  <!-- TRANSITION OVERLAY -->
+  <!-- ══════════════════════════════════════
+       TRANSITION OVERLAY
+  ══════════════════════════════════════ -->
   <div id="transOverlay" aria-hidden="true">
     <div class="trans-arrow" id="ta1"></div>
     <div class="trans-arrow" id="ta2"></div>
     <div class="trans-arrow" id="ta3"></div>
+
     <div id="transLabel">loading</div>
     <div id="transLangTag">hi</div>
     <div id="transName"></div>
+
     <canvas id="glitchCanvas"></canvas>
     <div id="transFlash"></div>
   </div>
@@ -633,15 +661,21 @@ It captures development as it occurs, including design decisions, implementation
         <span class="section-title">Projects</span>
         <span class="section-meta">
           <span id="projectCount">—</span>
+          <span id="fetchStatus"></span>
         </span>
       </div>
-      <div class="filter-row" id="filterRow">
+      <div class="filter-row" id="filterRow" style="display:none;">
         <button class="filter-pill active" data-filter="all">All</button>
         <button class="filter-pill" data-filter="active">Active</button>
         <button class="filter-pill" data-filter="paused">Paused</button>
         <button class="filter-pill" data-filter="completed">Completed</button>
       </div>
-      <div class="project-grid" id="projectGrid"></div>
+      <div class="project-grid" id="projectGrid">
+        <div class="grid-state" id="loadingState">
+          <div class="loader"></div>
+          <span class="grid-state-label">fetching devlogs/manifest.json…</span>
+        </div>
+      </div>
     </main>
 
     <section class="research" id="research">
@@ -649,16 +683,22 @@ It captures development as it occurs, including design decisions, implementation
         <span class="section-title">Technical Research</span>
         <span class="section-meta">
           <span id="researchCount">—</span>
+          <span id="researchStatus"></span>
         </span>
       </div>
       <div class="section-desc">Technical Research Documentations and Blogs</div>
-      <div class="filter-row" id="researchFilterRow">
+      <div class="filter-row" id="researchFilterRow" style="display:none;">
         <button class="filter-pill research-filter-pill active" data-rfilter="all">All</button>
         <button class="filter-pill research-filter-pill" data-rfilter="planning">Planning</button>
         <button class="filter-pill research-filter-pill" data-rfilter="draft">Draft</button>
         <button class="filter-pill research-filter-pill" data-rfilter="published">Published</button>
       </div>
-      <div class="project-grid" id="researchGrid"></div>
+      <div class="project-grid" id="researchGrid">
+        <div class="grid-state" id="researchLoadingState">
+          <div class="loader loader-purple"></div>
+          <span class="grid-state-label">fetching research/manifest.json…</span>
+        </div>
+      </div>
     </section>
 
     <footer>
@@ -687,46 +727,6 @@ It captures development as it occurs, including design decisions, implementation
   </div><!-- /#spaContent -->
 
   <script>
-    /* ─────────────────────────────────────────────────────────────
-       ✏️  EDIT YOUR DATA HERE — no server, no manifest.json needed
-       ─────────────────────────────────────────────────────────────
-       Each entry shape:
-         id       – used in the URL  → /devlogs/<id>  or  /research/<id>
-         name     – display name (English)
-         nameHi   – optional Hindi name shown in the page transition
-         lang     – optional tech stack / language tag
-         desc     – short description shown on the card
-         status   – projects:  "active" | "paused" | "completed"
-                    research:  "planning" | "draft" | "published"
-         updated  – any date string, e.g. "2025-04-20"
-    ───────────────────────────────────────────────────────────── */
-
-    const PROJECTS_DATA = [
-      // ── add / edit your project entries below ──
-      // {
-      //   id: "my-cool-project",
-      //   name: "My Cool Project",
-      //   nameHi: "मेरा प्रोजेक्ट",   // optional
-      //   lang: "Python / FastAPI",
-      //   desc: "A short description of what this project does.",
-      //   status: "active",
-      //   updated: "2025-05-01"
-      // },
-    ];
-
-    const RESEARCH_DATA = [
-      // ── add / edit your research entries below ──
-      // {
-      //   id: "my-first-post",
-      //   name: "My First Post",
-      //   nameHi: "मेरा पहला पोस्ट",  // optional
-      //   lang: "Systems / Networking",
-      //   desc: "A short summary of what this research covers.",
-      //   status: "published",
-      //   updated: "2025-04-15"
-      // },
-    ];
-
     /* ── THEME ─────────────────────────────── */
     const html   = document.documentElement;
     const toggle = document.getElementById('themeToggle');
@@ -770,28 +770,50 @@ It captures development as it occurs, including design decisions, implementation
       sections.forEach(s => observer.observe(s));
     })();
 
-    /* ── SPA INJECT ────────────────────────── */
+    /* ══════════════════════════════════════════
+       SPA NAVIGATION
+       ─ Fetches the target page, injects it into
+         the DOM under the flash, no full reload.
+    ══════════════════════════════════════════ */
+
+    /**
+     * Inject a pre-fetched HTML string into the document.
+     * Preserves the current theme. Re-executes scripts.
+     */
     function spaInject(htmlText, href) {
       const currentTheme = html.getAttribute('data-theme');
       const parser = new DOMParser();
       const newDoc  = parser.parseFromString(htmlText, 'text/html');
+
+      // Update browser URL + title (no reload)
       history.pushState({ spa: true, href }, newDoc.title, href);
       document.title = newDoc.title;
+
+      // Swap <head> styles (keep our base styles)
+      // We only swap style/link tags, not scripts
       document.head.querySelectorAll('style, link[rel="stylesheet"]').forEach(el => el.remove());
       newDoc.head.querySelectorAll('style, link[rel="stylesheet"]').forEach(el => {
         document.head.appendChild(el.cloneNode(true));
       });
+
+      // Swap <body> content
       document.body.innerHTML = newDoc.body.innerHTML;
+
+      // Restore theme on <html> (body swap can reset data attrs)
       html.setAttribute('data-theme', currentTheme);
+
+      // Re-execute <script> tags (innerHTML assignment doesn't run them)
       document.body.querySelectorAll('script').forEach(oldScript => {
         const s = document.createElement('script');
         [...oldScript.attributes].forEach(a => s.setAttribute(a.name, a.value));
         s.textContent = oldScript.textContent;
         oldScript.parentNode.replaceChild(s, oldScript);
       });
+
       window.scrollTo(0, 0);
     }
 
+    /* Handle browser back/forward after SPA nav */
     window.addEventListener('popstate', async (e) => {
       if (e.state && e.state.spa) {
         try {
@@ -804,22 +826,29 @@ It captures development as it occurs, including design decisions, implementation
       }
     });
 
-    /* ── TRANSITION SYSTEM ─────────────────── */
-    const overlay      = document.getElementById('transOverlay');
-    const ta1          = document.getElementById('ta1');
-    const ta2          = document.getElementById('ta2');
-    const ta3          = document.getElementById('ta3');
-    const transName    = document.getElementById('transName');
-    const transLabel   = document.getElementById('transLabel');
+    /* ══════════════════════════════════════════
+       TRANSITION SYSTEM
+    ══════════════════════════════════════════ */
+
+    const overlay     = document.getElementById('transOverlay');
+    const ta1         = document.getElementById('ta1');
+    const ta2         = document.getElementById('ta2');
+    const ta3         = document.getElementById('ta3');
+    const transName   = document.getElementById('transName');
+    const transLabel  = document.getElementById('transLabel');
     const transLangTag = document.getElementById('transLangTag');
     const glitchCanvas = document.getElementById('glitchCanvas');
-    const transFlash   = document.getElementById('transFlash');
+    const transFlash  = document.getElementById('transFlash');
 
-    let glitchRAF     = null;
-    let glitchActive  = false;
-    let nameSwapTimer = null;
+    let glitchRAF    = null;
+    let glitchActive = false;
+    let nameSwapTimer = null;   // interval for Hindi/EN toggle
 
+    /* — Chunk glitch (canvas) — */
     function glitchColor() {
+      // Contrast against the arrow fill:
+      // light theme → arrows are near-black → use white chunks
+      // dark theme  → arrows are near-white → use black chunks
       const dark = document.documentElement.getAttribute('data-theme') === 'dark';
       return dark ? ['#000000', '#111111', '#0E0D0B'] : ['#ffffff', '#f0ece4', '#fffef8'];
     }
@@ -829,9 +858,12 @@ It captures development as it occurs, including design decisions, implementation
       const ctx = glitchCanvas.getContext('2d');
       const W   = glitchCanvas.width;
       const H   = glitchCanvas.height;
+
       ctx.clearRect(0, 0, W, H);
+
       const colors = glitchColor();
       const zone   = W * 0.73;
+
       const numChunks = Math.random() > 0.45 ? 2 : 1;
       for (let i = 0; i < numChunks; i++) {
         const cH = Math.random() * 60 + 12;
@@ -843,6 +875,7 @@ It captures development as it occurs, including design decisions, implementation
         if (Math.random() > 0.5) {
           const lineY = y + Math.random() * (cH - 2);
           const lineW = cW * (0.3 + Math.random() * 0.7);
+          // contrasting hairline inside chunk
           ctx.fillStyle = Math.random() > 0.5 ? '#D97706' : (colors[0] === '#ffffff' ? '#1C1917' : '#E8E2D6');
           ctx.fillRect(x, lineY, lineW, Math.random() > 0.5 ? 2 : 1);
         }
@@ -855,6 +888,7 @@ It captures development as it occurs, including design decisions, implementation
         ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
         ctx.fillRect(sx, sy, sW, sH);
       }
+
       glitchRAF = setTimeout(spawnGlitchChunks, Math.floor(Math.random() * 65) + 45);
     }
 
@@ -875,6 +909,7 @@ It captures development as it occurs, including design decisions, implementation
       }
     }
 
+    /* ── Hindi / English name swap (inline styles — no CSS class conflicts) ── */
     function nameShow() {
       transName.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
       transName.style.opacity    = '1';
@@ -888,14 +923,19 @@ It captures development as it occurs, including design decisions, implementation
     }
 
     function startNameSwap(nameEn, nameHi) {
-      if (!nameHi) return;
+      if (!nameHi) return;   // no Hindi — nothing to swap
       let showHindi = false;
+
       nameSwapTimer = setInterval(() => {
         showHindi = !showHindi;
         const next = showHindi ? nameHi : nameEn;
+
+        // 1. fade out
         transName.style.transition = 'opacity 0.15s ease, transform 0.15s ease';
         transName.style.opacity    = '0';
         transName.style.transform  = 'translateY(5px)';
+
+        // 2. swap text + fade back in
         setTimeout(() => {
           transName.textContent = next;
           if (transLangTag) transLangTag.textContent = showHindi ? 'हि' : 'en';
@@ -903,49 +943,64 @@ It captures development as it occurs, including design decisions, implementation
           transName.style.opacity    = '1';
           transName.style.transform  = 'translateY(0)';
         }, 170);
+
       }, 1000);
     }
 
     function stopNameSwap() {
-      if (nameSwapTimer) { clearInterval(nameSwapTimer); nameSwapTimer = null; }
+      if (nameSwapTimer) {
+        clearInterval(nameSwapTimer);
+        nameSwapTimer = null;
+      }
     }
 
+    /* ── Main transition orchestrator ───────── */
     function playTransition(nameEn, nameHi, href) {
+      // ── Start pre-fetching the target page immediately ──
       const fetchPromise = fetch(href, { cache: 'no-cache' })
         .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.text(); })
         .catch(() => null);
 
       overlay.classList.add('active');
 
-      transName.textContent      = nameEn;
-      transName.style.opacity    = '0';
-      transName.style.transform  = 'translateY(16px)';
+      // Set initial text + inline reset (clear any leftover styles from previous run)
+      transName.textContent    = nameEn;
+      transName.style.opacity  = '0';
+      transName.style.transform = 'translateY(16px)';
       transName.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
-      transLabel.textContent     = '// loading module';
+
+      transLabel.textContent   = '// loading module';
       if (transLangTag) transLangTag.textContent = 'en';
 
+      // Reset arrow classes
       ta1.className = 'trans-arrow';
       ta2.className = 'trans-arrow';
       ta3.className = 'trans-arrow';
       transFlash.classList.remove('on');
-      transLabel.style.opacity = '0';
+
+      // Reset label opacities
+      transLabel.style.opacity    = '0';
       if (transLangTag) transLangTag.style.opacity = '0';
 
       stopGlitch();
       stopNameSwap();
 
+      // — Play audio —
       try {
         const audio = new Audio('trans.mp3');
         audio.volume = 0.65;
         audio.play().catch(() => {});
       } catch (e) {}
 
+      // ── TIMELINE ──────────────────────────────────────────────
+      // t=0ms    : Arrows slide in from left
       requestAnimationFrame(() => {
         ta1.classList.add('arrow-in');
         ta2.classList.add('arrow-in');
         ta3.classList.add('arrow-in');
       });
 
+      // t=550ms  : Module name fades in (inline style) + Hindi swap starts
       setTimeout(() => {
         nameShow();
         transLabel.style.transition = 'opacity 0.3s ease 0.1s';
@@ -957,15 +1012,18 @@ It captures development as it occurs, including design decisions, implementation
         startNameSwap(nameEn, nameHi);
       }, 550);
 
+      // t=950ms  : Glitch starts
       setTimeout(() => { startGlitch(); }, 950);
 
+      // t=2400ms : Name fades out, swap stops
       setTimeout(() => {
         stopNameSwap();
         nameHide('-8px');
-        transLabel.style.opacity = '0';
+        transLabel.style.opacity    = '0';
         if (transLangTag) transLangTag.style.opacity = '0';
       }, 2400);
 
+      // t=2600ms : Arrows sweep out to the right
       setTimeout(() => {
         stopGlitch();
         ta1.classList.remove('arrow-in');
@@ -976,8 +1034,12 @@ It captures development as it occurs, including design decisions, implementation
         ta3.classList.add('arrow-out');
       }, 2600);
 
-      setTimeout(() => { transFlash.classList.add('on'); }, 3150);
+      // t=3150ms : Flash appears — inject page underneath it
+      setTimeout(() => {
+        transFlash.classList.add('on');
+      }, 3150);
 
+      // t=3500ms : SPA inject (flash is covering everything)
       setTimeout(async () => {
         const htmlText = await fetchPromise;
         if (htmlText) {
@@ -987,6 +1049,7 @@ It captures development as it occurs, including design decisions, implementation
         }
       }, 3500);
 
+      // t=3800ms : Safety fallback
       setTimeout(() => {
         if (document.getElementById('transOverlay')) {
           window.location.href = href;
@@ -994,7 +1057,7 @@ It captures development as it occurs, including design decisions, implementation
       }, 3800);
     }
 
-    /* ── CARD BUILDER ──────────────────────── */
+    /* ── SHARED CARD BUILDER ───────────────── */
     const STATUS_MAP = {
       active:    'badge-active',
       paused:    'badge-paused',
@@ -1009,6 +1072,7 @@ It captures development as it occurs, including design decisions, implementation
       a.className      = 'project-card' + (extraClass ? ' ' + extraClass : '');
       a.href           = `/${basePath}/${id}`;
       a.dataset.status = (status || 'paused').toLowerCase();
+      // Store nameHi on the element so the click handler can use it
       a.dataset.nameHi = nameHi || '';
       a.tabIndex       = 0;
 
@@ -1024,6 +1088,7 @@ It captures development as it occurs, including design decisions, implementation
           <span class="card-date">${updated || '—'}</span>
         </div>`;
 
+      // ── Intercept click → trigger transition ──
       a.addEventListener('click', e => {
         e.preventDefault();
         playTransition(name || id, a.dataset.nameHi, a.href);
@@ -1039,32 +1104,58 @@ It captures development as it occurs, including design decisions, implementation
       return a;
     }
 
-    /* ── RENDER PROJECTS ───────────────────── */
-    (function renderProjects() {
-      const grid      = document.getElementById('projectGrid');
-      const countEl   = document.getElementById('projectCount');
-      let allCards    = [];
+    /* ── PROJECTS ──────────────────────────── */
+    const grid      = document.getElementById('projectGrid');
+    const countEl   = document.getElementById('projectCount');
+    const statusEl  = document.getElementById('fetchStatus');
+    const filterRow = document.getElementById('filterRow');
+    const loadingEl = document.getElementById('loadingState');
+    let allCards    = [];
 
-      if (!PROJECTS_DATA.length) {
-        grid.innerHTML = `<div class="grid-empty"><span class="grid-empty-label">no projects yet — add entries to PROJECTS_DATA in the script</span></div>`;
-        countEl.textContent = '0 entries';
-        return;
+    async function loadProjects() {
+      try {
+        const res  = await fetch('./devlogs/manifest.json', { cache: 'no-cache' });
+        if (!res.ok) throw new Error(`HTTP ${res.status} — ${res.statusText}`);
+        const data     = await res.json();
+        const projects = Array.isArray(data) ? data : (data.projects || []);
+        loadingEl.remove();
+
+        if (!projects.length) {
+          grid.innerHTML = `<div class="grid-state"><span class="grid-state-label">no projects yet — add entries to devlogs/manifest.json</span></div>`;
+          countEl.textContent = '0 entries';
+          return;
+        }
+
+        const order = { active: 0, paused: 1, completed: 2 };
+        projects.sort((a, b) => {
+          const sd = (order[a.status] ?? 9) - (order[b.status] ?? 9);
+          return sd !== 0 ? sd : (b.updated || '').localeCompare(a.updated || '');
+        });
+
+        projects.forEach(p => {
+          const card = buildCard(p, 'devlogs', '');
+          grid.appendChild(card);
+          allCards.push(card);
+        });
+
+        countEl.textContent  = `${projects.length} entr${projects.length === 1 ? 'y' : 'ies'}`;
+        statusEl.className   = 'ok';
+        statusEl.textContent = '· live';
+        filterRow.style.display = 'flex';
+        initFilters();
+
+      } catch (err) {
+        loadingEl.innerHTML = `
+          <span style="font-size:18px">⚠</span>
+          <span class="grid-state-label">failed to load manifest.json</span>
+          <span class="grid-state-sub">${err.message}</span>`;
+        countEl.textContent  = 'error';
+        statusEl.className   = 'err';
+        statusEl.textContent = '· unreachable';
       }
+    }
 
-      const order = { active: 0, paused: 1, completed: 2 };
-      const sorted = [...PROJECTS_DATA].sort((a, b) => {
-        const sd = (order[a.status] ?? 9) - (order[b.status] ?? 9);
-        return sd !== 0 ? sd : (b.updated || '').localeCompare(a.updated || '');
-      });
-
-      sorted.forEach(p => {
-        const card = buildCard(p, 'devlogs', '');
-        grid.appendChild(card);
-        allCards.push(card);
-      });
-
-      countEl.textContent = `${sorted.length} entr${sorted.length === 1 ? 'y' : 'ies'}`;
-
+    function initFilters() {
       document.querySelectorAll('.filter-pill:not(.research-filter-pill)').forEach(pill => {
         pill.addEventListener('click', () => {
           document.querySelectorAll('.filter-pill:not(.research-filter-pill)').forEach(p => p.classList.remove('active'));
@@ -1081,51 +1172,80 @@ It captures development as it occurs, including design decisions, implementation
             : `${shown} ${f}`;
         });
       });
-    })();
+    }
 
-    /* ── RENDER RESEARCH ───────────────────── */
-    (function renderResearch() {
-      const rgrid    = document.getElementById('researchGrid');
-      const rCountEl = document.getElementById('researchCount');
-      let allCards   = [];
+    /* ── RESEARCH ──────────────────────────── */
+    const rgrid          = document.getElementById('researchGrid');
+    const rCountEl       = document.getElementById('researchCount');
+    const rStatusEl      = document.getElementById('researchStatus');
+    const rFilterRow     = document.getElementById('researchFilterRow');
+    const rLoadingEl     = document.getElementById('researchLoadingState');
+    let allResearchCards = [];
 
-      if (!RESEARCH_DATA.length) {
-        rgrid.innerHTML = `<div class="grid-empty"><span class="grid-empty-label">no entries yet — add entries to RESEARCH_DATA in the script</span></div>`;
-        rCountEl.textContent = '0 entries';
-        return;
+    async function loadResearch() {
+      try {
+        const res  = await fetch('./research/manifest.json', { cache: 'no-cache' });
+        if (!res.ok) throw new Error(`HTTP ${res.status} — ${res.statusText}`);
+        const data  = await res.json();
+        const items = Array.isArray(data) ? data : (data.entries || []);
+        rLoadingEl.remove();
+
+        if (!items.length) {
+          rgrid.innerHTML = `<div class="grid-state"><span class="grid-state-label">no entries yet — add entries to research/manifest.json</span></div>`;
+          rCountEl.textContent = '0 entries';
+          return;
+        }
+
+        const order = { planning: 0, draft: 1, published: 2 };
+        items.sort((a, b) => {
+          const sd = (order[a.status] ?? 9) - (order[b.status] ?? 9);
+          return sd !== 0 ? sd : (b.updated || '').localeCompare(a.updated || '');
+        });
+
+        items.forEach(p => {
+          const card = buildCard(p, 'research', 'research-card');
+          rgrid.appendChild(card);
+          allResearchCards.push(card);
+        });
+
+        rCountEl.textContent  = `${items.length} entr${items.length === 1 ? 'y' : 'ies'}`;
+        rStatusEl.className   = 'ok';
+        rStatusEl.textContent = '· live';
+        rFilterRow.style.display = 'flex';
+        initResearchFilters();
+
+      } catch (err) {
+        rLoadingEl.innerHTML = `
+          <span style="font-size:18px">⚠</span>
+          <span class="grid-state-label">failed to load research/manifest.json</span>
+          <span class="grid-state-sub">${err.message}</span>`;
+        rCountEl.textContent  = 'error';
+        rStatusEl.className   = 'err';
+        rStatusEl.textContent = '· unreachable';
       }
+    }
 
-      const order = { planning: 0, draft: 1, published: 2 };
-      const sorted = [...RESEARCH_DATA].sort((a, b) => {
-        const sd = (order[a.status] ?? 9) - (order[b.status] ?? 9);
-        return sd !== 0 ? sd : (b.updated || '').localeCompare(a.updated || '');
-      });
-
-      sorted.forEach(p => {
-        const card = buildCard(p, 'research', 'research-card');
-        rgrid.appendChild(card);
-        allCards.push(card);
-      });
-
-      rCountEl.textContent = `${sorted.length} entr${sorted.length === 1 ? 'y' : 'ies'}`;
-
+    function initResearchFilters() {
       document.querySelectorAll('.research-filter-pill').forEach(pill => {
         pill.addEventListener('click', () => {
           document.querySelectorAll('.research-filter-pill').forEach(p => p.classList.remove('active'));
           pill.classList.add('active');
           const f = pill.dataset.rfilter;
           let shown = 0;
-          allCards.forEach(card => {
+          allResearchCards.forEach(card => {
             const visible = f === 'all' || card.dataset.status === f;
             card.dataset.hidden = visible ? 'false' : 'true';
             if (visible) shown++;
           });
           rCountEl.textContent = f === 'all'
-            ? `${allCards.length} entr${allCards.length === 1 ? 'y' : 'ies'}`
+            ? `${allResearchCards.length} entr${allResearchCards.length === 1 ? 'y' : 'ies'}`
             : `${shown} ${f}`;
         });
       });
-    })();
+    }
+
+    loadProjects();
+    loadResearch();
   </script>
 
 </body>
