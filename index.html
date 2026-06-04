@@ -550,7 +550,6 @@
       z-index: 6;
       pointer-events: none;
       display: none;
-      /* No blend mode — solid chunks drawn in theme-aware colors */
     }
     #glitchCanvas.active { display: block; }
 
@@ -652,7 +651,7 @@
       <div class="about-label">About this wiki</div>
       <div class="about-body">
         <p>This wiki serves as a structured record of ongoing projects, experiments, and technical work.
-It captures development as it occurs, including design decisions, implementation details, challenges encountered, and iterative progress. Entries may be incomplete or evolving, reflecting the active nature of the work.</p>
+It captures development as it occurs, including design decisions, implementation details, challenges encountered, and iterative progress. Entries may be incomplete or evolving, reflecting the act of building.</p>
         <p>The intent is to maintain clear, detailed documentation that supports continuity—enabling projects to be revisited, understood, and extended over time without loss of context.</p>
       </div>
     </section>
@@ -772,47 +771,41 @@ It captures development as it occurs, including design decisions, implementation
     })();
 
     /* ══════════════════════════════════════════
-       SPA NAVIGATION WITH PROPER ASSET LOADING
+       SPA NAVIGATION
        ─ Fetches the target page, injects it into
-         the DOM with full asset context support.
+         the DOM with asset path resolution.
     ══════════════════════════════════════════ */
 
     /**
-     * Resolve relative URLs based on href context.
-     * This ensures assets load from the correct path.
+     * Resolve relative URLs based on href context
      */
     function resolveAssetUrl(relativeUrl, contextHref) {
-      // If already absolute or data URL, return as-is
       if (relativeUrl.startsWith('http') || relativeUrl.startsWith('data:')) {
         return relativeUrl;
       }
-      
       const baseUrl = contextHref.split('/').slice(0, -1).join('/') || '/';
       return baseUrl + '/' + relativeUrl.replace(/^\//, '');
     }
 
     /**
-     * Rewrite asset URLs in HTML to absolute paths based on context.
+     * Rewrite asset URLs in HTML to absolute paths
      */
     function rewriteAssetPaths(htmlText, contextHref) {
       const parser = new DOMParser();
       const doc = parser.parseFromString(htmlText, 'text/html');
       
-      // Rewrite img src
       doc.querySelectorAll('img[src]').forEach(img => {
         if (!img.src.startsWith('http')) {
           img.src = resolveAssetUrl(img.getAttribute('src'), contextHref);
         }
       });
 
-      // Rewrite link href (stylesheets)
       doc.querySelectorAll('link[href]').forEach(link => {
         if (!link.href.startsWith('http')) {
           link.href = resolveAssetUrl(link.getAttribute('href'), contextHref);
         }
       });
 
-      // Rewrite script src
       doc.querySelectorAll('script[src]').forEach(script => {
         if (!script.src.startsWith('http')) {
           script.src = resolveAssetUrl(script.getAttribute('src'), contextHref);
@@ -824,37 +817,24 @@ It captures development as it occurs, including design decisions, implementation
 
     /**
      * Inject a pre-fetched HTML string into the document.
-     * Preserves the current theme. Re-executes scripts.
-     * Properly handles asset loading from project pages.
      */
     function spaInject(htmlText, href) {
       const currentTheme = html.getAttribute('data-theme');
-      
-      // Rewrite asset paths based on the new page's context
       const rewrittenHtml = rewriteAssetPaths(htmlText, href);
       const parser = new DOMParser();
       const newDoc = parser.parseFromString(rewrittenHtml, 'text/html');
 
-      // Update browser URL + title (no reload)
       history.pushState({ spa: true, href }, newDoc.title, href);
       document.title = newDoc.title;
 
-      // Preserve base stylesheets but allow project-specific ones
-      const baseSPA = document.head.querySelector('style');
       document.head.querySelectorAll('style:not(:first-of-type), link[rel="stylesheet"]').forEach(el => el.remove());
-      
-      // Add styles from new document
       newDoc.head.querySelectorAll('style, link[rel="stylesheet"]').forEach(el => {
         document.head.appendChild(el.cloneNode(true));
       });
 
-      // Swap body content
       document.body.innerHTML = newDoc.body.innerHTML;
-
-      // Restore theme on <html>
       html.setAttribute('data-theme', currentTheme);
 
-      // Re-execute <script> tags (innerHTML assignment doesn't run them)
       document.body.querySelectorAll('script').forEach(oldScript => {
         const s = document.createElement('script');
         [...oldScript.attributes].forEach(a => s.setAttribute(a.name, a.value));
@@ -862,13 +842,10 @@ It captures development as it occurs, including design decisions, implementation
         oldScript.parentNode.replaceChild(s, oldScript);
       });
 
-      // Trigger load event in case page has initialization listeners
       window.dispatchEvent(new Event('spa-loaded'));
-
       window.scrollTo(0, 0);
     }
 
-    /* Handle browser back/forward after SPA nav */
     window.addEventListener('popstate', async (e) => {
       if (e.state && e.state.spa) {
         try {
@@ -897,9 +874,8 @@ It captures development as it occurs, including design decisions, implementation
 
     let glitchRAF    = null;
     let glitchActive = false;
-    let nameSwapTimer = null;   // interval for Hindi/EN toggle
+    let nameSwapTimer = null;
 
-    /* — Chunk glitch (canvas) — */
     function glitchColor() {
       const dark = document.documentElement.getAttribute('data-theme') === 'dark';
       return dark ? ['#000000', '#111111', '#0E0D0B'] : ['#ffffff', '#f0ece4', '#fffef8'];
@@ -960,7 +936,6 @@ It captures development as it occurs, including design decisions, implementation
       }
     }
 
-    /* ── Hindi / English name swap ── */
     function nameShow() {
       transName.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
       transName.style.opacity    = '1';
@@ -1003,7 +978,6 @@ It captures development as it occurs, including design decisions, implementation
       }
     }
 
-    /* ── Main transition orchestrator ───────── */
     function playTransition(nameEn, nameHi, href) {
       const fetchPromise = fetch(href, { cache: 'no-cache' })
         .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.text(); })
@@ -1088,21 +1062,177 @@ It captures development as it occurs, including design decisions, implementation
       }, 1200);
     }
 
-    /* ── Project card click handler ───────── */
-    window.addEventListener('spa-loaded', () => {
-      document.querySelectorAll('.project-card, .research-card').forEach(card => {
-        card.addEventListener('click', (e) => {
-          e.preventDefault();
-          const href = card.getAttribute('href') || card.getAttribute('data-href');
-          const nameEn = card.getAttribute('data-name-en') || card.querySelector('.card-name')?.textContent || 'Project';
-          const nameHi = card.getAttribute('data-name-hi');
-          if (href) playTransition(nameEn, nameHi, href);
-        });
-      });
-    });
+    /* ══════════════════════════════════════════
+       FETCH & RENDER PROJECTS + RESEARCH
+    ══════════════════════════════════════════ */
 
-    // Trigger for initial load
-    window.dispatchEvent(new Event('spa-loaded'));
+    async function fetchAndRenderProjects() {
+      const grid = document.getElementById('projectGrid');
+      const status = document.getElementById('fetchStatus');
+      const count = document.getElementById('projectCount');
+      const filterRow = document.getElementById('filterRow');
+
+      try {
+        const res = await fetch('devlogs/manifest.json', { cache: 'no-cache' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const manifest = await res.json();
+
+        grid.innerHTML = '';
+        let projects = manifest.projects || [];
+        if (!Array.isArray(projects)) projects = [];
+
+        count.textContent = projects.length;
+        status.textContent = '✓';
+        status.classList.add('ok');
+
+        if (projects.length === 0) {
+          grid.innerHTML = '<div class="grid-state" style="grid-column:1/-1;"><span class="grid-state-label">No projects yet</span></div>';
+          return;
+        }
+
+        filterRow.style.display = 'flex';
+
+        projects.forEach(p => {
+          const card = document.createElement('a');
+          card.className = 'project-card';
+          card.href = p.href || '#';
+          card.setAttribute('data-status', p.status || 'active');
+          card.setAttribute('data-name-en', p.name || 'Project');
+          card.setAttribute('data-name-hi', p.nameHi || '');
+
+          const statusBadge = p.status ? `<span class="badge badge-${p.status}">${p.status}</span>` : '';
+
+          card.innerHTML = `
+            <div class="card-name">${p.name || 'Untitled'}</div>
+            <div class="card-lang">${p.lang || 'mixed'}</div>
+            <div class="card-desc">${p.desc || 'No description'}</div>
+            <div class="card-footer">
+              ${statusBadge}
+              <div class="card-date">${p.date || 'unknown'}</div>
+            </div>
+          `;
+
+          card.addEventListener('click', (e) => {
+            e.preventDefault();
+            playTransition(p.name || 'Project', p.nameHi || '', p.href || '#');
+          });
+
+          grid.appendChild(card);
+        });
+
+        // Filtering
+        document.querySelectorAll('[data-filter]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const filter = btn.getAttribute('data-filter');
+
+            grid.querySelectorAll('.project-card').forEach(card => {
+              if (filter === 'all' || card.getAttribute('data-status') === filter) {
+                card.style.display = '';
+              } else {
+                card.style.display = 'none';
+              }
+            });
+          });
+        });
+
+      } catch (err) {
+        console.error('Project fetch error:', err);
+        status.textContent = '✗';
+        status.classList.add('err');
+        grid.innerHTML = '<div class="grid-state" style="grid-column:1/-1;"><span class="grid-state-label">Failed to load projects</span></div>';
+      }
+    }
+
+    async function fetchAndRenderResearch() {
+      const grid = document.getElementById('researchGrid');
+      const status = document.getElementById('researchStatus');
+      const count = document.getElementById('researchCount');
+      const filterRow = document.getElementById('researchFilterRow');
+
+      try {
+        const res = await fetch('research/manifest.json', { cache: 'no-cache' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const manifest = await res.json();
+
+        grid.innerHTML = '';
+        let research = manifest.research || [];
+        if (!Array.isArray(research)) research = [];
+
+        count.textContent = research.length;
+        status.textContent = '✓';
+        status.classList.add('ok');
+
+        if (research.length === 0) {
+          grid.innerHTML = '<div class="grid-state" style="grid-column:1/-1;"><span class="grid-state-label">No research yet</span></div>';
+          return;
+        }
+
+        filterRow.style.display = 'flex';
+
+        research.forEach(r => {
+          const card = document.createElement('a');
+          card.className = 'project-card research-card';
+          card.href = r.href || '#';
+          card.setAttribute('data-status', r.status || 'draft');
+          card.setAttribute('data-name-en', r.name || 'Research');
+          card.setAttribute('data-name-hi', r.nameHi || '');
+
+          const statusBadge = r.status ? `<span class="badge badge-${r.status}">${r.status}</span>` : '';
+
+          card.innerHTML = `
+            <div class="card-name">${r.name || 'Untitled'}</div>
+            <div class="card-lang">${r.topic || 'general'}</div>
+            <div class="card-desc">${r.desc || 'No description'}</div>
+            <div class="card-footer">
+              ${statusBadge}
+              <div class="card-date">${r.date || 'unknown'}</div>
+            </div>
+          `;
+
+          card.addEventListener('click', (e) => {
+            e.preventDefault();
+            playTransition(r.name || 'Research', r.nameHi || '', r.href || '#');
+          });
+
+          grid.appendChild(card);
+        });
+
+        // Filtering
+        document.querySelectorAll('[data-rfilter]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('[data-rfilter]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const filter = btn.getAttribute('data-rfilter');
+
+            grid.querySelectorAll('.research-card').forEach(card => {
+              if (filter === 'all' || card.getAttribute('data-status') === filter) {
+                card.style.display = '';
+              } else {
+                card.style.display = 'none';
+              }
+            });
+          });
+        });
+
+      } catch (err) {
+        console.error('Research fetch error:', err);
+        status.textContent = '✗';
+        status.classList.add('err');
+        grid.innerHTML = '<div class="grid-state" style="grid-column:1/-1;"><span class="grid-state-label">Failed to load research</span></div>';
+      }
+    }
+
+    // Load on page load
+    fetchAndRenderProjects();
+    fetchAndRenderResearch();
+
+    // Reload on spa-loaded event
+    window.addEventListener('spa-loaded', () => {
+      fetchAndRenderProjects();
+      fetchAndRenderResearch();
+    });
   </script>
 </body>
 </html>
