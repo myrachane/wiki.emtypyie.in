@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="emtypyie's personal developer wiki — dev logs, builds, and technical breakdowns." />
   <title>wiki emtypyie</title>
-  <base href="/" />
   <link rel="icon" type="image/jpeg" href="assets/favicon.jpg">
   <style>
     :root {
@@ -550,6 +549,7 @@
       z-index: 6;
       pointer-events: none;
       display: none;
+      /* No blend mode — solid chunks drawn in theme-aware colors */
     }
     #glitchCanvas.active { display: block; }
 
@@ -631,7 +631,7 @@
           <span id="themeLabel">light</span>
         </button>
         <a href="https://github.com/myrachane" target="_blank" rel="noopener" class="nav-btn">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.453-1.154-1.106-1.462-1.106-1.462-.904-.619.069-.619.069-.619 1.001.07 1.527 1.028 1.527 1.028.888 1.52 2.33 1.081 2.9.826.088-.644.347-1.081.633-1.329-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.27 2.75 1.025A9.578 9.578 0 0 1 12 6.836c.85.004 1.705.114 2.504.336 1.909-1.295 2.747-1.025 2.747-1.025.544 1.376.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482C19.137 20.496 22 16.456 22 12.017 22 6.484 17.523 2 12 2z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
           <span>github</span>
         </a>
       </div>
@@ -651,7 +651,7 @@
       <div class="about-label">About this wiki</div>
       <div class="about-body">
         <p>This wiki serves as a structured record of ongoing projects, experiments, and technical work.
-It captures development as it occurs, including design decisions, implementation details, challenges encountered, and iterative progress. Entries may be incomplete or evolving, reflecting the act of building.</p>
+It captures development as it occurs, including design decisions, implementation details, challenges encountered, and iterative progress. Entries may be incomplete or evolving, reflecting the active nature of the work rather than a finalized presentation.</p>
         <p>The intent is to maintain clear, detailed documentation that supports continuity—enabling projects to be revisited, understood, and extended over time without loss of context.</p>
       </div>
     </section>
@@ -706,7 +706,7 @@ It captures development as it occurs, including design decisions, implementation
         <div class="footer-brand">emtypyie / <span>wiki</span> — updated continuously</div>
         <div class="footer-links">
           <a href="https://github.com/myrachane" target="_blank" rel="noopener" class="footer-link">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.453-1.154-1.106-1.462-1.106-1.462-.904-.619.069-.619.069-.619 1.001.07 1.527 1.028 1.527 1.028.888 1.52 2.33 1.081 2.9.826.088-.644.347-1.081.633-1.329-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.27 2.75 1.025A9.578 9.578 0 0 1 12 6.836c.85.004 1.705.114 2.504.336 1.909-1.295 2.747-1.025 2.747-1.025.544 1.376.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482C19.137 20.496 22 16.456 22 12.017 22 6.484 17.523 2 12 2z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
             github
           </a>
           <a href="https://emtypyie.in" target="_blank" rel="noopener" class="footer-link">
@@ -773,68 +773,36 @@ It captures development as it occurs, including design decisions, implementation
     /* ══════════════════════════════════════════
        SPA NAVIGATION
        ─ Fetches the target page, injects it into
-         the DOM with asset path resolution.
+         the DOM under the flash, no full reload.
     ══════════════════════════════════════════ */
 
     /**
-     * Resolve relative URLs based on href context
-     */
-    function resolveAssetUrl(relativeUrl, contextHref) {
-      if (relativeUrl.startsWith('http') || relativeUrl.startsWith('data:')) {
-        return relativeUrl;
-      }
-      const baseUrl = contextHref.split('/').slice(0, -1).join('/') || '/';
-      return baseUrl + '/' + relativeUrl.replace(/^\//, '');
-    }
-
-    /**
-     * Rewrite asset URLs in HTML to absolute paths
-     */
-    function rewriteAssetPaths(htmlText, contextHref) {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(htmlText, 'text/html');
-      
-      doc.querySelectorAll('img[src]').forEach(img => {
-        if (!img.src.startsWith('http')) {
-          img.src = resolveAssetUrl(img.getAttribute('src'), contextHref);
-        }
-      });
-
-      doc.querySelectorAll('link[href]').forEach(link => {
-        if (!link.href.startsWith('http')) {
-          link.href = resolveAssetUrl(link.getAttribute('href'), contextHref);
-        }
-      });
-
-      doc.querySelectorAll('script[src]').forEach(script => {
-        if (!script.src.startsWith('http')) {
-          script.src = resolveAssetUrl(script.getAttribute('src'), contextHref);
-        }
-      });
-
-      return doc.documentElement.outerHTML;
-    }
-
-    /**
      * Inject a pre-fetched HTML string into the document.
+     * Preserves the current theme. Re-executes scripts.
      */
     function spaInject(htmlText, href) {
       const currentTheme = html.getAttribute('data-theme');
-      const rewrittenHtml = rewriteAssetPaths(htmlText, href);
       const parser = new DOMParser();
-      const newDoc = parser.parseFromString(rewrittenHtml, 'text/html');
+      const newDoc  = parser.parseFromString(htmlText, 'text/html');
 
+      // Update browser URL + title (no reload)
       history.pushState({ spa: true, href }, newDoc.title, href);
       document.title = newDoc.title;
 
-      document.head.querySelectorAll('style:not(:first-of-type), link[rel="stylesheet"]').forEach(el => el.remove());
+      // Swap <head> styles (keep our base styles)
+      // We only swap style/link tags, not scripts
+      document.head.querySelectorAll('style, link[rel="stylesheet"]').forEach(el => el.remove());
       newDoc.head.querySelectorAll('style, link[rel="stylesheet"]').forEach(el => {
         document.head.appendChild(el.cloneNode(true));
       });
 
+      // Swap <body> content
       document.body.innerHTML = newDoc.body.innerHTML;
+
+      // Restore theme on <html> (body swap can reset data attrs)
       html.setAttribute('data-theme', currentTheme);
 
+      // Re-execute <script> tags (innerHTML assignment doesn't run them)
       document.body.querySelectorAll('script').forEach(oldScript => {
         const s = document.createElement('script');
         [...oldScript.attributes].forEach(a => s.setAttribute(a.name, a.value));
@@ -842,10 +810,10 @@ It captures development as it occurs, including design decisions, implementation
         oldScript.parentNode.replaceChild(s, oldScript);
       });
 
-      window.dispatchEvent(new Event('spa-loaded'));
       window.scrollTo(0, 0);
     }
 
+    /* Handle browser back/forward after SPA nav */
     window.addEventListener('popstate', async (e) => {
       if (e.state && e.state.spa) {
         try {
@@ -874,9 +842,13 @@ It captures development as it occurs, including design decisions, implementation
 
     let glitchRAF    = null;
     let glitchActive = false;
-    let nameSwapTimer = null;
+    let nameSwapTimer = null;   // interval for Hindi/EN toggle
 
+    /* — Chunk glitch (canvas) — */
     function glitchColor() {
+      // Contrast against the arrow fill:
+      // light theme → arrows are near-black → use white chunks
+      // dark theme  → arrows are near-white → use black chunks
       const dark = document.documentElement.getAttribute('data-theme') === 'dark';
       return dark ? ['#000000', '#111111', '#0E0D0B'] : ['#ffffff', '#f0ece4', '#fffef8'];
     }
@@ -903,6 +875,7 @@ It captures development as it occurs, including design decisions, implementation
         if (Math.random() > 0.5) {
           const lineY = y + Math.random() * (cH - 2);
           const lineW = cW * (0.3 + Math.random() * 0.7);
+          // contrasting hairline inside chunk
           ctx.fillStyle = Math.random() > 0.5 ? '#D97706' : (colors[0] === '#ffffff' ? '#1C1917' : '#E8E2D6');
           ctx.fillRect(x, lineY, lineW, Math.random() > 0.5 ? 2 : 1);
         }
@@ -936,6 +909,7 @@ It captures development as it occurs, including design decisions, implementation
       }
     }
 
+    /* ── Hindi / English name swap (inline styles — no CSS class conflicts) ── */
     function nameShow() {
       transName.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
       transName.style.opacity    = '1';
@@ -949,17 +923,19 @@ It captures development as it occurs, including design decisions, implementation
     }
 
     function startNameSwap(nameEn, nameHi) {
-      if (!nameHi) return;
+      if (!nameHi) return;   // no Hindi — nothing to swap
       let showHindi = false;
 
       nameSwapTimer = setInterval(() => {
         showHindi = !showHindi;
         const next = showHindi ? nameHi : nameEn;
 
+        // 1. fade out
         transName.style.transition = 'opacity 0.15s ease, transform 0.15s ease';
         transName.style.opacity    = '0';
         transName.style.transform  = 'translateY(5px)';
 
+        // 2. swap text + fade back in
         setTimeout(() => {
           transName.textContent = next;
           if (transLangTag) transLangTag.textContent = showHindi ? 'हि' : 'en';
@@ -978,13 +954,16 @@ It captures development as it occurs, including design decisions, implementation
       }
     }
 
+    /* ── Main transition orchestrator ───────── */
     function playTransition(nameEn, nameHi, href) {
+      // ── Start pre-fetching the target page immediately ──
       const fetchPromise = fetch(href, { cache: 'no-cache' })
         .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.text(); })
         .catch(() => null);
 
       overlay.classList.add('active');
 
+      // Set initial text + inline reset (clear any leftover styles from previous run)
       transName.textContent    = nameEn;
       transName.style.opacity  = '0';
       transName.style.transform = 'translateY(16px)';
@@ -993,246 +972,281 @@ It captures development as it occurs, including design decisions, implementation
       transLabel.textContent   = '// loading module';
       if (transLangTag) transLangTag.textContent = 'en';
 
+      // Reset arrow classes
       ta1.className = 'trans-arrow';
       ta2.className = 'trans-arrow';
       ta3.className = 'trans-arrow';
       transFlash.classList.remove('on');
 
+      // Reset label opacities
       transLabel.style.opacity    = '0';
       if (transLangTag) transLangTag.style.opacity = '0';
 
       stopGlitch();
       stopNameSwap();
 
+      // — Play audio —
       try {
         const audio = new Audio('trans.mp3');
         audio.volume = 0.65;
         audio.play().catch(() => {});
       } catch (e) {}
 
+      // ── TIMELINE ──────────────────────────────────────────────
+      // t=0ms    : Arrows slide in from left
       requestAnimationFrame(() => {
         ta1.classList.add('arrow-in');
         ta2.classList.add('arrow-in');
         ta3.classList.add('arrow-in');
-        transLabel.classList.add('label-visible');
-        if (transLangTag) transLangTag.classList.add('tag-visible');
-        nameShow();
-        startNameSwap(nameEn, nameHi);
       });
 
+      // t=550ms  : Module name fades in (inline style) + Hindi swap starts
+      setTimeout(() => {
+        nameShow();
+        transLabel.style.transition = 'opacity 0.3s ease 0.1s';
+        transLabel.style.opacity    = '0.45';
+        if (transLangTag) {
+          transLangTag.style.transition = 'opacity 0.25s ease';
+          transLangTag.style.opacity    = '0.4';
+        }
+        startNameSwap(nameEn, nameHi);
+      }, 550);
+
+      // t=950ms  : Glitch starts
+      setTimeout(() => { startGlitch(); }, 950);
+
+      // t=2400ms : Name fades out, swap stops
+      setTimeout(() => {
+        stopNameSwap();
+        nameHide('-8px');
+        transLabel.style.opacity    = '0';
+        if (transLangTag) transLangTag.style.opacity = '0';
+      }, 2400);
+
+      // t=2600ms : Arrows sweep out to the right
+      setTimeout(() => {
+        stopGlitch();
+        ta1.classList.remove('arrow-in');
+        ta2.classList.remove('arrow-in');
+        ta3.classList.remove('arrow-in');
+        ta1.classList.add('arrow-out');
+        ta2.classList.add('arrow-out');
+        ta3.classList.add('arrow-out');
+      }, 2600);
+
+      // t=3150ms : Flash appears — inject page underneath it
       setTimeout(() => {
         transFlash.classList.add('on');
-      }, 520);
+      }, 3150);
 
-      setTimeout(() => {
-        startGlitch();
-      }, 700);
-
+      // t=3500ms : SPA inject (flash is covering everything)
       setTimeout(async () => {
-        const html = await fetchPromise;
-        if (html) {
-          spaInject(html, href);
+        const htmlText = await fetchPromise;
+        if (htmlText) {
+          spaInject(htmlText, href);
+        } else {
+          window.location.href = href;
         }
+      }, 3500);
 
-        transFlash.classList.remove('on');
-
-        setTimeout(() => {
-          stopGlitch();
-          stopNameSwap();
-
-          ta1.classList.remove('arrow-in');
-          ta2.classList.remove('arrow-in');
-          ta3.classList.remove('arrow-in');
-          ta1.classList.add('arrow-out');
-          ta2.classList.add('arrow-out');
-          ta3.classList.add('arrow-out');
-
-          transLabel.classList.remove('label-visible');
-          if (transLangTag) transLangTag.classList.remove('tag-visible');
-          nameHide('8px');
-
-        }, 300);
-
-        setTimeout(() => {
-          overlay.classList.remove('active');
-          ta1.className = 'trans-arrow';
-          ta2.className = 'trans-arrow';
-          ta3.className = 'trans-arrow';
-        }, 1100);
-      }, 1200);
+      // t=3800ms : Safety fallback
+      setTimeout(() => {
+        if (document.getElementById('transOverlay')) {
+          window.location.href = href;
+        }
+      }, 3800);
     }
 
-    /* ══════════════════════════════════════════
-       FETCH & RENDER PROJECTS + RESEARCH
-    ══════════════════════════════════════════ */
+    /* ── SHARED CARD BUILDER ───────────────── */
+    const STATUS_MAP = {
+      active:    'badge-active',
+      paused:    'badge-paused',
+      completed: 'badge-completed',
+      planning:  'badge-planning',
+      draft:     'badge-draft',
+      published: 'badge-published',
+    };
 
-    async function fetchAndRenderProjects() {
-      const grid = document.getElementById('projectGrid');
-      const status = document.getElementById('fetchStatus');
-      const count = document.getElementById('projectCount');
-      const filterRow = document.getElementById('filterRow');
+    function buildCard({ id, name, nameHi, desc, status, updated, lang }, basePath, extraClass) {
+      const a = document.createElement('a');
+      a.className      = 'project-card' + (extraClass ? ' ' + extraClass : '');
+      a.href           = `/${basePath}/${id}`;
+      a.dataset.status = (status || 'paused').toLowerCase();
+      // Store nameHi on the element so the click handler can use it
+      a.dataset.nameHi = nameHi || '';
+      a.tabIndex       = 0;
 
+      const cls = STATUS_MAP[a.dataset.status] || 'badge-paused';
+      const lbl = a.dataset.status.charAt(0).toUpperCase() + a.dataset.status.slice(1);
+
+      a.innerHTML = `
+        <div class="card-name">${name || id}</div>
+        ${lang ? `<div class="card-lang">${lang}</div>` : ''}
+        <div class="card-desc">${desc || ''}</div>
+        <div class="card-footer">
+          <span class="badge ${cls}">${lbl}</span>
+          <span class="card-date">${updated || '—'}</span>
+        </div>`;
+
+      // ── Intercept click → trigger transition ──
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        playTransition(name || id, a.dataset.nameHi, a.href);
+      });
+
+      a.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          playTransition(name || id, a.dataset.nameHi, a.href);
+        }
+      });
+
+      return a;
+    }
+
+    /* ── PROJECTS ──────────────────────────── */
+    const grid      = document.getElementById('projectGrid');
+    const countEl   = document.getElementById('projectCount');
+    const statusEl  = document.getElementById('fetchStatus');
+    const filterRow = document.getElementById('filterRow');
+    const loadingEl = document.getElementById('loadingState');
+    let allCards    = [];
+
+    async function loadProjects() {
       try {
-        const res = await fetch('devlogs/manifest.json', { cache: 'no-cache' });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const manifest = await res.json();
+        const res  = await fetch('./devlogs/manifest.json', { cache: 'no-cache' });
+        if (!res.ok) throw new Error(`HTTP ${res.status} — ${res.statusText}`);
+        const data     = await res.json();
+        const projects = Array.isArray(data) ? data : (data.projects || []);
+        loadingEl.remove();
 
-        grid.innerHTML = '';
-        let projects = manifest.projects || [];
-        if (!Array.isArray(projects)) projects = [];
-
-        count.textContent = projects.length;
-        status.textContent = '✓';
-        status.classList.add('ok');
-
-        if (projects.length === 0) {
-          grid.innerHTML = '<div class="grid-state" style="grid-column:1/-1;"><span class="grid-state-label">No projects yet</span></div>';
+        if (!projects.length) {
+          grid.innerHTML = `<div class="grid-state"><span class="grid-state-label">no projects yet — add entries to devlogs/manifest.json</span></div>`;
+          countEl.textContent = '0 entries';
           return;
         }
 
-        filterRow.style.display = 'flex';
+        const order = { active: 0, paused: 1, completed: 2 };
+        projects.sort((a, b) => {
+          const sd = (order[a.status] ?? 9) - (order[b.status] ?? 9);
+          return sd !== 0 ? sd : (b.updated || '').localeCompare(a.updated || '');
+        });
 
         projects.forEach(p => {
-          const card = document.createElement('a');
-          card.className = 'project-card';
-          card.href = p.href || '#';
-          card.setAttribute('data-status', p.status || 'active');
-          card.setAttribute('data-name-en', p.name || 'Project');
-          card.setAttribute('data-name-hi', p.nameHi || '');
-
-          const statusBadge = p.status ? `<span class="badge badge-${p.status}">${p.status}</span>` : '';
-
-          card.innerHTML = `
-            <div class="card-name">${p.name || 'Untitled'}</div>
-            <div class="card-lang">${p.lang || 'mixed'}</div>
-            <div class="card-desc">${p.desc || 'No description'}</div>
-            <div class="card-footer">
-              ${statusBadge}
-              <div class="card-date">${p.date || 'unknown'}</div>
-            </div>
-          `;
-
-          card.addEventListener('click', (e) => {
-            e.preventDefault();
-            playTransition(p.name || 'Project', p.nameHi || '', p.href || '#');
-          });
-
+          const card = buildCard(p, 'devlogs', '');
           grid.appendChild(card);
+          allCards.push(card);
         });
 
-        // Filtering
-        document.querySelectorAll('[data-filter]').forEach(btn => {
-          btn.addEventListener('click', () => {
-            document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            const filter = btn.getAttribute('data-filter');
-
-            grid.querySelectorAll('.project-card').forEach(card => {
-              if (filter === 'all' || card.getAttribute('data-status') === filter) {
-                card.style.display = '';
-              } else {
-                card.style.display = 'none';
-              }
-            });
-          });
-        });
+        countEl.textContent  = `${projects.length} entr${projects.length === 1 ? 'y' : 'ies'}`;
+        statusEl.className   = 'ok';
+        statusEl.textContent = '· live';
+        filterRow.style.display = 'flex';
+        initFilters();
 
       } catch (err) {
-        console.error('Project fetch error:', err);
-        status.textContent = '✗';
-        status.classList.add('err');
-        grid.innerHTML = '<div class="grid-state" style="grid-column:1/-1;"><span class="grid-state-label">Failed to load projects</span></div>';
+        loadingEl.innerHTML = `
+          <span style="font-size:18px">⚠</span>
+          <span class="grid-state-label">failed to load manifest.json</span>
+          <span class="grid-state-sub">${err.message}</span>`;
+        countEl.textContent  = 'error';
+        statusEl.className   = 'err';
+        statusEl.textContent = '· unreachable';
       }
     }
 
-    async function fetchAndRenderResearch() {
-      const grid = document.getElementById('researchGrid');
-      const status = document.getElementById('researchStatus');
-      const count = document.getElementById('researchCount');
-      const filterRow = document.getElementById('researchFilterRow');
+    function initFilters() {
+      document.querySelectorAll('.filter-pill:not(.research-filter-pill)').forEach(pill => {
+        pill.addEventListener('click', () => {
+          document.querySelectorAll('.filter-pill:not(.research-filter-pill)').forEach(p => p.classList.remove('active'));
+          pill.classList.add('active');
+          const f = pill.dataset.filter;
+          let shown = 0;
+          allCards.forEach(card => {
+            const visible = f === 'all' || card.dataset.status === f;
+            card.dataset.hidden = visible ? 'false' : 'true';
+            if (visible) shown++;
+          });
+          countEl.textContent = f === 'all'
+            ? `${allCards.length} entr${allCards.length === 1 ? 'y' : 'ies'}`
+            : `${shown} ${f}`;
+        });
+      });
+    }
 
+    /* ── RESEARCH ──────────────────────────── */
+    const rgrid          = document.getElementById('researchGrid');
+    const rCountEl       = document.getElementById('researchCount');
+    const rStatusEl      = document.getElementById('researchStatus');
+    const rFilterRow     = document.getElementById('researchFilterRow');
+    const rLoadingEl     = document.getElementById('researchLoadingState');
+    let allResearchCards = [];
+
+    async function loadResearch() {
       try {
-        const res = await fetch('research/manifest.json', { cache: 'no-cache' });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const manifest = await res.json();
+        const res  = await fetch('./research/manifest.json', { cache: 'no-cache' });
+        if (!res.ok) throw new Error(`HTTP ${res.status} — ${res.statusText}`);
+        const data  = await res.json();
+        const items = Array.isArray(data) ? data : (data.entries || []);
+        rLoadingEl.remove();
 
-        grid.innerHTML = '';
-        let research = manifest.research || [];
-        if (!Array.isArray(research)) research = [];
-
-        count.textContent = research.length;
-        status.textContent = '✓';
-        status.classList.add('ok');
-
-        if (research.length === 0) {
-          grid.innerHTML = '<div class="grid-state" style="grid-column:1/-1;"><span class="grid-state-label">No research yet</span></div>';
+        if (!items.length) {
+          rgrid.innerHTML = `<div class="grid-state"><span class="grid-state-label">no entries yet — add entries to research/manifest.json</span></div>`;
+          rCountEl.textContent = '0 entries';
           return;
         }
 
-        filterRow.style.display = 'flex';
-
-        research.forEach(r => {
-          const card = document.createElement('a');
-          card.className = 'project-card research-card';
-          card.href = r.href || '#';
-          card.setAttribute('data-status', r.status || 'draft');
-          card.setAttribute('data-name-en', r.name || 'Research');
-          card.setAttribute('data-name-hi', r.nameHi || '');
-
-          const statusBadge = r.status ? `<span class="badge badge-${r.status}">${r.status}</span>` : '';
-
-          card.innerHTML = `
-            <div class="card-name">${r.name || 'Untitled'}</div>
-            <div class="card-lang">${r.topic || 'general'}</div>
-            <div class="card-desc">${r.desc || 'No description'}</div>
-            <div class="card-footer">
-              ${statusBadge}
-              <div class="card-date">${r.date || 'unknown'}</div>
-            </div>
-          `;
-
-          card.addEventListener('click', (e) => {
-            e.preventDefault();
-            playTransition(r.name || 'Research', r.nameHi || '', r.href || '#');
-          });
-
-          grid.appendChild(card);
+        const order = { planning: 0, draft: 1, published: 2 };
+        items.sort((a, b) => {
+          const sd = (order[a.status] ?? 9) - (order[b.status] ?? 9);
+          return sd !== 0 ? sd : (b.updated || '').localeCompare(a.updated || '');
         });
 
-        // Filtering
-        document.querySelectorAll('[data-rfilter]').forEach(btn => {
-          btn.addEventListener('click', () => {
-            document.querySelectorAll('[data-rfilter]').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            const filter = btn.getAttribute('data-rfilter');
-
-            grid.querySelectorAll('.research-card').forEach(card => {
-              if (filter === 'all' || card.getAttribute('data-status') === filter) {
-                card.style.display = '';
-              } else {
-                card.style.display = 'none';
-              }
-            });
-          });
+        items.forEach(p => {
+          const card = buildCard(p, 'research', 'research-card');
+          rgrid.appendChild(card);
+          allResearchCards.push(card);
         });
+
+        rCountEl.textContent  = `${items.length} entr${items.length === 1 ? 'y' : 'ies'}`;
+        rStatusEl.className   = 'ok';
+        rStatusEl.textContent = '· live';
+        rFilterRow.style.display = 'flex';
+        initResearchFilters();
 
       } catch (err) {
-        console.error('Research fetch error:', err);
-        status.textContent = '✗';
-        status.classList.add('err');
-        grid.innerHTML = '<div class="grid-state" style="grid-column:1/-1;"><span class="grid-state-label">Failed to load research</span></div>';
+        rLoadingEl.innerHTML = `
+          <span style="font-size:18px">⚠</span>
+          <span class="grid-state-label">failed to load research/manifest.json</span>
+          <span class="grid-state-sub">${err.message}</span>`;
+        rCountEl.textContent  = 'error';
+        rStatusEl.className   = 'err';
+        rStatusEl.textContent = '· unreachable';
       }
     }
 
-    // Load on page load
-    fetchAndRenderProjects();
-    fetchAndRenderResearch();
+    function initResearchFilters() {
+      document.querySelectorAll('.research-filter-pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+          document.querySelectorAll('.research-filter-pill').forEach(p => p.classList.remove('active'));
+          pill.classList.add('active');
+          const f = pill.dataset.rfilter;
+          let shown = 0;
+          allResearchCards.forEach(card => {
+            const visible = f === 'all' || card.dataset.status === f;
+            card.dataset.hidden = visible ? 'false' : 'true';
+            if (visible) shown++;
+          });
+          rCountEl.textContent = f === 'all'
+            ? `${allResearchCards.length} entr${allResearchCards.length === 1 ? 'y' : 'ies'}`
+            : `${shown} ${f}`;
+        });
+      });
+    }
 
-    // Reload on spa-loaded event
-    window.addEventListener('spa-loaded', () => {
-      fetchAndRenderProjects();
-      fetchAndRenderResearch();
-    });
+    loadProjects();
+    loadResearch();
   </script>
+
 </body>
 </html>
