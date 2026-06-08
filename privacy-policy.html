@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Privacy Policy — emtypyie wiki" />
+  <title>Privacy Policy · wiki emtypyie</title>
+  <link rel="icon" type="image/jpeg" href="assets/favicon.jpg">
+  <style>
+    :root {
+      --bg:           #F4EFE6;
+      --surface:      #EDE7DA;
+      --surface-2:    #E5DDD0;
+      --border:       #C9BEB0;
+      --border-light: #DDD6CA;
+      --text:         #1C1917;
+      --text-muted:   #6B6152;
+      --text-faint:   #9A8F82;
+      --accent:       #B45309;
+      --accent-hover: #92400E;
+      --accent-dim:   #FEF3C7;
+      --green:        #2F6B3E;
+      --green-bg:     #DCFCE7;
+      --radius:       3px;
+      --font-serif:   'Georgia', 'Times New Roman', serif;
+      --font-sans:    system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+      --font-mono:    'Courier New', 'Lucida Console', Courier, monospace;
+      --max-w:        760px;
+      --nav-h:        52px;
+    }
+    [data-theme="dark"] {
+      --bg:           #0E0D0B;
+      --surface:      #181614;
+      --surface-2:    #201E1A;
+      --border:       #2C2924;
+      --border-light: #252220;
+      --text:         #E8E2D6;
+      --text-muted:   #8C8274;
+      --text-faint:   #5A5248;
+      --accent:       #D97706;
+      --accent-hover: #F59E0B;
+      --accent-dim:   #1C1407;
+      --green:        #4ADE80;
+      --green-bg:     #052E16;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.65;
+      min-height: 100vh;
+      transition: background 0.2s, color 0.2s;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: var(--accent-hover); }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image: radial-gradient(circle, var(--border) 1px, transparent 1px);
+      background-size: 28px 28px;
+      opacity: 0.3;
+    }
+    [data-theme="dark"] body::before { opacity: 0.12; }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      z-index: 100;
+      transition: background 0.2s;
+    }
+    .nav-inner {
+      width: 100%;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-brand { font-family: var(--font-mono); font-size: 13px; color: var(--text); display: flex; align-items: center; text-decoration: none; color: var(--text); }
+    .nav-brand .slash { color: var(--text-faint); margin: 0 5px; }
+    .nav-brand .wiki-part { color: var(--accent); font-weight: 700; }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+    .nav-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: var(--radius);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+      text-decoration: none;
+    }
+    .nav-btn:hover { color: var(--text); border-color: var(--text-muted); background: var(--surface); }
+    .nav-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      padding-top: var(--nav-h);
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding-left: 24px;
+      padding-right: 24px;
+      padding-bottom: 80px;
+    }
+
+    .breadcrumb {
+      padding: 20px 0 0;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-faint);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .breadcrumb a { color: var(--text-faint); }
+    .breadcrumb a:hover { color: var(--accent); }
+    .breadcrumb .sep { color: var(--border); }
+
+    .doc-header {
+      padding: 32px 0 40px;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .doc-title {
+      font-family: var(--font-serif);
+      font-size: clamp(32px, 6vw, 52px);
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+    .doc-meta {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-faint);
+    }
+
+    .doc-body {
+      padding: 40px 0;
+    }
+
+    .doc-section {
+      margin-bottom: 40px;
+    }
+
+    .doc-section h2 {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .doc-section p {
+      color: var(--text-muted);
+      font-size: 14.5px;
+      line-height: 1.8;
+      margin-bottom: 12px;
+    }
+
+    .doc-section ul {
+      margin: 12px 0;
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .doc-section ul li {
+      color: var(--text-muted);
+      font-size: 14.5px;
+      line-height: 1.7;
+    }
+
+    .doc-section ul li::marker { color: var(--accent); }
+
+    .callout {
+      margin: 20px 0;
+      padding: 14px 18px;
+      background: var(--accent-dim);
+      border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    .doc-section strong { color: var(--text); font-weight: 600; }
+
+    .contact-box {
+      margin-top: 40px;
+      padding: 20px 24px;
+      background: var(--surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+    .contact-box .label {
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin-bottom: 8px;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      margin-top: 40px;
+    }
+    .footer-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-faint);
+    }
+    .footer-inner a { color: var(--text-faint); }
+    .footer-inner a:hover { color: var(--accent); }
+    .footer-inner span { color: var(--accent); }
+
+    @media (max-width: 640px) {
+      nav { padding: 0 16px; }
+      .page { padding-left: 16px; padding-right: 16px; }
+      .footer-inner { flex-direction: column; align-items: flex-start; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">
+        emtypyie<span class="slash">/</span><span class="wiki-part">wiki</span>
+      </a>
+      <div class="nav-actions">
+        <button class="nav-btn" id="themeToggle" aria-label="Toggle theme">
+          <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <span id="themeLabel">light</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+
+    <div class="breadcrumb">
+      <a href="/">wiki</a>
+      <span class="sep">/</span>
+      <span>Privacy Policy</span>
+    </div>
+
+    <header class="doc-header">
+      <h1 class="doc-title">Privacy Policy</h1>
+      <div class="doc-meta">Last updated: June 2026 · emtypyie / wiki</div>
+    </header>
+
+    <div class="doc-body">
+
+      <div class="doc-section">
+        <p>This Privacy Policy describes how the emtypyie wiki (<strong>wiki.emtypyie.in</strong>) handles information when you visit. This is a personal technical documentation site — there is no account system, no user profiles, and no tracking beyond what is described below.</p>
+      </div>
+
+      <div class="doc-section">
+        <h2>What We Collect</h2>
+        <p>This site collects minimal data. Specifically:</p>
+        <ul>
+          <li><strong>Like counts</strong> — when you click the like button on a project page, a POST request is sent to <code>api.emtypyie.in</code> with the project identifier. No personal information is transmitted. A timestamp is stored in your browser's <code>localStorage</code> to enforce a 24-hour cooldown — this never leaves your device.</li>
+          <li><strong>Standard server logs</strong> — like any web server, requests may be logged by the hosting provider (Vercel) including IP address, browser type, and page requested. These logs are governed by Vercel's own privacy policy and are not accessed or stored by us beyond what the platform retains automatically.</li>
+          <li><strong>No cookies</strong> — this site does not set any cookies. Theme preferences and like timestamps are stored in <code>localStorage</code> locally on your device.</li>
+        </ul>
+      </div>
+
+      <div class="doc-section">
+        <h2>What We Don't Collect</h2>
+        <ul>
+          <li>No email addresses, names, or contact information</li>
+          <li>No browsing history or cross-site tracking</li>
+          <li>No analytics scripts (Google Analytics, Mixpanel, etc.)</li>
+          <li>No advertising identifiers</li>
+          <li>No fingerprinting or device identification</li>
+        </ul>
+      </div>
+
+      <div class="doc-section">
+        <h2>Third-Party Services</h2>
+        <p>The following external services may be loaded on this site:</p>
+        <ul>
+          <li><strong>GitHub</strong> — avatar images on contributor cards are loaded directly from <code>github.com</code>. GitHub's own privacy policy applies.</li>
+          <li><strong>Vercel</strong> — this site is hosted on Vercel. Vercel collects access logs as part of standard infrastructure operation.</li>
+        </ul>
+        <p>No advertising networks, social media trackers, or third-party analytics are loaded.</p>
+      </div>
+
+      <div class="doc-section">
+        <h2>Data Retention</h2>
+        <p>We do not maintain a database of visitor information. Like counts are stored server-side as aggregate numbers only — no association with IP addresses or sessions is kept beyond the immediate request. <code>localStorage</code> data lives entirely on your device and can be cleared at any time through your browser settings.</p>
+      </div>
+
+      <div class="doc-section">
+        <h2>Your Rights</h2>
+        <p>Because we don't collect personal data, there is nothing to request deletion of. If you believe data about you is being retained in error, contact us at the address below and we'll investigate immediately.</p>
+      </div>
+
+      <div class="doc-section">
+        <h2>Changes to This Policy</h2>
+        <p>If this policy changes materially, the "Last updated" date at the top of this page will reflect it. We don't send email notifications — check back here if you have concerns.</p>
+      </div>
+
+      <div class="contact-box">
+        <div class="label">Contact</div>
+        Questions about this policy? Reach out at <a href="mailto:contact@emtypyie.in">contact@emtypyie.in</a> or open an issue on <a href="https://github.com/myrachane" target="_blank" rel="noopener">github.com/myrachane</a>.
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <span>emtypyie / <span>wiki</span></span>
+      <a href="/">← back to wiki</a>
+    </div>
+  </footer>
+
+  <script>
+    const html   = document.documentElement;
+    const toggle = document.getElementById('themeToggle');
+    const label  = document.getElementById('themeLabel');
+    const icon   = document.getElementById('themeIcon');
+    function applyTheme(t) {
+      html.setAttribute('data-theme', t);
+      localStorage.setItem('wiki-theme', t);
+      label.textContent = t;
+      const dark = t === 'dark';
+      icon.innerHTML = dark
+        ? `<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>`
+        : `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
+      icon.setAttribute('fill', dark ? 'currentColor' : 'none');
+      if (!dark) { icon.setAttribute('stroke','currentColor'); icon.setAttribute('stroke-width','2'); icon.setAttribute('stroke-linecap','round'); icon.setAttribute('stroke-linejoin','round'); }
+    }
+    applyTheme(localStorage.getItem('wiki-theme') || 'light');
+    toggle.addEventListener('click', () => applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
+  </script>
+
+</body>
+</html>
