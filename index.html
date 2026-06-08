@@ -248,6 +248,122 @@
     .hero-tag { font-family: var(--font-mono); font-size: 12px; color: var(--text-faint); }
     .hero-tag::before { content: '// '; color: var(--accent); opacity: 0.7; }
 
+    /* ── SEARCH BAR ─────────────────────────────── */
+    .search-wrap {
+      padding: 32px 24px 0;
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+    .search-container {
+      position: relative;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-faint);
+      pointer-events: none;
+      display: flex;
+    }
+    .search-icon svg { width: 15px; height: 15px; }
+    #siteSearch {
+      width: 100%;
+      padding: 11px 40px 11px 42px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    #siteSearch::placeholder { color: var(--text-faint); }
+    #siteSearch:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 15%, transparent);
+    }
+    .search-clear {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-faint);
+      cursor: pointer;
+      padding: 4px;
+      display: none;
+      line-height: 1;
+      font-size: 14px;
+      transition: color 0.15s;
+    }
+    .search-clear:hover { color: var(--text); }
+    .search-clear.visible { display: block; }
+
+    /* Search results dropdown */
+    #searchResults {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0; right: 0;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      z-index: 200;
+      overflow: hidden;
+      display: none;
+    }
+    #searchResults.visible { display: block; }
+    .search-result-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-light);
+      cursor: pointer;
+      transition: background 0.12s;
+      text-decoration: none;
+      color: inherit;
+    }
+    .search-result-item:last-child { border-bottom: none; }
+    .search-result-item:hover { background: var(--surface); }
+    .search-result-tag {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: 2px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .search-result-tag.project  { background: var(--accent-dim); color: var(--accent); }
+    .search-result-tag.research { background: var(--purple-bg);  color: var(--purple); }
+    .search-result-name {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+    .search-result-desc {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      color: var(--text-faint);
+      line-height: 1.4;
+    }
+    .search-no-results {
+      padding: 20px 16px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-faint);
+      text-align: center;
+    }
+
     /* ABOUT */
     .about {
       padding: 48px 24px;
@@ -417,7 +533,12 @@
     .footer-inner {
       max-width: var(--max-w);
       margin: 0 auto;
-      padding: 28px 24px;
+      padding: 28px 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .footer-top-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -425,10 +546,34 @@
     }
     .footer-brand { font-family: var(--font-mono); font-size: 12px; color: var(--text-faint); }
     .footer-brand span { color: var(--accent); }
-    .footer-links { display: flex; align-items: center; gap: 20px; }
+    .footer-links { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
     .footer-link { font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); display: flex; align-items: center; gap: 5px; transition: color 0.15s; }
     .footer-link:hover { color: var(--accent); }
     .footer-link svg { width: 13px; height: 13px; }
+    .footer-legal {
+      border-top: 1px solid var(--border-light);
+      padding-top: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .footer-legal-links { display: flex; gap: 16px; flex-wrap: wrap; }
+    .footer-legal-link {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-faint);
+      opacity: 0.7;
+      transition: color 0.15s, opacity 0.15s;
+    }
+    .footer-legal-link:hover { color: var(--accent); opacity: 1; }
+    .footer-copy {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-faint);
+      opacity: 0.5;
+    }
 
     /* ═══════════════════════════════════════
        TRANSITION OVERLAY
@@ -483,7 +628,6 @@
     #ta2.arrow-out { transform: translateX(420%); transition: transform 0.48s cubic-bezier(0.77, 0, 0.175, 1) 0.06s; }
     #ta3.arrow-out { transform: translateX(320%); transition: transform 0.48s cubic-bezier(0.77, 0, 0.175, 1) 0.12s; }
 
-    /* ── MODULE NAME ── */
     #transName {
       position: absolute;
       bottom: 7vh;
@@ -503,7 +647,6 @@
       pointer-events: none;
     }
 
-    /* script label */
     #transLangTag {
       position: absolute;
       bottom: calc(7vh + clamp(26px, 4vw, 64px) + 14px);
@@ -540,7 +683,6 @@
     }
     #transLabel.label-visible { opacity: 0.45; }
 
-    /* ── CHUNK GLITCH CANVAS ── */
     #glitchCanvas {
       position: absolute;
       inset: 0;
@@ -549,15 +691,8 @@
       z-index: 6;
       pointer-events: none;
       display: none;
-      /* No blend mode — solid chunks drawn in theme-aware colors */
     }
     #glitchCanvas.active { display: block; }
-
-    /* ── SPA CONTENT WRAPPER ── */
-    #spaContent {
-      position: relative;
-      z-index: 1;
-    }
 
     /* ── RESPONSIVE ─────────────────────── */
     @media (max-width: 1100px) { .toc-sidebar { display: none; } }
@@ -568,12 +703,14 @@
       .projects { padding: 36px 16px 56px; }
       .research { padding: 0 16px 56px; padding-top: 36px; }
       .project-grid { grid-template-columns: 1fr; }
-      .footer-inner { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .footer-top-row { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .footer-legal { flex-direction: column; align-items: flex-start; gap: 8px; }
       .nav-btn span { display: none; }
       .bg-right { display: none; }
       #transName    { font-size: clamp(16px, 7vw, 32px); bottom: 5vh; right: 2vw; width: 38vw; }
       #transLabel   { right: 2vw; width: 38vw; }
       #transLangTag { right: 2vw; width: 38vw; }
+      .search-wrap { padding: 24px 16px 0; }
     }
   </style>
 </head>
@@ -590,7 +727,7 @@
     <div class="trans-arrow" id="ta3"></div>
 
     <div id="transLabel">loading</div>
-    <div id="transLangTag">hi</div>
+    <div id="transLangTag">en</div>
     <div id="transName"></div>
 
     <canvas id="glitchCanvas"></canvas>
@@ -646,6 +783,26 @@
       <p class="hero-sub">Dev logs, builds, and technical breakdowns from things I'm actually working on.</p>
       <p class="hero-tag">Yappin N Buildin.</p>
     </header>
+
+    <!-- ── SEARCH BAR ── -->
+    <div class="search-wrap">
+      <div class="search-container">
+        <div class="search-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </div>
+        <input
+          type="search"
+          id="siteSearch"
+          placeholder="Search projects and research..."
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button class="search-clear" id="searchClear" aria-label="Clear search">×</button>
+        <div id="searchResults"></div>
+      </div>
+    </div>
 
     <section class="about" id="about">
       <div class="about-label">About this wiki</div>
@@ -703,23 +860,33 @@ It captures development as it occurs, including design decisions, implementation
 
     <footer>
       <div class="footer-inner">
-        <div class="footer-brand">emtypyie / <span>wiki</span> — updated continuously</div>
-        <div class="footer-links">
-          <a href="https://github.com/myrachane" target="_blank" rel="noopener" class="footer-link">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
-            github
-          </a>
-          <a href="https://emtypyie.in" target="_blank" rel="noopener" class="footer-link">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-              <polyline points="9 22 9 12 15 12 15 22"/>
-            </svg>
-            emtypyie.in
-          </a>
-          <a href="https://wiki.emtypyie.in" class="footer-link">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-            wiki.emtypyie.in
-          </a>
+        <div class="footer-top-row">
+          <div class="footer-brand">emtypyie / <span>wiki</span> — updated continuously</div>
+          <div class="footer-links">
+            <a href="https://github.com/myrachane" target="_blank" rel="noopener" class="footer-link">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+              github
+            </a>
+            <a href="https://emtypyie.in" target="_blank" rel="noopener" class="footer-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+              </svg>
+              emtypyie.in
+            </a>
+            <a href="https://wiki.emtypyie.in" class="footer-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              wiki.emtypyie.in
+            </a>
+          </div>
+        </div>
+        <div class="footer-legal">
+          <div class="footer-legal-links">
+            <a href="/privacy-policy.html" class="footer-legal-link">Privacy Policy</a>
+            <a href="/disclaimer.html" class="footer-legal-link">Disclaimer</a>
+            <a href="mailto:contact@emtypyie.in" class="footer-legal-link">Contact</a>
+          </div>
+          <div class="footer-copy">© 2026 emtypyie. All rights reserved.</div>
         </div>
       </div>
     </footer>
@@ -766,89 +933,33 @@ It captures development as it occurs, including design decisions, implementation
             if (active) active.classList.add('active');
           }
         });
-      }, { rootMargin: `-${52}px 0px -60% 0px`, threshold: 0 });
+      }, { rootMargin: `-52px 0px -60% 0px`, threshold: 0 });
       sections.forEach(s => observer.observe(s));
     })();
 
     /* ══════════════════════════════════════════
-       SPA NAVIGATION
-       ─ Fetches the target page, injects it into
-         the DOM under the flash, no full reload.
-    ══════════════════════════════════════════ */
-
-    /**
-     * Inject a pre-fetched HTML string into the document.
-     * Preserves the current theme. Re-executes scripts.
-     */
-    function spaInject(htmlText, href) {
-      const currentTheme = html.getAttribute('data-theme');
-      const parser = new DOMParser();
-      const newDoc  = parser.parseFromString(htmlText, 'text/html');
-
-      // Update browser URL + title (no reload)
-      history.pushState({ spa: true, href }, newDoc.title, href);
-      document.title = newDoc.title;
-
-      // Swap <head> styles (keep our base styles)
-      // We only swap style/link tags, not scripts
-      document.head.querySelectorAll('style, link[rel="stylesheet"]').forEach(el => el.remove());
-      newDoc.head.querySelectorAll('style, link[rel="stylesheet"]').forEach(el => {
-        document.head.appendChild(el.cloneNode(true));
-      });
-
-      // Swap <body> content
-      document.body.innerHTML = newDoc.body.innerHTML;
-
-      // Restore theme on <html> (body swap can reset data attrs)
-      html.setAttribute('data-theme', currentTheme);
-
-      // Re-execute <script> tags (innerHTML assignment doesn't run them)
-      document.body.querySelectorAll('script').forEach(oldScript => {
-        const s = document.createElement('script');
-        [...oldScript.attributes].forEach(a => s.setAttribute(a.name, a.value));
-        s.textContent = oldScript.textContent;
-        oldScript.parentNode.replaceChild(s, oldScript);
-      });
-
-      window.scrollTo(0, 0);
-    }
-
-    /* Handle browser back/forward after SPA nav */
-    window.addEventListener('popstate', async (e) => {
-      if (e.state && e.state.spa) {
-        try {
-          const res  = await fetch(e.state.href, { cache: 'no-cache' });
-          const html = await res.text();
-          spaInject(html, e.state.href);
-        } catch (_) {
-          window.location.reload();
-        }
-      }
-    });
-
-    /* ══════════════════════════════════════════
        TRANSITION SYSTEM
+       ─ After animation completes, do a REAL
+         page navigation (window.location.href).
+         This fixes all SPA injection bugs where
+         devlog scripts don't fully re-execute.
     ══════════════════════════════════════════ */
 
-    const overlay     = document.getElementById('transOverlay');
-    const ta1         = document.getElementById('ta1');
-    const ta2         = document.getElementById('ta2');
-    const ta3         = document.getElementById('ta3');
-    const transName   = document.getElementById('transName');
-    const transLabel  = document.getElementById('transLabel');
+    const overlay      = document.getElementById('transOverlay');
+    const ta1          = document.getElementById('ta1');
+    const ta2          = document.getElementById('ta2');
+    const ta3          = document.getElementById('ta3');
+    const transName    = document.getElementById('transName');
+    const transLabel   = document.getElementById('transLabel');
     const transLangTag = document.getElementById('transLangTag');
     const glitchCanvas = document.getElementById('glitchCanvas');
-    const transFlash  = document.getElementById('transFlash');
+    const transFlash   = document.getElementById('transFlash');
 
     let glitchRAF    = null;
     let glitchActive = false;
-    let nameSwapTimer = null;   // interval for Hindi/EN toggle
+    let nameSwapTimer = null;
 
-    /* — Chunk glitch (canvas) — */
     function glitchColor() {
-      // Contrast against the arrow fill:
-      // light theme → arrows are near-black → use white chunks
-      // dark theme  → arrows are near-white → use black chunks
       const dark = document.documentElement.getAttribute('data-theme') === 'dark';
       return dark ? ['#000000', '#111111', '#0E0D0B'] : ['#ffffff', '#f0ece4', '#fffef8'];
     }
@@ -858,12 +969,9 @@ It captures development as it occurs, including design decisions, implementation
       const ctx = glitchCanvas.getContext('2d');
       const W   = glitchCanvas.width;
       const H   = glitchCanvas.height;
-
       ctx.clearRect(0, 0, W, H);
-
       const colors = glitchColor();
       const zone   = W * 0.73;
-
       const numChunks = Math.random() > 0.45 ? 2 : 1;
       for (let i = 0; i < numChunks; i++) {
         const cH = Math.random() * 60 + 12;
@@ -875,20 +983,10 @@ It captures development as it occurs, including design decisions, implementation
         if (Math.random() > 0.5) {
           const lineY = y + Math.random() * (cH - 2);
           const lineW = cW * (0.3 + Math.random() * 0.7);
-          // contrasting hairline inside chunk
           ctx.fillStyle = Math.random() > 0.5 ? '#D97706' : (colors[0] === '#ffffff' ? '#1C1917' : '#E8E2D6');
           ctx.fillRect(x, lineY, lineW, Math.random() > 0.5 ? 2 : 1);
         }
       }
-      if (Math.random() > 0.8) {
-        const sH = Math.random() * 16 + 4;
-        const sW = Math.random() * 80 + 15;
-        const sx = Math.random() * Math.max(zone - sW, 10);
-        const sy = Math.random() * (H - sH);
-        ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
-        ctx.fillRect(sx, sy, sW, sH);
-      }
-
       glitchRAF = setTimeout(spawnGlitchChunks, Math.floor(Math.random() * 65) + 45);
     }
 
@@ -909,7 +1007,6 @@ It captures development as it occurs, including design decisions, implementation
       }
     }
 
-    /* ── Hindi / English name swap (inline styles — no CSS class conflicts) ── */
     function nameShow() {
       transName.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
       transName.style.opacity    = '1';
@@ -923,19 +1020,14 @@ It captures development as it occurs, including design decisions, implementation
     }
 
     function startNameSwap(nameEn, nameHi) {
-      if (!nameHi) return;   // no Hindi — nothing to swap
+      if (!nameHi) return;
       let showHindi = false;
-
       nameSwapTimer = setInterval(() => {
         showHindi = !showHindi;
         const next = showHindi ? nameHi : nameEn;
-
-        // 1. fade out
         transName.style.transition = 'opacity 0.15s ease, transform 0.15s ease';
         transName.style.opacity    = '0';
         transName.style.transform  = 'translateY(5px)';
-
-        // 2. swap text + fade back in
         setTimeout(() => {
           transName.textContent = next;
           if (transLangTag) transLangTag.textContent = showHindi ? 'हि' : 'en';
@@ -943,27 +1035,24 @@ It captures development as it occurs, including design decisions, implementation
           transName.style.opacity    = '1';
           transName.style.transform  = 'translateY(0)';
         }, 170);
-
       }, 1000);
     }
 
     function stopNameSwap() {
-      if (nameSwapTimer) {
-        clearInterval(nameSwapTimer);
-        nameSwapTimer = null;
-      }
+      if (nameSwapTimer) { clearInterval(nameSwapTimer); nameSwapTimer = null; }
     }
 
-    /* ── Main transition orchestrator ───────── */
+    /**
+     * FIX: Use real page navigation instead of SPA DOM injection.
+     * This ensures all scripts on devlog pages load and execute
+     * correctly — no more broken pages requiring manual reload.
+     *
+     * The transition animation plays in full, then window.location.href
+     * navigates when the flash is fully opaque (covering any flicker).
+     */
     function playTransition(nameEn, nameHi, href) {
-      // ── Start pre-fetching the target page immediately ──
-      const fetchPromise = fetch(href, { cache: 'no-cache' })
-        .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.text(); })
-        .catch(() => null);
-
       overlay.classList.add('active');
 
-      // Set initial text + inline reset (clear any leftover styles from previous run)
       transName.textContent    = nameEn;
       transName.style.opacity  = '0';
       transName.style.transform = 'translateY(16px)';
@@ -972,35 +1061,31 @@ It captures development as it occurs, including design decisions, implementation
       transLabel.textContent   = '// loading module';
       if (transLangTag) transLangTag.textContent = 'en';
 
-      // Reset arrow classes
       ta1.className = 'trans-arrow';
       ta2.className = 'trans-arrow';
       ta3.className = 'trans-arrow';
       transFlash.classList.remove('on');
-
-      // Reset label opacities
       transLabel.style.opacity    = '0';
       if (transLangTag) transLangTag.style.opacity = '0';
 
       stopGlitch();
       stopNameSwap();
 
-      // — Play audio —
+      // Audio
       try {
         const audio = new Audio('trans.mp3');
         audio.volume = 0.65;
         audio.play().catch(() => {});
       } catch (e) {}
 
-      // ── TIMELINE ──────────────────────────────────────────────
-      // t=0ms    : Arrows slide in from left
+      // t=0: arrows in
       requestAnimationFrame(() => {
         ta1.classList.add('arrow-in');
         ta2.classList.add('arrow-in');
         ta3.classList.add('arrow-in');
       });
 
-      // t=550ms  : Module name fades in (inline style) + Hindi swap starts
+      // t=550: name + label appear
       setTimeout(() => {
         nameShow();
         transLabel.style.transition = 'opacity 0.3s ease 0.1s';
@@ -1012,10 +1097,10 @@ It captures development as it occurs, including design decisions, implementation
         startNameSwap(nameEn, nameHi);
       }, 550);
 
-      // t=950ms  : Glitch starts
+      // t=950: glitch
       setTimeout(() => { startGlitch(); }, 950);
 
-      // t=2400ms : Name fades out, swap stops
+      // t=2400: name out
       setTimeout(() => {
         stopNameSwap();
         nameHide('-8px');
@@ -1023,7 +1108,7 @@ It captures development as it occurs, including design decisions, implementation
         if (transLangTag) transLangTag.style.opacity = '0';
       }, 2400);
 
-      // t=2600ms : Arrows sweep out to the right
+      // t=2600: arrows sweep out
       setTimeout(() => {
         stopGlitch();
         ta1.classList.remove('arrow-in');
@@ -1034,27 +1119,15 @@ It captures development as it occurs, including design decisions, implementation
         ta3.classList.add('arrow-out');
       }, 2600);
 
-      // t=3150ms : Flash appears — inject page underneath it
+      // t=3150: flash on
       setTimeout(() => {
         transFlash.classList.add('on');
       }, 3150);
 
-      // t=3500ms : SPA inject (flash is covering everything)
-      setTimeout(async () => {
-        const htmlText = await fetchPromise;
-        if (htmlText) {
-          spaInject(htmlText, href);
-        } else {
-          window.location.href = href;
-        }
-      }, 3500);
-
-      // t=3800ms : Safety fallback
+      // t=3400: REAL navigation — flash covers the transition so no flicker
       setTimeout(() => {
-        if (document.getElementById('transOverlay')) {
-          window.location.href = href;
-        }
-      }, 3800);
+        window.location.href = href;
+      }, 3400);
     }
 
     /* ── SHARED CARD BUILDER ───────────────── */
@@ -1072,7 +1145,6 @@ It captures development as it occurs, including design decisions, implementation
       a.className      = 'project-card' + (extraClass ? ' ' + extraClass : '');
       a.href           = `/${basePath}/${id}`;
       a.dataset.status = (status || 'paused').toLowerCase();
-      // Store nameHi on the element so the click handler can use it
       a.dataset.nameHi = nameHi || '';
       a.tabIndex       = 0;
 
@@ -1088,7 +1160,6 @@ It captures development as it occurs, including design decisions, implementation
           <span class="card-date">${updated || '—'}</span>
         </div>`;
 
-      // ── Intercept click → trigger transition ──
       a.addEventListener('click', e => {
         e.preventDefault();
         playTransition(name || id, a.dataset.nameHi, a.href);
@@ -1111,6 +1182,7 @@ It captures development as it occurs, including design decisions, implementation
     const filterRow = document.getElementById('filterRow');
     const loadingEl = document.getElementById('loadingState');
     let allCards    = [];
+    let allProjects = [];
 
     async function loadProjects() {
       try {
@@ -1118,6 +1190,7 @@ It captures development as it occurs, including design decisions, implementation
         if (!res.ok) throw new Error(`HTTP ${res.status} — ${res.statusText}`);
         const data     = await res.json();
         const projects = Array.isArray(data) ? data : (data.projects || []);
+        allProjects    = projects;
         loadingEl.remove();
 
         if (!projects.length) {
@@ -1181,6 +1254,7 @@ It captures development as it occurs, including design decisions, implementation
     const rFilterRow     = document.getElementById('researchFilterRow');
     const rLoadingEl     = document.getElementById('researchLoadingState');
     let allResearchCards = [];
+    let allResearch      = [];
 
     async function loadResearch() {
       try {
@@ -1188,6 +1262,7 @@ It captures development as it occurs, including design decisions, implementation
         if (!res.ok) throw new Error(`HTTP ${res.status} — ${res.statusText}`);
         const data  = await res.json();
         const items = Array.isArray(data) ? data : (data.entries || []);
+        allResearch  = items;
         rLoadingEl.remove();
 
         if (!items.length) {
@@ -1244,6 +1319,119 @@ It captures development as it occurs, including design decisions, implementation
       });
     }
 
+    /* ══════════════════════════════════════════
+       SEARCH
+    ══════════════════════════════════════════ */
+    const searchInput   = document.getElementById('siteSearch');
+    const searchResults = document.getElementById('searchResults');
+    const searchClear   = document.getElementById('searchClear');
+
+    function highlight(text, query) {
+      if (!query || !text) return text || '';
+      const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      return text.replace(new RegExp(`(${escaped})`, 'gi'), '<mark style="background:var(--accent-dim);color:var(--accent);border-radius:1px;padding:0 1px;">$1</mark>');
+    }
+
+    function runSearch(query) {
+      query = query.trim();
+
+      if (!query) {
+        searchResults.innerHTML = '';
+        searchResults.classList.remove('visible');
+        return;
+      }
+
+      const q = query.toLowerCase();
+
+      const projectMatches = allProjects.filter(p =>
+        (p.name  || '').toLowerCase().includes(q) ||
+        (p.desc  || '').toLowerCase().includes(q) ||
+        (p.lang  || '').toLowerCase().includes(q)
+      );
+
+      const researchMatches = allResearch.filter(r =>
+        (r.name  || '').toLowerCase().includes(q) ||
+        (r.desc  || '').toLowerCase().includes(q)
+      );
+
+      if (!projectMatches.length && !researchMatches.length) {
+        searchResults.innerHTML = `<div class="search-no-results">No results for "${query}"</div>`;
+        searchResults.classList.add('visible');
+        return;
+      }
+
+      let html = '';
+
+      projectMatches.forEach(p => {
+        const href = `/devlogs/${p.id}`;
+        html += `
+          <a class="search-result-item" href="${href}" data-name="${p.name || p.id}" data-namehi="${p.nameHi || ''}">
+            <span class="search-result-tag project">project</span>
+            <div>
+              <div class="search-result-name">${highlight(p.name || p.id, query)}</div>
+              <div class="search-result-desc">${highlight((p.desc || '').slice(0, 80) + ((p.desc || '').length > 80 ? '…' : ''), query)}</div>
+            </div>
+          </a>`;
+      });
+
+      researchMatches.forEach(r => {
+        const href = `/research/${r.id}`;
+        html += `
+          <a class="search-result-item" href="${href}" data-name="${r.name || r.id}" data-namehi="${r.nameHi || ''}">
+            <span class="search-result-tag research">research</span>
+            <div>
+              <div class="search-result-name">${highlight(r.name || r.id, query)}</div>
+              <div class="search-result-desc">${highlight((r.desc || '').slice(0, 80) + ((r.desc || '').length > 80 ? '…' : ''), query)}</div>
+            </div>
+          </a>`;
+      });
+
+      searchResults.innerHTML = html;
+      searchResults.classList.add('visible');
+
+      // Wire up click → transition
+      searchResults.querySelectorAll('.search-result-item').forEach(item => {
+        item.addEventListener('click', e => {
+          e.preventDefault();
+          searchResults.classList.remove('visible');
+          searchInput.blur();
+          playTransition(item.dataset.name, item.dataset.namehi, item.href);
+        });
+      });
+    }
+
+    let searchDebounce = null;
+    searchInput.addEventListener('input', () => {
+      const val = searchInput.value;
+      searchClear.classList.toggle('visible', val.length > 0);
+      clearTimeout(searchDebounce);
+      searchDebounce = setTimeout(() => runSearch(val), 180);
+    });
+
+    searchInput.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        searchInput.value = '';
+        searchClear.classList.remove('visible');
+        searchResults.classList.remove('visible');
+        searchInput.blur();
+      }
+    });
+
+    searchClear.addEventListener('click', () => {
+      searchInput.value = '';
+      searchClear.classList.remove('visible');
+      searchResults.classList.remove('visible');
+      searchInput.focus();
+    });
+
+    // Close results when clicking outside
+    document.addEventListener('click', e => {
+      if (!e.target.closest('.search-container')) {
+        searchResults.classList.remove('visible');
+      }
+    });
+
+    /* ── BOOT ──────────────────────────────── */
     loadProjects();
     loadResearch();
   </script>
