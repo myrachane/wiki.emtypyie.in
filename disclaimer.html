@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Disclaimer — emtypyie wiki" />
+  <title>Disclaimer · wiki emtypyie</title>
+  <link rel="icon" type="image/jpeg" href="assets/favicon.jpg">
+  <style>
+    :root {
+      --bg:           #F4EFE6;
+      --surface:      #EDE7DA;
+      --surface-2:    #E5DDD0;
+      --border:       #C9BEB0;
+      --border-light: #DDD6CA;
+      --text:         #1C1917;
+      --text-muted:   #6B6152;
+      --text-faint:   #9A8F82;
+      --accent:       #B45309;
+      --accent-hover: #92400E;
+      --accent-dim:   #FEF3C7;
+      --amber:        #92400E;
+      --amber-bg:     #FEF3C7;
+      --radius:       3px;
+      --font-serif:   'Georgia', 'Times New Roman', serif;
+      --font-sans:    system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+      --font-mono:    'Courier New', 'Lucida Console', Courier, monospace;
+      --max-w:        760px;
+      --nav-h:        52px;
+    }
+    [data-theme="dark"] {
+      --bg:           #0E0D0B;
+      --surface:      #181614;
+      --surface-2:    #201E1A;
+      --border:       #2C2924;
+      --border-light: #252220;
+      --text:         #E8E2D6;
+      --text-muted:   #8C8274;
+      --text-faint:   #5A5248;
+      --accent:       #D97706;
+      --accent-hover: #F59E0B;
+      --accent-dim:   #1C1407;
+      --amber:        #FCD34D;
+      --amber-bg:     #1C1100;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.65;
+      min-height: 100vh;
+      transition: background 0.2s, color 0.2s;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: var(--accent-hover); }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image: radial-gradient(circle, var(--border) 1px, transparent 1px);
+      background-size: 28px 28px;
+      opacity: 0.3;
+    }
+    [data-theme="dark"] body::before { opacity: 0.12; }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      z-index: 100;
+      transition: background 0.2s;
+    }
+    .nav-inner {
+      width: 100%;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-brand { font-family: var(--font-mono); font-size: 13px; color: var(--text); display: flex; align-items: center; text-decoration: none; color: var(--text); }
+    .nav-brand .slash { color: var(--text-faint); margin: 0 5px; }
+    .nav-brand .wiki-part { color: var(--accent); font-weight: 700; }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+    .nav-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: var(--radius);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+      text-decoration: none;
+    }
+    .nav-btn:hover { color: var(--text); border-color: var(--text-muted); background: var(--surface); }
+    .nav-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      padding-top: var(--nav-h);
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding-left: 24px;
+      padding-right: 24px;
+      padding-bottom: 80px;
+    }
+
+    .breadcrumb {
+      padding: 20px 0 0;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-faint);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .breadcrumb a { color: var(--text-faint); }
+    .breadcrumb a:hover { color: var(--accent); }
+    .breadcrumb .sep { color: var(--border); }
+
+    .doc-header {
+      padding: 32px 0 40px;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .doc-title {
+      font-family: var(--font-serif);
+      font-size: clamp(32px, 6vw, 52px);
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+    .doc-meta {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-faint);
+    }
+
+    /* Big notice box */
+    .notice-box {
+      margin: 36px 0;
+      padding: 24px 28px;
+      background: var(--amber-bg);
+      border: 1px solid color-mix(in srgb, var(--amber) 30%, transparent);
+      border-left: 4px solid var(--amber);
+      border-radius: 0 var(--radius) var(--radius) 0;
+    }
+    .notice-box .notice-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 10px;
+    }
+    .notice-box p {
+      font-size: 14.5px;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+    .notice-box p + p { margin-top: 10px; }
+    .notice-box strong { color: var(--text); }
+
+    .doc-body { padding: 20px 0; }
+
+    .doc-section { margin-bottom: 40px; }
+
+    .doc-section h2 {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .doc-section p {
+      color: var(--text-muted);
+      font-size: 14.5px;
+      line-height: 1.8;
+      margin-bottom: 12px;
+    }
+
+    .doc-section ul {
+      margin: 12px 0;
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .doc-section ul li { color: var(--text-muted); font-size: 14.5px; line-height: 1.7; }
+    .doc-section ul li::marker { color: var(--accent); }
+    .doc-section strong { color: var(--text); font-weight: 600; }
+
+    .project-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius);
+      overflow: hidden;
+      font-size: 13px;
+    }
+    .project-table th {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      background: var(--surface);
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .project-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-light);
+      color: var(--text-muted);
+      vertical-align: top;
+    }
+    .project-table tr:last-child td { border-bottom: none; }
+    .project-table tr:hover td { background: var(--surface); }
+    .project-table td:first-child { font-weight: 600; color: var(--text); font-family: var(--font-mono); font-size: 12px; }
+
+    .contact-box {
+      margin-top: 40px;
+      padding: 20px 24px;
+      background: var(--surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+    .contact-box .label {
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin-bottom: 8px;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      margin-top: 40px;
+    }
+    .footer-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-faint);
+    }
+    .footer-inner a { color: var(--text-faint); }
+    .footer-inner a:hover { color: var(--accent); }
+    .footer-inner span { color: var(--accent); }
+
+    @media (max-width: 640px) {
+      nav { padding: 0 16px; }
+      .page { padding-left: 16px; padding-right: 16px; }
+      .footer-inner { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .project-table { font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">
+        emtypyie<span class="slash">/</span><span class="wiki-part">wiki</span>
+      </a>
+      <div class="nav-actions">
+        <button class="nav-btn" id="themeToggle" aria-label="Toggle theme">
+          <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <span id="themeLabel">light</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+
+    <div class="breadcrumb">
+      <a href="/">wiki</a>
+      <span class="sep">/</span>
+      <span>Disclaimer</span>
+    </div>
+
+    <header class="doc-header">
+      <h1 class="doc-title">Disclaimer</h1>
+      <div class="doc-meta">Last updated: June 2026 · emtypyie / wiki</div>
+    </header>
+
+    <div class="notice-box">
+      <div class="notice-label">⚠ Read Before Proceeding</div>
+      <p><strong>Everything documented on this wiki is built for pure engineering and learning purposes.</strong> Projects here are personal experiments — code written to understand how things work, not to cause harm or advance any real-world agenda.</p>
+      <p>Any political references, ideological characters, or cultural jokes embedded in projects (yes, including the Soviet stuff) are <strong>memes and satire only</strong>. Do not take them seriously. The author does not endorse any political ideology, regime, or movement — past, present, or fictional.</p>
+    </div>
+
+    <div class="doc-body">
+
+      <div class="doc-section">
+        <h2>Nature of Projects</h2>
+        <p>All projects documented here are personal, independent, research-oriented builds. They are built to explore technical concepts — machine learning, avionics, browser extensions, Discord bots — and to document the learning process publicly.</p>
+        <p>None of the projects documented here are production systems, commercial products, or tools intended for use in safety-critical environments without proper independent validation and certification.</p>
+      </div>
+
+      <div class="doc-section">
+        <h2>Satirical & Cultural References</h2>
+        <p>Some projects on this wiki contain characters, themes, or humour rooted in cultural references, internet memes, and historical satire. Specifically:</p>
+        <ul>
+          <li>References to Soviet history, communism, or political ideologies in projects like BloatWare are <strong>purely comedic and satirical</strong>. They do not represent the author's political beliefs.</li>
+          <li>Any fictional "evil" characters, antagonist archetypes, or culturally-charged personas in bot personalities are creative exercises — the equivalent of writing a villain in a story.</li>
+          <li>Pop culture references, film references, and internet humour should be understood in that context.</li>
+        </ul>
+        <div style="margin-top: 16px; padding: 12px 16px; background: var(--surface); border: 1px solid var(--border-light); border-radius: var(--radius); font-family: var(--font-mono); font-size: 12px; color: var(--text-faint); line-height: 1.7;">
+          // tl;dr — BloatWare is a Soviet-themed Discord bot because the author watched too many Cold War films. It's a bit. Chill.
+        </div>
+      </div>
+
+      <div class="doc-section">
+        <h2>Project-Specific Disclaimers</h2>
+        <table class="project-table">
+          <thead>
+            <tr>
+              <th>Project</th>
+              <th>Disclaimer</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>SLYR</td>
+              <td>SLYR is an avionics research platform for educational purposes. It is not certified for real flight operations. Never fly any unmanned aircraft system without complying with local aviation regulations (DGCA in India, FAA in the US, etc.).</td>
+            </tr>
+            <tr>
+              <td>BloatWare</td>
+              <td>A Discord bot with a satirical Soviet personality. All political references are jokes. The bot runs a fine-tuned LLM — output is AI-generated and may be unexpected. Do not treat its responses as factual.</td>
+            </tr>
+            <tr>
+              <td>OpenNH-Download</td>
+              <td>This browser extension is intended for use only with content that is legal in your jurisdiction. The author does not host, distribute, or endorse any third-party content. Users are solely responsible for compliance with applicable laws and terms of service.</td>
+            </tr>
+            <tr>
+              <td>W.Decision-Matrix</td>
+              <td>A utility tool. No disclaimers required — it just does maths on your inputs.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="doc-section">
+        <h2>No Liability</h2>
+        <p>The author provides all code, documentation, and builds "as-is" with no warranties of any kind. You use any project documented here entirely at your own risk. The author is not liable for any damages, data loss, regulatory violations, or other consequences arising from use of any code or documentation on this wiki.</p>
+        <p>Code shared here is for learning. If you deploy it in a production environment without thoroughly reviewing and testing it yourself, that's on you.</p>
+      </div>
+
+      <div class="doc-section">
+        <h2>Accuracy of Documentation</h2>
+        <p>This is a living wiki. Dev logs are written as projects develop — they may contain outdated information, planned features that didn't ship, or notes that made sense at 2am. The code in the architecture sections reflects the state at the time of writing, not necessarily the current repository state. Always check the linked GitHub repos for the latest code.</p>
+      </div>
+
+      <div class="doc-section">
+        <h2>External Links</h2>
+        <p>This wiki links to external sites (GitHub, various documentation pages). The author has no control over those sites' content or availability and is not responsible for anything on them.</p>
+      </div>
+
+      <div class="contact-box">
+        <div class="label">Got a concern?</div>
+        If something on this wiki concerns you — a project, a reference, or a specific piece of content — reach out at <a href="mailto:contact@emtypyie.in">contact@emtypyie.in</a> before assuming the worst. Most things have a straightforward explanation.
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <span>emtypyie / <span>wiki</span></span>
+      <a href="/">← back to wiki</a>
+    </div>
+  </footer>
+
+  <script>
+    const html   = document.documentElement;
+    const toggle = document.getElementById('themeToggle');
+    const label  = document.getElementById('themeLabel');
+    const icon   = document.getElementById('themeIcon');
+    function applyTheme(t) {
+      html.setAttribute('data-theme', t);
+      localStorage.setItem('wiki-theme', t);
+      label.textContent = t;
+      const dark = t === 'dark';
+      icon.innerHTML = dark
+        ? `<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>`
+        : `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
+      icon.setAttribute('fill', dark ? 'currentColor' : 'none');
+      if (!dark) { icon.setAttribute('stroke','currentColor'); icon.setAttribute('stroke-width','2'); icon.setAttribute('stroke-linecap','round'); icon.setAttribute('stroke-linejoin','round'); }
+    }
+    applyTheme(localStorage.getItem('wiki-theme') || 'light');
+    toggle.addEventListener('click', () => applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
+  </script>
+
+</body>
+</html>
